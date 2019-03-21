@@ -12,3 +12,6 @@ package libraryadminterminalclient;
 public class RegistrationOperationModule {
     
 }
+
+
+
