@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.MemberEntity;
 import javax.ejb.Local;
+import util.exception.InvalidLoginException;
+import util.exception.MemberNotFoundException;
 
 /**
  *
@@ -13,5 +16,9 @@ import javax.ejb.Local;
  */
 @Local
 public interface MemberEntityControllerLocal {
+
+    MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException;
+
+    MemberEntity retrieveMemberByUsername(String username) throws MemberNotFoundException;
     
 }

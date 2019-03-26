@@ -3,19 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ejb.session.stateless;
+package ejb.session.stateful;
 
-import entity.MemberEntity;
 import javax.ejb.Remote;
 import util.exception.InvalidLoginException;
 
 /**
  *
- * @author hiixdayah
+ * @author kengthong
  */
 @Remote
-public interface MemberEntityControllerRemote {
+public interface SelfKioskOperationControllerRemote {
 
-    MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException;
+    void doMemberLogin(String username, String password) throws InvalidLoginException;
     
 }
