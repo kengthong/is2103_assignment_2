@@ -14,4 +14,6 @@ import javax.ejb.Remote;
 @Remote
 public interface FineControllerRemote {
     
+      public boolean checkForFines(String identityNumber) ; 
+
 }

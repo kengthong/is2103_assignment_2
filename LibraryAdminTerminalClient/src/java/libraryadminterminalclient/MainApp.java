@@ -70,8 +70,8 @@ public void runApp() {
                 
                 doLogin() ; 
                 libraryOperationModule = new LibraryOperationModule(staffEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, bookEntityControllerRemote, fineControllerRemote, reservationControllerRemote, currentStaffEntity) ;
-                administrationOperationModule = new AdministrationOperationModule(staffEntityControllerRemote, bookEntityControllerRemote, memberEntityControllerRemote) ;
-                registrationOperationModule = new RegistrationOperationModule(memberEntityControllerRemote) ; 
+                administrationOperationModule = new AdministrationOperationModule(staffEntityControllerRemote, bookEntityControllerRemote, memberEntityControllerRemote, currentStaffEntity) ;
+                registrationOperationModule = new RegistrationOperationModule(memberEntityControllerRemote, currentStaffEntity) ; 
                 menuMain() ; 
             } catch (InvalidLoginException ex) {
             }

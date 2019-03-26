@@ -86,5 +86,13 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
         entityManager.remove(memberEntityToRemove);
     }
     
+    @Override
+    public List<MemberEntity> retrieveAllMembers()
+    {
+        Query query = entityManager.createQuery("SELECT m FROM MemberEntity m");
+        
+        return query.getResultList();
+    }
+    
     
 }
