@@ -7,6 +7,8 @@ package ejb.session.stateless;
 
 import entity.BookEntity;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import util.exception.BookNotFoundException;
 
 /**
@@ -16,13 +18,29 @@ import util.exception.BookNotFoundException;
 @Stateless
 public class BookEntityController implements BookEntityControllerRemote, BookEntityControllerLocal {
 
+    @PersistenceContext(unitName = "librarydb2-ejbPU")
+    private EntityManager em;
+    
     @Override
-    public BookEntity getBook(Integer bookId) throws BookNotFoundException {
+    public BookEntity retrieveBookByBookId(Integer bookId) throws BookNotFoundException {
         
-        return null;
+        BookEntity bookEntity = em.find(BookEntity.class, bookId);
+        
+        if(bookEntity != null)
+        {
+            return bookEntity;
+        }
+        else
+        {
+            throw new BookNotFoundException("Product ID " + bookId + " does not exist!");
+        }          
     }
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+
+    public void persist(Object object) {
+        em.persist(object);
+    }
     
 }

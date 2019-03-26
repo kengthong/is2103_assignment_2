@@ -101,7 +101,7 @@ public class MemberOperationModule {
             {
                 try
                 {
-                    BookEntity bookToBorrow = bookEntityController.getBook(bookId);
+                    BookEntity bookToBorrow = bookEntityController.retrieveBookByBookId(bookId);
                     String dueDate = "2019-03-25";
                     System.out.println("Successfully lent book. Due Date: " + dueDate + ".");
                 }
