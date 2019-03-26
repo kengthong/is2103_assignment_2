@@ -5,32 +5,265 @@
  */
 package libraryadminterminalclient;
 
+import ejb.session.stateless.BookEntityControllerRemote;
+import ejb.session.stateless.FineControllerRemote;
+import ejb.session.stateless.LendingEntityControllerRemote;
+import ejb.session.stateless.MemberEntityControllerRemote;
+import ejb.session.stateless.ReservationControllerRemote;
+import ejb.session.stateless.StaffEntityControllerRemote;
+import entity.BookEntity;
+import entity.LendingEntity;
+import entity.MemberEntity;
+import entity.StaffEntity;
+import java.util.List;
+import java.util.Scanner;
+import util.exception.BookNotFoundException;
+import util.exception.MemberNotFoundException;
+
 /**
  *
  * @author hiixdayah
  */
 public class LibraryOperationModule {
     
-}
+    private BookEntityControllerRemote bookEntityControllerRemote;
+    private MemberEntityControllerRemote memberEntityControllerRemote;
+    private StaffEntityControllerRemote staffEntityControllerRemote;
+    private LendingEntityControllerRemote lendingEntityControllerRemote ;
+    private FineControllerRemote fineControllerRemote ; 
+    private ReservationControllerRemote reservationControllerRemote ; 
+    private StaffEntity currentStaffEntity;
+
+  public LibraryOperationModule() {  
+  }
+  
+    public LibraryOperationModule(StaffEntityControllerRemote staffEntityControllerRemote, LendingEntityControllerRemote lendingEntityControllerRemote, MemberEntityControllerRemote memberEntityControllerRemote, BookEntityControllerRemote bookEntityControllerRemote,FineControllerRemote fineControllerRemote,  ReservationControllerRemote reservationControllerRemote, StaffEntity currentStaffEntity) {  
+      this() ;
+      this.memberEntityControllerRemote = memberEntityControllerRemote;
+      this.bookEntityControllerRemote = bookEntityControllerRemote;
+      this.staffEntityControllerRemote = staffEntityControllerRemote;
+      this.lendingEntityControllerRemote = lendingEntityControllerRemote ; 
+      this.fineControllerRemote = fineControllerRemote ; 
+      this.reservationControllerRemote = reservationControllerRemote ;     
+      this.currentStaffEntity = currentStaffEntity;
+  }
+    
+    public void menuLibraryOperation() {
+    Scanner scanner = new Scanner(System.in) ; 
+    Integer response = 0 ; 
+    
+    while(true) {
+            System.out.println("*** ILS :: Library Operation ***\n");
+            System.out.println("1: Lend Book");
+            System.out.println("2: View Lent Books");
+            System.out.println("3: Return Book");
+            System.out.println("4: Extend Book");
+            System.out.println("5: Pay Fines");
+            System.out.println("6: Manage Reservations");
+            System.out.println("7: Back\n");
+            response = 0;  
+            
+            while(response < 1 || response > 7)
+            {
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+                 
+
+                if(response == 1)
+                {
+                    doLendBook() ;   
+                } else if (response == 2) {
+                    viewLentBooks() ;  
+                } else if (response == 3) {
+                    doReturnBook() ; 
+                } else if (response == 4) {
+                    doExtendBook() ; 
+                } else if (response == 5) {
+                    doPayFines() ; 
+                } else if (response == 6) {
+                    doManageReservations() ; 
+                } else if (response == 7) {
+                    break ; 
+                } else {
+                    System.out.println("Invalid option, please try again!\n") ; 
+                }
+            }
+               if(response == 7)
+            {
+                break;
+            }
+        }
+    
+  }
+    
+    private void doLendBook() {
+        Scanner scanner = new Scanner(System.in) ; 
+        System.out.println("*** ILS :: Library Operation :: Lend Book ***\n");
+        System.out.print("Enter Member Identity Number> ");
+        String identityNumber = scanner.nextLine().trim();
+        System.out.print("Enter Book ID> ");
+        Long bookId = scanner.nextLong() ;
+        LendingEntity newLendingEntity = new LendingEntity() ; 
+        MemberEntity newMemberEntity = new MemberEntity() ; 
+        BookEntity newBookEntity = new BookEntity() ;
+        
+             try {
+          bookEntityControllerRemote.retrieveBookByBookId(bookId) ;
+          memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber) ; 
+
+           
+               if ( lendingEntityControllerRemote.checkIsBookLent(bookId) ) {
+               System.out.println("Book has been lent out and cannot be borrowed!") ; 
+           } else if (fineControllerRemote.checkForFines(identityNumber)) {
+               System.out.println("Member has unpaid fines and cannot borrow any books!") ; 
+           } else if (lendingEntityControllerRemote.checkNumBooksLoaned(identityNumber) >= 3) {
+               System.out.println("Member has already borrowed 3 books and cannot borrow anymore books!") ; 
+           } else {
+              newMemberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber) ;
+              newLendingEntity.setMember(newMemberEntity) ;
+              newBookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId) ; 
+              newLendingEntity.setBook(newBookEntity) ;
+              String duedate = lendingEntityControllerRemote.generateDueDate() ; 
+              newLendingEntity.setDueDate(duedate) ; 
+              newLendingEntity.setStatus(true) ; 
+              lendingEntityControllerRemote.createNewLending(newLendingEntity); 
+      System.out.println("Successfully lent book to member. Due Date: " +  newLendingEntity.getDueDate()) ; 
+     }
+             } catch (BookNotFoundException | MemberNotFoundException ex) {
+         System.out.println("Book ID or Member Identity Number cannot be found!\n") ; 
+     }
+
+    }
+    
+        
+    private void viewLentBooks() {
+        Scanner scanner = new Scanner(System.in) ; 
+        System.out.println("*** ILS :: Library Operation :: View Lent Books ***\n");
+        System.out.println("Enter Member Identity Number> ");
+        String identityNumber = scanner.nextLine().trim();
+        
+        try {
+            memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber) ;
+            System.out.println("Currently Lent Books:\n") ; 
+            lendingEntityControllerRemote.retrieveBooksLoanedByMember(identityNumber) ;            
+        } catch (MemberNotFoundException ex) {
+            System.out.println("Member Identity Number cannot be found!")
+        } 
+    } 
+
+    private void doReturnBook() {
+        Scanner scanner = new Scanner(System.in) ; 
+        System.out.println("*** ILS :: Library Operation :: Return Book ***\n");
+        System.out.println("Enter Member Identity Number> ");
+        String identityNumber = scanner.nextLine().trim();
+        LendingEntity lendingEntity = new LendingEntity() ; 
+
+
+        try {
+            memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber) ;
+            System.out.println("Currently Lent Books:\n") ;
+            List<LendingEntity> listOfBooks = lendingEntityControllerRemote.retrieveBooksLoanedByMember(identityNumber) ; 
+            
+            if (listOfBooks.size() != 0) {
+                System.out.println("Enter Book to Return>")
+                Long returnBookId = scanner.nextLong() ; 
+                lendingEntityControllerRemote.setBookAvailable(identityNumber,returnBookId); 
+                System.out.println("Book successfully returned.") ; 
+            } else {
+                System.out.println("There are no books to return!") ; 
+            }
+        } catch (MemberNotFoundException ex) {
+            System.out.println("Member Identity Number cannot be found!") ; 
+        }          
+    }
+    
+    private void doExtendBook() {
+        Scanner scanner = new Scanner(System.in) ; 
+        System.out.println("*** ILS :: Library Operation :: Extend Book ***\n");
+        System.out.println("Enter Member Identity Number> ");
+        String identityNumber = scanner.nextLine().trim();
+        LendingEntity lendingEntity = new LendingEntity() ;
+        
+         try {
+            memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber) ;
+        System.out.println("Currently Lent Books:\n") ;
+        List<LendingEntity> listOfBooks = lendingEntityControllerRemote.retrieveBooksLoanedByMember(identityNumber) ; 
+        
+        if(listOfBooks.size() != 0) {
+            System.out.println("Enter Book to Extend>") ;
+            Long extendBookId = scanner.nextLong(); 
+             if (reservationControllerRemote.checkForReservation(extendBookId)) {
+                System.out.println("Book has been reserved and cannot be extended!") ;  
+             }  else {
+                 lendingEntityControllerRemote.extendDueDate(identityNumber, extendBookId) ; 
+                 System.out.println("Book successfully extended. New due date: " + lendingEntityControllerRemote.generateDueDate())
+             }
+        } else {
+            System.out.println("There are no books to extend!") ; 
+        } 
+         } catch (MemberNotFoundException ex) {
+                System.out.println("Member Identity Number cannot be found!") ; 
+        }
+    }
+    
+    private void doPayFines() {
+        Scanner scanner = new Scanner(System.in) ; 
+        System.out.println("*** ILS :: Library Operation :: Pay Fines ***\n");
+        System.out.println("Enter Member Identity Number>\n");
+        String identityNumber = scanner.nextLine().trim();
+        
+          try {
+            memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber) ;
+            System.out.println("Unpaid Fines for Member:\n") ; 
+            fineControllerRemote.retrieveFinesByMember(identityNumber) ; 
+            
+            System.out.println("Enter Fine ID to Settle>\n");
+            Long fineId = scanner.nextLong() ; 
+            fineControllerRemote.payFine(fineId) ; 
+            System.out.println("Select Payment Method (1: Cash, 2: Card)>") ;
+            int method = scanner.nextInt() ;
+            if (method == 1) {
+            System.out.println("Fine successfully paid.") ; 
+            } else if (method == 2) {
+                System.out.println("Enter Name of Card>") ; 
+                scanner.nextLine().trim() ; 
+                System.out.println("Enter Card Number>") ;
+                scanner.nextLine().trim() ;                 
+                System.out.println("Enter Card Expiry>") ;
+                scanner.nextLine().trim() ;        
+                System.out.println("Enter Pin>") ; 
+                scanner.nextLine().trim() ;                 
+                System.out.println("Fine successfully paid.") ; 
+                        
+            }
+                    
+                
+          } catch (MemberNotFoundException ex) {
+                System.out.println("Member Identity Number cannot be found!") ; 
+        } 
+        
+    }
+        
+    
+    
+    private void doManageReservations() {
+       Scanner scanner = new Scanner(System.in) ; 
+        System.out.println("*** ILS :: Library Operation :: Manage Reservations ***\n");
+        System.out.println("1: View Reservations for Books") ; 
+        System.out.println("2: Delete Reservations") ; 
+        System.out.println("3: Back") ; 
+
+        
+        
+    }
+    
+   
 
 doLendBook() 
 memberEntityController.retrieveMemberByMemberId(member identityNumber) (check whether member exist)
 bookEntityController.retrieveBookByBookId(bookId ) (check whether book exist)
 lendingEntityController.checkIsBookLent(bookId) (boolean - return false if book is available) 
-
-(SELECT DISTINCT b
-FROM BookEntity b, IN (b.lending) l
-WHERE l.bookId = :bookId and l.available = false)
-
-(Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId") ; 
-        query.setParameter("inBookId",bookId) ; 
-
-        if ( query.getResultList().isEmpty() ) {
-            return false ;
-        } else {
-            return true ;
-        } ) 
-
 lendingEntityController.checkNumBooksLoaned(member identityNumber) (return number of books loaned, if = 3, cannot loan out)
 fineEntityController.checkForFines(member identityNumber) (boolean - return true if member has fine, l.memberId = :memberId and f.paid = false)
 

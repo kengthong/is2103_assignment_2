@@ -5,7 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.StaffEntity;
+import java.util.List;
 import javax.ejb.Remote;
+import util.exception.InvalidLoginException;
+import util.exception.StaffNotFoundException;
 
 /**
  *
@@ -14,4 +18,16 @@ import javax.ejb.Remote;
 @Remote
 public interface StaffEntityControllerRemote {
     
+    public StaffEntity createNewStaff(StaffEntity newStaffEntity) ; 
+    public void updateStaff(StaffEntity StaffEntity) ; 
+    public StaffEntity retrieveStaffByStaffId(Long staffId) throws StaffNotFoundException ; 
+    public StaffEntity retrieveStaffByUsername(String username) throws StaffNotFoundException ; 
+    public void deleteStaff(Long staffId) throws StaffNotFoundException ; 
+    public List<StaffEntity> retrieveAllStaff() ; 
+    public StaffEntity staffLogin(String username, String password) throws InvalidLoginException ; 
+
+
+
+
+
 }

@@ -5,15 +5,26 @@
  */
 package ejb.session.stateless;
 
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.persistence.PersistenceContext;
 
 /**
  *
  * @author hiixdayah
  */
 @Stateless
+@Local(ReservationControllerLocal.class)
+@Remote(ReservationControllerRemote.class)
 public class ReservationController implements ReservationControllerRemote, ReservationControllerLocal {
+    
+    
+    @PersistenceContext(unitName = "librarydb2-ejbPU")
+    private javax.persistence.EntityManager entityManager;
+    
+    public ReservationController()
+    {
+    }
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
 }

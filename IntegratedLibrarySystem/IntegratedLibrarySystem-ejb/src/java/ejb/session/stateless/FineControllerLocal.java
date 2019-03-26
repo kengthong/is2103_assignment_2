@@ -14,4 +14,6 @@ import javax.ejb.Local;
 @Local
 public interface FineControllerLocal {
     
+        public boolean checkForFines(String identityNumber) ; 
+
 }

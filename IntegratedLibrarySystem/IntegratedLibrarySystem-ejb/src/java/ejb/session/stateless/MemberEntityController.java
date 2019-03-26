@@ -88,6 +88,13 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
     }
     
     @Override
+    public List<MemberEntity> retrieveAllMembers()
+    {
+        Query query = entityManager.createQuery("SELECT m FROM MemberEntity m");
+        
+        return query.getResultList();
+    }
+    
     public MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException {
         try
         {
@@ -110,7 +117,6 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-
     
     public void persist(Object object) {
         em.persist(object);
