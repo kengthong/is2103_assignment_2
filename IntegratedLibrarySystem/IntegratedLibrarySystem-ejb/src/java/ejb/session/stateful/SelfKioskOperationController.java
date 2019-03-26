@@ -6,12 +6,12 @@
 package ejb.session.stateful;
 
 import ejb.session.stateless.MemberEntityControllerLocal;
+import entity.MemberEntity;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import util.exception.InvalidLoginException;
-import util.exception.MemberNotFoundException;
 
 
 /**
@@ -20,18 +20,18 @@ import util.exception.MemberNotFoundException;
  */
 @Local (SelfKioskOperationControllerLocal.class)
 @Remote (SelfKioskOperationControllerRemote.class)
-@Stateless
+@Stateful
 public class SelfKioskOperationController implements SelfKioskOperationControllerRemote, SelfKioskOperationControllerLocal {
 
     @EJB
     private MemberEntityControllerLocal memberEntityController;
 
-    
+    private MemberEntity currentActiveMember;
     @Override
     public void doMemberLogin(String username, String password) throws InvalidLoginException {
         try
         {
-            memberEntityController.doMemberLogin(username, password);
+            currentActiveMember = memberEntityController.doMemberLogin(username, password);
         }
         catch (InvalidLoginException ex)
         {

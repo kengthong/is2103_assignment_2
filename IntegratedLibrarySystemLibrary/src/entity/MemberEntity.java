@@ -59,5 +59,19 @@ public class MemberEntity implements Serializable {
     public String toString() {
         return "entity.MemberEntity[ id=" + id + " ]";
     }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
     
 }
