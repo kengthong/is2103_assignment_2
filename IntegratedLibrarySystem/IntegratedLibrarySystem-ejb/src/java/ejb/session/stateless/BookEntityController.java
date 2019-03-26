@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.BookEntity;
 import javax.ejb.Stateless;
+import util.exception.BookNotFoundException;
 
 /**
  *
@@ -14,6 +16,13 @@ import javax.ejb.Stateless;
 @Stateless
 public class BookEntityController implements BookEntityControllerRemote, BookEntityControllerLocal {
 
+    @Override
+    public BookEntity getBook(Integer bookId) throws BookNotFoundException {
+        
+        return null;
+    }
+
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+    
 }

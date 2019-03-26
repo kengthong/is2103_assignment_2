@@ -5,6 +5,7 @@
  */
 package ejb.session.stateful;
 
+import entity.MemberEntity;
 import javax.ejb.Remote;
 import util.exception.InvalidLoginException;
 
@@ -16,5 +17,7 @@ import util.exception.InvalidLoginException;
 public interface SelfKioskOperationControllerRemote {
 
     void doMemberLogin(String username, String password) throws InvalidLoginException;
+
+    MemberEntity getCurrentActiveMember();
     
 }

@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.BookEntity;
 import javax.ejb.Remote;
+import util.exception.BookNotFoundException;
 
 /**
  *
@@ -13,5 +15,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface BookEntityControllerRemote {
+
+    BookEntity getBook(Integer bookId) throws BookNotFoundException;
     
 }

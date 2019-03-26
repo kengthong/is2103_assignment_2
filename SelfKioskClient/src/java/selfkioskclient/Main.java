@@ -6,6 +6,7 @@
 package selfkioskclient;
 
 import ejb.session.stateful.SelfKioskOperationControllerRemote;
+import ejb.session.stateless.BookEntityControllerRemote;
 import javax.ejb.EJB;
 
 /**
@@ -15,14 +16,21 @@ import javax.ejb.EJB;
 public class Main {
 
     @EJB
+    private static BookEntityControllerRemote bookEntityController;
+
+    @EJB
     private static SelfKioskOperationControllerRemote selfKioskOperationController;
 
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        MainApp mainApp = new MainApp(selfKioskOperationController);
+        MainApp mainApp = new MainApp(
+            selfKioskOperationController,
+            bookEntityController
+        );
         mainApp.run();
     }
     
