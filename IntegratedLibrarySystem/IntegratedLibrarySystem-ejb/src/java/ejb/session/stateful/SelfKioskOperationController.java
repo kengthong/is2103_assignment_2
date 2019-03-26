@@ -31,7 +31,7 @@ public class SelfKioskOperationController implements SelfKioskOperationControlle
     public void doMemberLogin(String username, String password) throws InvalidLoginException {
         try
         {
-            currentActiveMember = memberEntityController.doMemberLogin(username, password);
+            this.currentActiveMember = memberEntityController.doMemberLogin(username, password);
         }
         catch (InvalidLoginException ex)
         {
@@ -41,5 +41,11 @@ public class SelfKioskOperationController implements SelfKioskOperationControlle
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+
+    @Override
+    public MemberEntity getCurrentActiveMember() {
+        return this.currentActiveMember;
+    }
+    
     
 }

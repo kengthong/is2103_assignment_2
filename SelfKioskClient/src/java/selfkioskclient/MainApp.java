@@ -6,6 +6,7 @@
 package selfkioskclient;
 
 import ejb.session.stateful.SelfKioskOperationControllerRemote;
+import ejb.session.stateless.BookEntityControllerRemote;
 import java.util.Scanner;
 import util.exception.InvalidLoginException;
 
@@ -16,9 +17,19 @@ import util.exception.InvalidLoginException;
 public class MainApp {
 
     private SelfKioskOperationControllerRemote selfKioskOperationController;
+    private BookEntityControllerRemote bookEntityController;
+    private MemberOperationModule memberOperationModule;
     
-    public MainApp(SelfKioskOperationControllerRemote selfKioskOperationController) {
+    public MainApp(
+            SelfKioskOperationControllerRemote selfKioskOperationController,
+            BookEntityControllerRemote bookEntityController
+    ) {
         this.selfKioskOperationController = selfKioskOperationController;
+        this.bookEntityController = bookEntityController;
+        this.memberOperationModule = new MemberOperationModule(
+                this.selfKioskOperationController,
+                this.bookEntityController
+        );
     }
     
     
@@ -28,11 +39,12 @@ public class MainApp {
         Integer response = 0;
         
         System.out.println("*** Welcome to Self-Service Kiosk *** \n") ; 
-        System.out.println("1: Login") ; 
-        System.out.println("2: Exit\n") ; 
+        
         
         while( response <1 || response >2)
         {
+            System.out.println("1: Login") ; 
+            System.out.println("2: Exit\n") ; 
             System.out.print("> ");
             response = sc.nextInt();
             
@@ -46,6 +58,7 @@ public class MainApp {
                     try 
                     {
                         doLogin();
+                        memberOperationModule.displayMenu();
                     } 
                     catch (InvalidLoginException ex)
                     {
