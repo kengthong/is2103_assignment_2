@@ -21,4 +21,14 @@ public interface MemberEntityControllerLocal {
 
     MemberEntity retrieveMemberByUsername(String username) throws MemberNotFoundException;
     
+    public MemberEntity createNewMember(MemberEntity newMemberEntity) ; 
+    public MemberEntity retrieveMemberByIdentityNumber(String identityNumber) throws MemberNotFoundException ; 
+    public void updateMember(MemberEntity memberEntity) ; 
+    public MemberEntity retrieveMemberByMemberId(Long memberId) throws MemberNotFoundException ; 
+    public void deleteMember(Long memberId) throws MemberNotFoundException ; 
+
+
+
+
+    
 }
