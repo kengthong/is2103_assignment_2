@@ -16,7 +16,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.BookNotFoundException;
 
-
 /**
  *
  * @author hiixdayah
@@ -86,6 +85,5 @@ public class BookEntityController implements BookEntityControllerRemote, BookEnt
         
         return query.getResultList();
     }
-    
     
 }

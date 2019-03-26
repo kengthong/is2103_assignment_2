@@ -16,6 +16,8 @@ import util.exception.BookNotFoundException;
  */
 @Local
 public interface BookEntityControllerLocal {
+
+    BookEntity retrieveBookByBookId(Integer bookId) throws BookNotFoundException;
     
     public BookEntity createNewBook(BookEntity newBookEntity) ; 
     public void updateBook(BookEntity bookEntity) ; 
