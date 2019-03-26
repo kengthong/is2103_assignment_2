@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.MemberEntity;
 import javax.ejb.Remote;
+import util.exception.MemberNotFoundException;
 
 /**
  *
@@ -14,4 +16,13 @@ import javax.ejb.Remote;
 @Remote
 public interface MemberEntityControllerRemote {
     
+    public MemberEntity createNewMember(MemberEntity newMemberEntity) ; 
+    public MemberEntity retrieveMemberByIdentityNumber(String identityNumber) throws MemberNotFoundException ;
+    public void updateMember(MemberEntity memberEntity) ; 
+    public MemberEntity retrieveMemberByMemberId(Long memberId) throws MemberNotFoundException ; 
+    public void deleteMember(Long memberId) throws MemberNotFoundException ; 
+
+
+
+
 }
