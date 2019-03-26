@@ -5,17 +5,42 @@
  */
 package libraryadminterminalclient;
 
+import ejb.session.stateless.BookEntityControllerRemote;
+import ejb.session.stateless.FineControllerRemote;
+import ejb.session.stateless.LendingEntityControllerRemote;
+import ejb.session.stateless.MemberEntityControllerRemote;
+import ejb.session.stateless.ReservationControllerRemote;
+import ejb.session.stateless.StaffEntityControllerRemote;
+import javax.ejb.EJB;
 /**
  *
  * @author hiixdayah
  */
 public class Main {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
     
+    @EJB
+    private static BookEntityControllerRemote bookEntityControllerRemote;
+    
+    @EJB 
+    private static LendingEntityControllerRemote lendingEntityControllerRemote;
+    
+    @EJB
+    private static MemberEntityControllerRemote memberEntityControllerRemote;
+    
+    @EJB
+    private static StaffEntityControllerRemote staffEntityControllerRemote;
+    
+    @EJB
+    private static FineControllerRemote fineControllerRemote;
+    
+    @EJB 
+    private static ReservationControllerRemote reservationControllerRemote;
+  
+
+    
+    public static void main(String[] args)  {
+         MainApp mainApp = new MainApp(bookEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, staffEntityControllerRemote, fineControllerRemote, reservationControllerRemote);
+         mainApp.runApp();
+    }    
 }

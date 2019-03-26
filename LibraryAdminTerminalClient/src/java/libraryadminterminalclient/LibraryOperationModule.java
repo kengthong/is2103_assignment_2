@@ -17,6 +17,7 @@ doLendBook()
 memberEntityController.retrieveMemberByMemberId(member identityNumber) (check whether member exist)
 bookEntityController.retrieveBookByBookId(bookId ) (check whether book exist)
 lendingEntityController.checkIsBookLent(bookId) (boolean - return false if book is available) 
+
 (SELECT DISTINCT b
 FROM BookEntity b, IN (b.lending) l
 WHERE l.bookId = :bookId and l.available = false)
