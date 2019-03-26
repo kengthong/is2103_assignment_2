@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.MemberEntity;
 import javax.ejb.Remote;
 import util.exception.MemberNotFoundException;
+import util.exception.InvalidLoginException;
 
 /**
  *
@@ -15,6 +16,8 @@ import util.exception.MemberNotFoundException;
  */
 @Remote
 public interface MemberEntityControllerRemote {
+
+    MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException;
     
     public MemberEntity createNewMember(MemberEntity newMemberEntity) ; 
     public MemberEntity retrieveMemberByIdentityNumber(String identityNumber) throws MemberNotFoundException ;

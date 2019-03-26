@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.BookEntity;
 import javax.ejb.Local;
+import util.exception.BookNotFoundException;
 
 /**
  *
@@ -13,5 +15,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface BookEntityControllerLocal {
+
+    BookEntity retrieveBookByBookId(Integer bookId) throws BookNotFoundException;
     
 }

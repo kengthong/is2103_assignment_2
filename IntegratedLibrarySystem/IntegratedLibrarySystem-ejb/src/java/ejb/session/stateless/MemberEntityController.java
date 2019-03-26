@@ -15,7 +15,8 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.MemberNotFoundException;
-
+import util.exception.InvalidLoginException;
+import util.exception.MemberNotFoundException;
 
 /**
  *
@@ -86,5 +87,47 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
         entityManager.remove(memberEntityToRemove);
     }
     
+    @Override
+    public MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException {
+        try
+        {
+            MemberEntity memberEntity = retrieveMemberByUsername(username);
+            
+            if(memberEntity.getPassword().equals(password))
+            {
+                return memberEntity;
+            }
+            else
+            {
+                throw new InvalidLoginException("Username does not exist or invalid password!");
+            }
+        }
+        catch(MemberNotFoundException ex)
+        {
+            throw new InvalidLoginException("Username does not exist or invalid password!");
+        }
+    }
+
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+
     
+    public void persist(Object object) {
+        em.persist(object);
+    }
+
+    @Override
+    public MemberEntity retrieveMemberByUsername(String username) throws MemberNotFoundException {
+        Query query = em.createQuery("SELECT m FROM MemberEntity m WHERE m.username = :inUsername");
+        query.setParameter("inUsername", username);
+        
+        try
+        {
+            return (MemberEntity)query.getSingleResult();
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new MemberNotFoundException("Staff Username " + username + " does not exist!");
+        }
+    }
 }
