@@ -6,14 +6,17 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
- * @author hiixdayah
+ * @author sing jie
  */
 @Entity
 public class BookEntity implements Serializable {
@@ -21,20 +24,70 @@ public class BookEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long bookId;
+    @Column(length = 60, nullable = false)
+    private String title;
+    @Column(length = 6, nullable = false)
+    private String isbn;
+    @Column(precision = 4, nullable = false)
+    private Integer publishedYear;
+    @OneToMany(mappedBy="book")
+    private List<LendingEntity> lendings;
+    @OneToMany(mappedBy="book")
+    private List<ReservationEntity> reservations;
 
-    public Long getId() {
-        return id;
+    public Long getBookId() {
+        return bookId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
+    }
+    
+    public String getTitle() {
+        return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public Integer getPublishedYear() {
+        return publishedYear;
+    }
+
+    public void setPublishedYear(Integer publishedYear) {
+        this.publishedYear = publishedYear;
+    }
+
+    public List<LendingEntity> getLendings() {
+        return lendings;
+    }
+
+    public void setLendings(List<LendingEntity> lendings) {
+        this.lendings = lendings;
+    }
+    
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (bookId != null ? bookId.hashCode() : 0);
         return hash;
     }
 
@@ -45,7 +98,7 @@ public class BookEntity implements Serializable {
             return false;
         }
         BookEntity other = (BookEntity) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.bookId == null && other.bookId != null) || (this.bookId != null && !this.bookId.equals(other.bookId))) {
             return false;
         }
         return true;
@@ -53,7 +106,7 @@ public class BookEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.BookEntity[ id=" + id + " ]";
+        return "entity.BookEntity[ id=" + bookId + " ]";
     }
-    
+
 }

@@ -6,14 +6,17 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
 
 /**
  *
- * @author hiixdayah
+ * @author sing jie
  */
 @Entity
 public class FineEntity implements Serializable {
@@ -22,6 +25,14 @@ public class FineEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @OneToOne(optional = false)
+    private MemberEntity identityNumber;
+    @Column(scale = 2, nullable = false)
+    private double amount;
+    @Column(nullable = false)
+    private boolean status;
+    
+    
 
     public Long getId() {
         return id;
@@ -29,6 +40,30 @@ public class FineEntity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public MemberEntity getIdentityNumber() {
+        return identityNumber;
+    }
+
+    public void setIdentityNumber(MemberEntity identityNumber) {
+        this.identityNumber = identityNumber;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     @Override
