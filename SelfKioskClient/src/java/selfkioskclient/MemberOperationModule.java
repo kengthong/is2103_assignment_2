@@ -7,8 +7,11 @@ package selfkioskclient;
 
 import ejb.session.stateful.SelfKioskOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
+import ejb.session.stateless.LendingEntityControllerRemote;
 import entity.BookEntity;
+import entity.LendingEntity;
 import entity.MemberEntity;
+import java.util.List;
 import java.util.Scanner;
 import util.exception.BookNotFoundException;
 
@@ -21,14 +24,18 @@ public class MemberOperationModule {
     private SelfKioskOperationControllerRemote selfKioskOperationController;
     private BookEntityControllerRemote bookEntityController;
     private MemberEntity currentActiveMember;
+    private LendingEntityControllerRemote lendingEntityController;
     
     
     
     public MemberOperationModule(
             SelfKioskOperationControllerRemote selfKioskOperationController,
-            BookEntityControllerRemote bookEntityController) {
+            BookEntityControllerRemote bookEntityController,
+            LendingEntityControllerRemote lendingEntityController
+    ) {
         this.selfKioskOperationController = selfKioskOperationController;
         this.bookEntityController = bookEntityController;
+        this.lendingEntityController = lendingEntityController;
         init();
     }
     
@@ -67,6 +74,7 @@ public class MemberOperationModule {
                     doBorrowBook();
                 case 2:
                     //View Lent Books
+                    viewLentBook();
                 case 3:
                     //Return book
                 case 4:
@@ -88,14 +96,15 @@ public class MemberOperationModule {
     private void doBorrowBook()
     {
         Scanner sc = new Scanner(System.in);
-        Integer bookId = 0;
+        Integer bookIdEntered = 0;
         
         System.out.println("*** Self-Service Kiosk :: Borrow Book ***\n");
         
 
 
             System.out.print("Enter Book ID: ");
-            bookId = sc.nextInt();
+            bookIdEntered = sc.nextInt();
+            Long bookId = (long) bookIdEntered;
             
             if(bookId != 0)
             {
@@ -107,9 +116,27 @@ public class MemberOperationModule {
                 }
                 catch(BookNotFoundException ex)
                 {
-                    
                 }
             }
     }
 
+    private void viewLentBook()
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Self-Service Kiosk :: View Lent Books ***\n");
+
+        String memberIdentityNumber = this.currentActiveMember.getIdentityNumber();
+        List<LendingEntity> lentBooks = this.lendingEntityController.retrieveBooksLoanedByMember(memberIdentityNumber);
+        
+        System.out.println("Currently Lent Books:");
+        System.out.println("Id\t| Title\t| Due date");
+        for (LendingEntity lendingEntity : lentBooks)
+        {
+            Long lendId = lendingEntity.getLendId();
+            String title = lendingEntity.getTitle();
+            // date
+            String dueDate = "2019-03-14";
+            System.out.println(lendId + "\t| " + title + "\t| " + dueDate);
+        }
+    }
 }
