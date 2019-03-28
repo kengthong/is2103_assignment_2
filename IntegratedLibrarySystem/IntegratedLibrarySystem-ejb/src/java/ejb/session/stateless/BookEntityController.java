@@ -84,6 +84,5 @@ public class BookEntityController implements BookEntityControllerRemote, BookEnt
         Query query = entityManager.createQuery("SELECT b FROM BookEntity b");
         
         return query.getResultList();
-    }
-    
+    }    
 }
