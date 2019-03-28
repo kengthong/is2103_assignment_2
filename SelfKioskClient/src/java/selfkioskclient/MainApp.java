@@ -7,6 +7,8 @@ package selfkioskclient;
 
 import ejb.session.stateful.SelfKioskOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
+import ejb.session.stateless.MemberEntityControllerRemote;
+import entity.MemberEntity;
 import java.util.Scanner;
 import util.exception.InvalidLoginException;
 
@@ -18,14 +20,17 @@ public class MainApp {
 
     private SelfKioskOperationControllerRemote selfKioskOperationController;
     private BookEntityControllerRemote bookEntityController;
+    private MemberEntityControllerRemote memberEntityControllerRemote;
     private MemberOperationModule memberOperationModule;
     
     public MainApp(
             SelfKioskOperationControllerRemote selfKioskOperationController,
-            BookEntityControllerRemote bookEntityController
+            BookEntityControllerRemote bookEntityController,
+            MemberEntityControllerRemote memberEntityControllerRemote
     ) {
         this.selfKioskOperationController = selfKioskOperationController;
         this.bookEntityController = bookEntityController;
+        this.memberEntityControllerRemote = memberEntityControllerRemote;
         this.memberOperationModule = new MemberOperationModule(
                 this.selfKioskOperationController,
                 this.bookEntityController
@@ -100,5 +105,34 @@ public class MainApp {
                 }
             }
         }
+    }
+    
+    private void doRegisterMember()
+    {
+        Scanner scanner = new Scanner(System.in);
+        MemberEntity newMemberEntity = new MemberEntity();
+        
+        System.out.println("*** POS System :: System Administration :: Create New Staff ***\n");
+        System.out.print("Enter Identity Number> ");
+        newMemberEntity.setIdentityNumber(scanner.nextLine().trim());
+        System.out.print("Enter Security Code> ");
+        newMemberEntity.setSecurityCode(scanner.nextLine().trim());
+        System.out.print("Enter First Name> ");
+        newMemberEntity.setFirstName(scanner.nextLine().trim());
+        System.out.print("Enter Last Name> ");
+        newMemberEntity.setLastName(scanner.nextLine().trim());
+        System.out.print("Enter Gender> ");
+        newMemberEntity.setGender(scanner.nextLine().trim());
+        System.out.print("Enter Age> ");
+        newMemberEntity.setAge(scanner.nextInt());
+        scanner.nextLine();
+        System.out.print("Enter Phone> ");
+        newMemberEntity.setPhone(scanner.nextLine().trim());
+        System.out.print("Enter Address> ");
+        newMemberEntity.setAddress(scanner.nextLine().trim());
+        
+        
+        newMemberEntity = memberEntityControllerRemote.createNewMember(newMemberEntity);
+        System.out.println("You have been registered successfully!\n");
     }
 }

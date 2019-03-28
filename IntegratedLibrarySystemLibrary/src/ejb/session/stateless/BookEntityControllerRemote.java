@@ -16,8 +16,6 @@ import util.exception.BookNotFoundException;
  */
 @Remote
 public interface BookEntityControllerRemote {
-
-    BookEntity retrieveBookByBookId(Integer bookId) throws BookNotFoundException;
     
     public BookEntity createNewBook(BookEntity newBookEntity) ; 
     public void updateBook(BookEntity bookEntity) ; 
