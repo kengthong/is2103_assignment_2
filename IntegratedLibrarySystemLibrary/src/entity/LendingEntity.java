@@ -31,14 +31,14 @@ public class LendingEntity implements Serializable {
     private Date lendDate;    
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    private MemberEntity member;
+    private MemberEntity memberEntity;
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private BookEntity book;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dueDate;
     @Column(nullable = false)
-    private boolean status;
+    private boolean hasReturned;
     
 
     public Long getLendId() {
@@ -58,11 +58,11 @@ public class LendingEntity implements Serializable {
     }
 
     public MemberEntity getMember() {
-        return member;
+        return memberEntity;
     }
 
     public void setMember(MemberEntity member) {
-        this.member = member;
+        this.memberEntity = memberEntity;
     }
 
     public BookEntity getBook() {
@@ -81,12 +81,12 @@ public class LendingEntity implements Serializable {
         this.dueDate = dueDate;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean getStatus() {
+        return hasReturned;
     }
 
     public void setStatus(boolean status) {
-        this.status = status;
+        this.hasReturned = status;
     }
     
     @Override

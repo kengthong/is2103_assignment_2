@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -31,8 +33,10 @@ public class ReservationEntity implements Serializable {
     private String title;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date availability;
-    @ManyToMany(mappedBy = "identityNumber")
-    private List<MemberEntity> memberId;
+    @ManyToOne
+    private List<MemberEntity> members;
+    @OneToOne(optional = false)
+    private BookEntity book;
  
     
     
@@ -60,12 +64,20 @@ public class ReservationEntity implements Serializable {
         this.availability = availability;
     }
 
-    public List<MemberEntity> getMemberId() {
-        return memberId;
+    public List<MemberEntity> getMembers() {
+        return members;
     }
 
-    public void setMemberId(List<MemberEntity> memberId) {
-        this.memberId = memberId;
+    public void setMembers(List<MemberEntity> members) {
+        this.members = members;
+    }
+    
+    public BookEntity getBook() {
+        return book;
+    }
+    
+    public void setBook(BookEntity book) {
+        this.book = book;
     }
     
     

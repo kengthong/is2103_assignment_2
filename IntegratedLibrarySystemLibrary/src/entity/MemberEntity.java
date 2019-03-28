@@ -44,8 +44,10 @@ public class MemberEntity implements Serializable {
     private String address;
     @OneToMany(mappedBy="member")
     private List<LendingEntity> lendings;
-    @OneToOne(optional = false, mappedBy = "identityNumber")
+    @OneToMany(mappedBy = "member") 
     private FineEntity fines;
+    @OneToMany (mappedBy = "member") 
+    private ReservationEntity reservations ; 
   
    
     public Long getMemberId() {
@@ -127,15 +129,22 @@ public class MemberEntity implements Serializable {
     public void setLendings(List<LendingEntity> lendings) {
         this.lendings = lendings;
     }
-
-    public FineEntity getFineEntity() {
+    
+    public FineEntity getFines() {
         return fines;
     }
 
-    public void setFineEntity(FineEntity fines) {
+    public void setFines(FineEntity fines) {
         this.fines = fines;
     }
+
+    public ReservationEntity getReservations() {
+        return reservations;
+    }
     
+    public void setReservations(ReservationEntity reservations) {
+        this.reservations = reservations;
+    }
     
     @Override
     public int hashCode() {
@@ -161,5 +170,7 @@ public class MemberEntity implements Serializable {
     public String toString() {
         return "entity.MemberEntity[ id=" + memberId + " ]";
     }
+
+    
     
 }
