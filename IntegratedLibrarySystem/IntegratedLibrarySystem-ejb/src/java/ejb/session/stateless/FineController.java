@@ -12,6 +12,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.MemberHasFinesException;
 
 /**
  *
@@ -32,16 +33,13 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     
     
     @Override 
-    public boolean checkForFines(String identityNumber) {
+    public void checkIfMemberHasFines(String identityNumber) throws MemberHasFinesException {
         Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber AND f.paid == false ") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
         
-        if ( query.getResultList().isEmpty() ) {
-            return false ;
-        } else {
-            return true ;
-        }        
-        
+        if ( !query.getResultList().isEmpty() ) {
+            throw new MemberHasFinesException("Member has unpaid fines and cannot borrow any books!");
+        } 
     }
     
     @Override 
