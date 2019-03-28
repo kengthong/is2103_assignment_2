@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.FineEntity;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -14,6 +16,9 @@ import javax.ejb.Local;
 @Local
 public interface FineControllerLocal {
     
-        public boolean checkForFines(String identityNumber) ; 
+        public boolean checkForFines(String identityNumber) ;
+        public List<FineEntity> retrieveFinesByMember(String identityNumber) ; 
+        public void payFine(Long fineId) ; 
+
 
 }

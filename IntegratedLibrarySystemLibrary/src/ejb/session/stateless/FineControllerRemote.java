@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.FineEntity;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -14,6 +16,8 @@ import javax.ejb.Remote;
 @Remote
 public interface FineControllerRemote {
     
-      public boolean checkForFines(String identityNumber) ; 
+       public boolean checkForFines(String identityNumber) ;
+       public List<FineEntity> retrieveFinesByMember(String identityNumber) ; 
+       public void payFine(Long fineId) ; 
 
 }
