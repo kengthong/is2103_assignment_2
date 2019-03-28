@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.ReservationEntity;
+import java.util.List;
 import javax.ejb.Local;
+import util.exception.ReservationNotFoundException;
 
 /**
  *
@@ -13,5 +16,10 @@ import javax.ejb.Local;
  */
 @Local
 public interface ReservationControllerLocal {
+    
+    
+        public List<ReservationEntity> retrieveAllReservations() ; 
+        public boolean checkForReservation(Long bookId) ; 
+        public void deleteReservation(Long reservationId) throws ReservationNotFoundException ; 
     
 }

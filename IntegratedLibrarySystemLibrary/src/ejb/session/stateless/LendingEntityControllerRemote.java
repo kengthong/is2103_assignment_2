@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.BookEntity;
 import entity.LendingEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -20,7 +22,10 @@ public interface LendingEntityControllerRemote {
     public int checkNumBooksLoaned(String identityNumber) ; 
     public void setBookAvailable(String identityNumber, Long returnBookId) ;
     public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) ; 
-    public String generateDueDate() ; 
+    public String generateDueDate(Date date) ; 
     public void extendDueDate(String identityNumber, Long extendBookId) ; 
+    public BookEntity retrieveBookByBookId(String bookId);  
+
+
     
 }

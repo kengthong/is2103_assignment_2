@@ -17,12 +17,11 @@ import util.exception.BookNotFoundException;
 @Local
 public interface BookEntityControllerLocal {
 
-    BookEntity retrieveBookByBookId(Integer bookId) throws BookNotFoundException;
     
     public BookEntity createNewBook(BookEntity newBookEntity) ; 
-    public void updateBook(BookEntity bookEntity) ; 
     public BookEntity retrieveBookByBookId(Long bookId) throws BookNotFoundException ; 
     public BookEntity retrieveBookByIsbn(String isbn) throws BookNotFoundException ; 
+    public void updateBook(BookEntity bookEntity) ; 
     public void deleteBook(Long bookId) throws BookNotFoundException ; 
     public List<BookEntity> retrieveAllBooks() ; 
 

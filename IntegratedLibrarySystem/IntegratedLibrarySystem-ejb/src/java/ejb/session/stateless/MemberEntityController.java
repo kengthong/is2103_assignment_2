@@ -119,12 +119,12 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
     // "Insert Code > Add Business Method")
     
     public void persist(Object object) {
-        em.persist(object);
+        entityManager.persist(object);
     }
 
     @Override
     public MemberEntity retrieveMemberByUsername(String username) throws MemberNotFoundException {
-        Query query = em.createQuery("SELECT m FROM MemberEntity m WHERE m.username = :inUsername");
+        Query query = entityManager.createQuery("SELECT m FROM MemberEntity m WHERE m.username = :inUsername");
         query.setParameter("inUsername", username);
         
         try
