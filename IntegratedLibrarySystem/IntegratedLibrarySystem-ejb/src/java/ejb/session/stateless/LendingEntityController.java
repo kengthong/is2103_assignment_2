@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.BookEntity;
 import entity.LendingEntity;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     {
     }
     
+    @Override
     public boolean checkIsBookLent(Long bookId) {
         Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId") ; 
         query.setParameter("inBookId",bookId) ; 
@@ -43,14 +45,17 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
         } 
     }
     
+    @Override
     public int checkNumBooksLoaned(String identityNumber) {
         Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber") ;
         query.setParameter("inIdentityNumber", identityNumber) ; 
         return query.getResultList().size() ; 
     }
     
-    public String generateDueDate() {
-        Calendar duedate = Calendar.getInstance() ; 
+    @Override
+    public String generateDueDate(Date date) {
+        Calendar duedate = Calendar.getInstance() ;
+        duedate.setTime(date) ; 
         duedate.add(Calendar.DATE, 14) ;
         String returnDate = duedate.get(Calendar.YEAR) + "-" + duedate.get(Calendar.MONTH) + "-" + duedate.get(Calendar.DATE) ; 
         
@@ -58,12 +63,23 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
              
     }
     
+    @Override
     public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) {
         Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber ORDER BY l.book.bookId ASC") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
         return query.getResultList() ; 
     }
     
+    
+    @Override
+    public LendingEntity retrieveLendingByBookId(Long bookId) {
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity WHERE l.book.bookId = :inBookId") ; 
+        query.setParameter("inBookId", bookId) ; 
+        return (LendingEntity) query.getSingleResult() ; 
+    }
+    
+    
+    @Override        
     public void setBookAvailable(String identityNumber, Long returnBookId) {
         Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber AND l.book.bookId = :inBookId") ;  
         query.setParameter("inIdentityNumber", identityNumber) ; 
@@ -71,13 +87,17 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
         query.getSingleResult().setStatus(true) ; 
     }
     
+    @Override
     public void extendDueDate(String identityNumber, Long extendBookId) {
         Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber AND l.book.bookId = :inBookId") ;  
             query.setParameter("inIdentityNumber", identityNumber) ;
             query.setParameter("inBookId", extendBookId) ;
-            query.getSingleResult().; 
+            query.getSingleResult().setDueDate(generateDueDate());  
             
     }
+
+
+    
     
 
     

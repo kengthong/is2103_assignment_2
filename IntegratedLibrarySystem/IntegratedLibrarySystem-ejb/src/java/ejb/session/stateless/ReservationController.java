@@ -5,10 +5,15 @@
  */
 package ejb.session.stateless;
 
+import entity.MemberEntity;
+import entity.ReservationEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import util.exception.ReservationNotFoundException;
 
 /**
  *
@@ -26,5 +31,29 @@ public class ReservationController implements ReservationControllerRemote, Reser
     public ReservationController()
     {
     }
+    
+    @Override 
+    public boolean checkForReservation(Long bookId){
+        
+    }
+    
+    @Override
+    public List<ReservationEntity> retrieveAllReservations() {
+        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r");
+        
+        return query.getResultList();
+    }
+    
+    @Override
+    public void deleteReservation(Long reservationId) throws ReservationNotFoundException {
+        ReservationEntity reservationEntityToRemove = retrieveReservationByReservationId(reservationId);
+        entityManager.remove(reservationEntityToRemove);
+    }
+    
+    
+    
+    
+
+    
 
 }

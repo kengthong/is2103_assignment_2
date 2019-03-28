@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.FineEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -29,6 +31,7 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     }
     
     
+    @Override 
     public boolean checkForFines(String identityNumber) {
         Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber AND f.paid == false ") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
@@ -41,6 +44,20 @@ public class FineController implements FineControllerRemote, FineControllerLocal
         
     }
     
+    @Override 
+    public List<FineEntity> retrieveFinesByMember(String identityNumber) {
+        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber") ;
+        query.setParameter("inIdentityNumber", identityNumber) ; 
+        
+        return query.getResultList() ;
+        
 
+    }
+    
+    @Override 
+    public void payFine(Long fineId) {
+        
+    }
+   
     
 }
