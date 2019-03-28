@@ -5,7 +5,6 @@
  */
 package ejb.session.stateless;
 
-import entity.BookEntity;
 import entity.LendingEntity;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,9 +12,9 @@ import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.LendingNotFoundException;
 
 /**
  *
@@ -32,6 +31,8 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     public LendingEntityController()
     {
     }
+    
+    
     
     @Override
     public boolean checkIsBookLent(Long bookId) {
@@ -53,20 +54,26 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     }
     
     @Override
-    public String generateDueDate(Date date) {
+    public Date generateDueDate(Date date) {
         Calendar duedate = Calendar.getInstance() ;
         duedate.setTime(date) ; 
         duedate.add(Calendar.DATE, 14) ;
-        String returnDate = duedate.get(Calendar.YEAR) + "-" + duedate.get(Calendar.MONTH) + "-" + duedate.get(Calendar.DATE) ; 
-        
-        return returnDate ; 
-             
+        return duedate.getTime();
+//        String returnDate = duedate.get(Calendar.YEAR) + "-" + duedate.get(Calendar.MONTH) + "-" + duedate.get(Calendar.DATE) ; 
     }
     
     @Override
     public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber ORDER BY l.book.bookId ASC") ; 
-        query.setParameter("inIdentityNumber", identityNumber) ; 
+        try
+        {
+            Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber ORDER BY l.book.bookId ASC") ; 
+            query.setParameter("inIdentityNumber", identityNumber) ; 
+        }
+        catch (//No result)
+        {
+            //return empty list
+            return new List<LendingEntity>();
+        }
         return query.getResultList() ; 
     }
     
@@ -81,20 +88,43 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     
     @Override        
     public void setBookAvailable(String identityNumber, Long returnBookId) {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber AND l.book.bookId = :inBookId") ;  
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber AND l.book.bookId = :inBookId AND l.hasReturned = false") ;  
         query.setParameter("inIdentityNumber", identityNumber) ; 
         query.setParameter("inBookId", returnBookId) ;
-        query.getSingleResult().setStatus(true) ; 
+        LendingEntity lendingEntity = (LendingEntity) query.getSingleResult() ; 
+        lendingEntity.setStatus(true) ; 
+        //updateLendingEntity(lendingEntity);
+    }
+
+    @Override
+    public LendingEntity createNewLending(LendingEntity newLendingEntity) {
+        entityManager.persist(newLendingEntity);
+        entityManager.flush();
+        
+        return newLendingEntity;
+    }
+
+    @Override
+    public LendingEntity retrieveLendingByLendingId(Long lendId) throws LendingNotFoundException {
+        LendingEntity lendingEntity = entityManager.find(LendingEntity.class, lendId) ; 
+        if (lendingEntity != null) {
+            return lendingEntity ; 
+        } else {
+            throw new LendingNotFoundException("Lending with lendingId " + lendId + "does not exist!") ; 
+        }
+    }
+
+    @Override
+    public void updateLendingEntity(LendingEntity lendingEntity) {
+    }
+
+    @Override
+    public void deleteLendingEntity(LendingEntity lendingEntity) {
     }
     
-    @Override
-    public void extendDueDate(String identityNumber, Long extendBookId) {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber AND l.book.bookId = :inBookId") ;  
-            query.setParameter("inIdentityNumber", identityNumber) ;
-            query.setParameter("inBookId", extendBookId) ;
-            query.getSingleResult().setDueDate(generateDueDate());  
-            
-    }
+    
+    
+}
 
 
     

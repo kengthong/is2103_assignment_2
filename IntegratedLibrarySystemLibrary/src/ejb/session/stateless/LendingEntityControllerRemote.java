@@ -5,11 +5,11 @@
  */
 package ejb.session.stateless;
 
-import entity.BookEntity;
 import entity.LendingEntity;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.LendingNotFoundException;
 
 /**
  *
@@ -22,9 +22,16 @@ public interface LendingEntityControllerRemote {
     public int checkNumBooksLoaned(String identityNumber) ; 
     public void setBookAvailable(String identityNumber, Long returnBookId) ;
     public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) ; 
-    public String generateDueDate(Date date) ; 
-    public void extendDueDate(String identityNumber, Long extendBookId) ; 
-    public BookEntity retrieveBookByBookId(String bookId);  
+    public Date generateDueDate(Date date); 
+    public LendingEntity retrieveLendingByBookId(Long bookId);  
+
+    LendingEntity createNewLending(LendingEntity newLendingEntity);
+
+    LendingEntity retrieveLendingByLendingId(Long lendId) throws LendingNotFoundException;
+
+    void updateLendingEntity(LendingEntity lendingEntity);
+
+    void deleteLendingEntity(LendingEntity lendingEntity);
 
 
     
