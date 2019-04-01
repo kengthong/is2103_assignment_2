@@ -23,7 +23,7 @@ public class BookEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookId;
     @Column(length = 60, nullable = false)
     private String title;
@@ -35,6 +35,17 @@ public class BookEntity implements Serializable {
     private List<LendingEntity> lendings;
     @OneToMany(mappedBy="book")
     private List<ReservationEntity> reservations;
+    
+        public BookEntity() {
+    }
+    
+    public BookEntity(String title, String isbn, Integer publishedYear) {
+        this();
+        
+        this.title = title;
+        this.isbn = isbn;
+        this.publishedYear = publishedYear;
+    }
 
     public Long getBookId() {
         return bookId;

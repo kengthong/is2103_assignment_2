@@ -25,15 +25,15 @@ public class LendingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lendId;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lendDate;    
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name="memberId", nullable = false)
     private MemberEntity memberEntity;
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name="bookId", nullable = false)
     private BookEntity book;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dueDate;

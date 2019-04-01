@@ -31,6 +31,7 @@ public interface LendingEntityControllerLocal {
 
     void updateLendingEntity(LendingEntity lendingEntity);
 
-    void deleteLendingEntity(LendingEntity lendingEntity);
+    void deleteLendingEntity(Long lendId) throws LendingNotFoundException;
+    
     
 }

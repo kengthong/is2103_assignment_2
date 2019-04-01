@@ -12,6 +12,7 @@ import ejb.session.stateless.MemberEntityControllerRemote;
 import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.StaffEntityControllerRemote;
 import javax.ejb.EJB;
+import util.exception.MemberNotFoundException;
 /**
  *
  * @author hiixdayah
@@ -39,7 +40,7 @@ public class Main {
   
 
     
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws MemberNotFoundException  {
          MainApp mainApp = new MainApp(bookEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, staffEntityControllerRemote, fineControllerRemote, reservationControllerRemote);
          mainApp.runApp();
     }    

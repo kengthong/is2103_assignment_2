@@ -13,8 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Temporal;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -27,14 +27,15 @@ public class ReservationEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
     @Column(length = 60, nullable = false)
     private String title;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date availability;
     @ManyToOne
-    private List<MemberEntity> members;
+    @JoinColumn (name="memberID")
+    private MemberEntity memberEntity;
     @OneToOne(optional = false)
     private BookEntity book;
  
@@ -64,12 +65,12 @@ public class ReservationEntity implements Serializable {
         this.availability = availability;
     }
 
-    public List<MemberEntity> getMembers() {
-        return members;
+    public MemberEntity getMembers() {
+        return memberEntity;
     }
 
     public void setMembers(List<MemberEntity> members) {
-        this.members = members;
+        this.memberEntity = memberEntity;
     }
     
     public BookEntity getBook() {

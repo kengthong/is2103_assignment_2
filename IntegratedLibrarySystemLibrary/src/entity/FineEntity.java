@@ -11,7 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 
 /**
@@ -23,10 +24,15 @@ public class FineEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fineId;
-    @OneToOne(optional = false)
-    private MemberEntity identityNumber;
+    @Column(length = 9, nullable = false)
+    private String identityNumber;
+    //@OneToOne(optional = false)
+    //private MemberEntity identityNumber;
+    @ManyToOne
+    @JoinColumn (name="memberId")
+    private MemberEntity memberEntity;
     @Column(scale = 2, nullable = false)
     private double amount;
     @Column(nullable = false)
@@ -42,11 +48,11 @@ public class FineEntity implements Serializable {
         this.fineId = fineId;
     }
 
-    public MemberEntity getIdentityNumber() {
+    public String getIdentityNumber() {
         return identityNumber;
     }
 
-    public void setIdentityNumber(MemberEntity identityNumber) {
+    public void setIdentityNumber(String identityNumber) {
         this.identityNumber = identityNumber;
     }
 

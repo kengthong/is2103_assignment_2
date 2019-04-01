@@ -21,16 +21,27 @@ public class StaffEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long staffId;
     @Column(length = 32, nullable = false)
     private String firstName;
     @Column(length = 32, nullable = false)
     private String lastName;
-    @Column(length = 32, nullable = false)
+    @Column(length = 32, nullable = false, unique = true)
     private String userName;
     @Column(length = 32, nullable = false)
     private String password;
+    
+    public StaffEntity() {
+    }
+    
+    public StaffEntity(String firstName, String lastName, String userName, String password) {
+        
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+        this.password = password;
+    }
 
     public Long getStaffId() {
         return staffId;

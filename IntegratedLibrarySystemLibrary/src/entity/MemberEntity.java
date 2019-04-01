@@ -24,7 +24,7 @@ public class MemberEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
     @Column(length = 9, nullable = false)
     private String identityNumber;
@@ -42,14 +42,30 @@ public class MemberEntity implements Serializable {
     private String phone;
     @Column(length = 60, nullable = false)
     private String address;
-    @OneToMany(mappedBy="member")
+    @OneToMany(mappedBy="memberEntity")
     private List<LendingEntity> lendings;
-    @OneToMany(mappedBy = "member") 
-    private FineEntity fines;
-    @OneToMany (mappedBy = "member") 
-    private ReservationEntity reservations ; 
+    @OneToMany(mappedBy = "memberEntity") 
+    private List<FineEntity> fines;
+    @OneToMany (mappedBy = "memberEntity") 
+    private List<ReservationEntity> reservations ; 
   
-   
+       public MemberEntity() {
+    }
+
+    public MemberEntity(String identityNumber, String securityCode, String firstName, String lastName, String gender, Integer age, String phone, String address) {
+        this.identityNumber = identityNumber;
+        this.securityCode = securityCode;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.age = age;
+        this.phone = phone;
+        this.address = address;
+    }
+    
+    
+    
+    
     public Long getMemberId() {
         return memberId;
     }
@@ -130,19 +146,19 @@ public class MemberEntity implements Serializable {
         this.lendings = lendings;
     }
     
-    public FineEntity getFines() {
+    public List<FineEntity> getFines() {
         return fines;
     }
 
-    public void setFines(FineEntity fines) {
+    public void setFines(List<FineEntity> fines) {
         this.fines = fines;
     }
 
-    public ReservationEntity getReservations() {
+    public List<ReservationEntity> getReservations() {
         return reservations;
     }
     
-    public void setReservations(ReservationEntity reservations) {
+    public void setReservations(List<ReservationEntity> reservations) {
         this.reservations = reservations;
     }
     
