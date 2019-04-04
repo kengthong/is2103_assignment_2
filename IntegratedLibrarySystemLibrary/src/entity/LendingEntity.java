@@ -9,10 +9,10 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 
@@ -29,10 +29,10 @@ public class LendingEntity implements Serializable {
     private Long lendId;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lendDate;    
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     //@JoinColumn(name="memberId", nullable = false)
     private MemberEntity memberEntity;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     //@JoinColumn(name="bookId", nullable = false)
     private BookEntity book;
     @Temporal(javax.persistence.TemporalType.DATE)
