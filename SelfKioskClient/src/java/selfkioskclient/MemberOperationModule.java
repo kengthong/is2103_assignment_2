@@ -13,6 +13,7 @@ import entity.LendingEntity;
 import entity.MemberEntity;
 import java.util.List;
 import java.util.Scanner;
+import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
 
 /**
@@ -111,14 +112,12 @@ public class MemberOperationModule {
                 try
                 {
                     BookEntity bookToBorrow = bookEntityController.retrieveBookByBookId(bookId);
-                    
-                    if(lendingEntityController.checkIsBookLent(bookId)){
-                        throw BookIsOnLoanException
-                    }
+                    lendingEntityController.checkIsBookLent(bookId);
                     String dueDate = "2019-03-25";
                     System.out.println("Successfully lent book. Due Date: " + dueDate + ".");
                 }
-                catch(BookNotFoundException ex)
+                catch(BookNotFoundException |
+                        BookIsOnLoanException ex)
                 {
                 }
             }

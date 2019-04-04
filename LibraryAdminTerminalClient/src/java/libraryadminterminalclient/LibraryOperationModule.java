@@ -17,6 +17,7 @@ import entity.LendingEntity;
 import entity.MemberEntity;
 import entity.ReservationEntity;
 import entity.StaffEntity;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -132,9 +133,13 @@ public class LibraryOperationModule {
             Date duedate = lendingEntityControllerRemote.generateDueDate(date);
             newLendingEntity.setLendDate(date);
             newLendingEntity.setDueDate(duedate);
-            newLendingEntity.setHasReturned(false);
+             newLendingEntity.setHasReturned(false);
             newLendingEntity = lendingEntityControllerRemote.createNewLending(newLendingEntity);
-            System.out.println("Successfully lent book to member. Due Date: " + newLendingEntity.getDueDate());
+            
+            Date newDueDate = newLendingEntity.getDueDate() ; 
+            SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd") ; 
+            
+            System.out.println("Successfully lent book to member. Due Date: " + dt1.format(newDueDate) + ".");
         } catch (
                 BookNotFoundException | 
                 MemberNotFoundException | 

@@ -51,7 +51,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded{
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber") ;
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber") ;
         query.setParameter("inIdentityNumber", identityNumber) ; 
         
         if(query.getResultList().size() >= 3){
@@ -104,7 +104,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public void setBookAvailable(String identityNumber, Long returnBookId) {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber AND l.book.bookId = :inBookId"); //AND l.hasReturned == false
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber AND l.book.bookId = :inBookId"); //AND l.hasReturned == false
         query.setParameter("inIdentityNumber", identityNumber);
         query.setParameter("inBookId", returnBookId);
         LendingEntity lendingEntity = (LendingEntity) query.getSingleResult();
@@ -114,7 +114,6 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public LendingEntity createNewLending(LendingEntity newLendingEntity) {
-        System.out.println("here at create new lending");
         try
         {
             entityManager.persist(newLendingEntity);
