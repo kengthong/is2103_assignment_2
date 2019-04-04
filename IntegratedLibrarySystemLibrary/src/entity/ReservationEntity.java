@@ -36,7 +36,7 @@ public class ReservationEntity implements Serializable {
     @ManyToOne
     @JoinColumn (name="memberID")
     private MemberEntity memberEntity;
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private BookEntity book;
     
     //NEED LIST OF RESERVATIONS FOR A BOOK 

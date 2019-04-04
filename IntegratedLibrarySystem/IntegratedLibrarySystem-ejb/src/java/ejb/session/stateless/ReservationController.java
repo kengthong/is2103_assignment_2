@@ -44,6 +44,8 @@ public class ReservationController implements ReservationControllerRemote, Reser
 
         return query.getResultList();
     }
+    
+    
 
     @Override
     public void deleteReservation(Long reservationId) throws ReservationNotFoundException {
@@ -55,4 +57,12 @@ public class ReservationController implements ReservationControllerRemote, Reser
         entityManager.persist(object);
     }
 
+    @Override
+    public List<ReservationEntity> retrieveAllReservationsByBookId(Long bookId) {
+        Query query = entityManager.createQuery("SELECT r from ReservationEntity r WHERE r.book.bookId = :inBookId");
+        query.setParameter("inBookId", bookId);
+        return query.getResultList();
+    }
+
+    
 }
