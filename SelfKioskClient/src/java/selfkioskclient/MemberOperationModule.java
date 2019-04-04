@@ -111,6 +111,10 @@ public class MemberOperationModule {
                 try
                 {
                     BookEntity bookToBorrow = bookEntityController.retrieveBookByBookId(bookId);
+                    
+                    if(lendingEntityController.checkIsBookLent(bookId)){
+                        throw BookIsOnLoanException
+                    }
                     String dueDate = "2019-03-25";
                     System.out.println("Successfully lent book. Due Date: " + dueDate + ".");
                 }

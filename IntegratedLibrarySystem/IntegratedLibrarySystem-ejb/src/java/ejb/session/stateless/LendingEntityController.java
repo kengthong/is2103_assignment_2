@@ -17,7 +17,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.BookIsOnLoanException;
 import util.exception.LendingNotFoundException;
+import util.exception.MaxLoansExceeded;
 
 /**
  *
@@ -37,14 +39,12 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     }
 
     @Override
-    public boolean checkIsBookLent(Long bookId) { //return true if book is not available 
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId AND l.hasReturned = false "); //book has not been returned 
-        query.setParameter("inBookId", bookId);
+    public void checkIsBookLent(Long bookId) throws BookIsOnLoanException {
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false") ; 
+        query.setParameter("inBookId",bookId) ; 
 
-        if (query.getResultList().isEmpty()) {
-            return false; //book is available  
-        } else {
-            return true;
+        if (!query.getResultList().isEmpty() ) {
+            throw new BookIsOnLoanException("Book has been lent out and cannot be borrowed!");
         }
     }
     
@@ -66,10 +66,13 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     
 
     @Override
-    public int checkNumBooksLoaned(String identityNumber) {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber AND l.hasReturned = false"); 
-        query.setParameter("inIdentityNumber", identityNumber);
-        return query.getResultList().size();
+    public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded{
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber") ;
+        query.setParameter("inIdentityNumber", identityNumber) ; 
+        
+        if(query.getResultList().size() >= 3){
+            throw new MaxLoansExceeded("Member has already borrowed 3 books and cannot borrow anymore books!");
+        }
     }
     
     @Override

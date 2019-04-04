@@ -20,7 +20,10 @@ import entity.StaffEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
+import util.exception.MaxLoansExceeded;
+import util.exception.MemberHasFinesException;
 import util.exception.MemberNotFoundException;
 import util.exception.ReservationNotFoundException;
 
@@ -110,51 +113,37 @@ public class LibraryOperationModule {
         System.out.print("Enter Book ID> ");
         Long bookId = scanner.nextLong();
         LendingEntity newLendingEntity = new LendingEntity();
-        MemberEntity newMemberEntity = new MemberEntity();
-        BookEntity newBookEntity = new BookEntity();
         Date date = new Date();
 
         try { //check if book and member exists 
-            newBookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId);
-            newMemberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
-            
-            if (lendingEntityControllerRemote.checkIsBookLent(bookId)) { //returns true if book is lent out 
-                System.out.println("Book has been lent out and cannot be borrowed!");
+            BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId);
+            MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
+          
+            lendingEntityControllerRemote.checkIsBookLent(bookId);
+            fineControllerRemote.checkIfMemberHasFines(identityNumber);
+            lendingEntityControllerRemote.checkIfMemberExceedsMaxLoans(identityNumber);
+            List<ReservationEntity> reservations = reservationControllerRemote.retrieveAllReservationsByBookId(bookId);
+            if(!reservations.isEmpty()){
+                lendingEntityControllerRemote.checkIfMemberOnReserveList(identityNumber);
             }
-            System.out.println("here1");
-            System.out.println("Test =" + lendingEntityControllerRemote.test(bookId));
-            if (lendingEntityControllerRemote.checkForReservations(bookId)) { //returns true if there are reservations 
-               // if (!lendingEntityControllerRemote.checkIfMemberOnReserveList(identityNumber)) { //returns true if member is at the top 
-                    System.out.println("Book has been reserved by another member!") ; 
-                
-           // }
-            }
-            
-            if (fineControllerRemote.checkForFines(identityNumber)) { //return true if member has outstanding fines
-                System.out.println("Member has unpaid fines and cannot borrow any books!");
-            }
-             System.out.println("here2");
-
-            if (lendingEntityControllerRemote.checkNumBooksLoaned(identityNumber) >= 3) { //check num books member borrowed
-                System.out.println("Member has already borrowed 3 books and cannot borrow anymore books!");
-            } else {
-                System.out.println("here3") ; 
-                newLendingEntity.setMember(newMemberEntity);
-                newLendingEntity.setBook(newBookEntity);
-                Date duedate = lendingEntityControllerRemote.generateDueDate(date);
-                System.out.println(duedate) ; 
-                newLendingEntity.setLendDate(date);
-                newLendingEntity.setDueDate(duedate);
-                System.out.println(date) ; 
-                newLendingEntity.setHasReturned(false);
-                System.out.println(newLendingEntity.getHasReturned()) ; 
-                lendingEntityControllerRemote.createNewLending(newLendingEntity);
-                System.out.println("Successfully lent book to member. Due Date: " + newLendingEntity.getDueDate());
-            }
-         
-        } catch (BookNotFoundException | MemberNotFoundException ex) {
+          
+            newLendingEntity.setMember(memberEntity);
+            newLendingEntity.setBook(bookEntity);
+            Date duedate = lendingEntityControllerRemote.generateDueDate(date);
+            newLendingEntity.setLendDate(date);
+            newLendingEntity.setDueDate(duedate);
+            newLendingEntity.setHasReturned(false);
+            newLendingEntity = lendingEntityControllerRemote.createNewLending(newLendingEntity);
+            System.out.println("Successfully lent book to member. Due Date: " + newLendingEntity.getDueDate());
+        } catch (
+                BookNotFoundException | 
+                MemberNotFoundException | 
+                BookIsOnLoanException | 
+                MemberHasFinesException |
+                MaxLoansExceeded |
+                MemberNotAtTopOfReserveList ex
+            ) {
             System.out.println(ex.getMessage());
-            System.out.println("Book ID or Member Identity Number cannot be found!\n");
         }
 
     }
