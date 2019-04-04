@@ -98,8 +98,8 @@ public class LendingEntity implements Serializable {
         return hasReturned;
     }
 
-    public void setHasReturned(boolean status) {
-        this.hasReturned = status;
+    public void setHasReturned(boolean hasReturned) {
+        this.hasReturned = hasReturned;
     }
     
     @Override
