@@ -26,9 +26,6 @@ public class Main {
     @EJB
     private static BookEntityControllerRemote bookEntityController;
 
-    @EJB
-    private static SelfKioskOperationControllerRemote selfKioskOperationController;
-
     
     /**
      * @param args the command line arguments
@@ -36,7 +33,6 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
         MainApp mainApp = new MainApp(
-            selfKioskOperationController,
             bookEntityController,
             memberEntityController,
             lendingEntityController
