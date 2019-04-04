@@ -32,6 +32,10 @@ public interface LendingEntityControllerLocal {
     void updateLendingEntity(LendingEntity lendingEntity);
 
     void deleteLendingEntity(Long lendId) throws LendingNotFoundException;
+
+    boolean checkForReservations(Long bookId);
+
+    boolean checkIfMemberOnReserveList(String identityNumber);
     
     
 }

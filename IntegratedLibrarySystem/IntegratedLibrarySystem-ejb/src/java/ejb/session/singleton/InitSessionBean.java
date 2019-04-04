@@ -6,16 +6,21 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.BookEntityControllerLocal;
+import ejb.session.stateless.LendingEntityControllerLocal;
 import ejb.session.stateless.MemberEntityControllerLocal;
 import ejb.session.stateless.StaffEntityControllerLocal;
 import entity.BookEntity;
+import entity.LendingEntity;
 import entity.MemberEntity;
 import entity.StaffEntity;
+import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
+import util.exception.BookNotFoundException;
+import util.exception.MemberNotFoundException;
 import util.exception.StaffNotFoundException;
 
 /**
@@ -35,6 +40,9 @@ public class InitSessionBean {
 
     @EJB
     private MemberEntityControllerLocal memberEntityControllerLocal;
+    
+    @EJB 
+    private LendingEntityControllerLocal lendingEntityControllerLocal ; 
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -43,6 +51,14 @@ public class InitSessionBean {
 
     @PostConstruct
     public void postConstruct() {
+        Date date = new Date() ; 
+        
+        try {
+        lendingEntityControllerLocal.createNewLending(new LendingEntity(date,memberEntityControllerLocal.retrieveMemberByIdentityNumber("S7483027A"),bookEntityControllerLocal.retrieveBookByIsbn("S38101"),date,true )) ;//true = 1 
+        } catch (MemberNotFoundException | BookNotFoundException ex) {
+            
+        }
+                
         try {
 //            staffEntityControllerLocal.retrieveStaffByUsername("manager");
             staffEntityControllerLocal.retrieveStaffByStaffId((long) 1);

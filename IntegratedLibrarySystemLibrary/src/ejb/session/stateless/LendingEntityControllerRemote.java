@@ -24,6 +24,8 @@ public interface LendingEntityControllerRemote {
     public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) ; 
     public Date generateDueDate(Date date); 
     public LendingEntity retrieveLendingByBookId(Long bookId);  
+    
+    boolean checkForReservations(Long bookId) ; 
 
     LendingEntity createNewLending(LendingEntity newLendingEntity);
 
@@ -32,6 +34,10 @@ public interface LendingEntityControllerRemote {
     void updateLendingEntity(LendingEntity lendingEntity);
 
     void deleteLendingEntity(Long lendId) throws LendingNotFoundException;
+
+    boolean checkIfMemberOnReserveList(String identityNumber);
+
+    boolean test(Long bookId);
     
 
 

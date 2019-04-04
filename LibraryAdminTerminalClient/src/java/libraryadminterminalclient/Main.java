@@ -5,6 +5,7 @@
  */
 package libraryadminterminalclient;
 
+import ejb.session.stateful.LibraryOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
 import ejb.session.stateless.FineControllerRemote;
 import ejb.session.stateless.LendingEntityControllerRemote;
@@ -37,11 +38,14 @@ public class Main {
     
     @EJB 
     private static ReservationControllerRemote reservationControllerRemote;
+    
+    @EJB
+    private static LibraryOperationControllerRemote libraryOperationControllerRemote;
   
 
     
     public static void main(String[] args) throws MemberNotFoundException  {
-         MainApp mainApp = new MainApp(bookEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, staffEntityControllerRemote, fineControllerRemote, reservationControllerRemote);
+         MainApp mainApp = new MainApp(libraryOperationControllerRemote, bookEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, staffEntityControllerRemote, fineControllerRemote, reservationControllerRemote);
          mainApp.runApp();
     }    
 }

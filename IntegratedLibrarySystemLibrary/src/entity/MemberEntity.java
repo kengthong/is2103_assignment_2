@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,7 +43,7 @@ public class MemberEntity implements Serializable {
     private String phone;
     @Column(length = 60, nullable = false)
     private String address;
-    @OneToMany(mappedBy="memberEntity")
+    @OneToMany(mappedBy="memberEntity", fetch=FetchType.EAGER)
     private List<LendingEntity> lendings;
     @OneToMany(mappedBy = "memberEntity") 
     private List<FineEntity> fines;

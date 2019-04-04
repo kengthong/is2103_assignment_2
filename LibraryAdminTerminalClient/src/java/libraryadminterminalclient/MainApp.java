@@ -5,6 +5,7 @@
  */
 package libraryadminterminalclient;
 
+import ejb.session.stateful.LibraryOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
 import ejb.session.stateless.FineControllerRemote;
 import ejb.session.stateless.LendingEntityControllerRemote;
@@ -30,6 +31,7 @@ public class MainApp {
     private StaffEntityControllerRemote staffEntityControllerRemote;
     private FineControllerRemote fineControllerRemote;
     private ReservationControllerRemote reservationControllerRemote;
+    private LibraryOperationControllerRemote libraryOperationControllerRemote ; 
     private StaffEntity currentStaffEntity;
     private LibraryOperationModule libraryOperationModule;
     private AdministrationOperationModule administrationOperationModule;
@@ -38,12 +40,13 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(BookEntityControllerRemote bookEntityControllerRemote, LendingEntityControllerRemote lendingEntityControllerRemote, MemberEntityControllerRemote memberEntityControllerRemote, StaffEntityControllerRemote staffEntityControllerRemote, FineControllerRemote fineControllerRemote, ReservationControllerRemote reservationControllerRemote) {
+    public MainApp(LibraryOperationControllerRemote libraryOperationControllerRemote, BookEntityControllerRemote bookEntityControllerRemote, LendingEntityControllerRemote lendingEntityControllerRemote, MemberEntityControllerRemote memberEntityControllerRemote, StaffEntityControllerRemote staffEntityControllerRemote, FineControllerRemote fineControllerRemote, ReservationControllerRemote reservationControllerRemote) {
 
         this.staffEntityControllerRemote = staffEntityControllerRemote;
         this.lendingEntityControllerRemote = lendingEntityControllerRemote;
         this.memberEntityControllerRemote = memberEntityControllerRemote;
         this.bookEntityControllerRemote = bookEntityControllerRemote;
+        this.libraryOperationControllerRemote = libraryOperationControllerRemote ; 
         this.fineControllerRemote = fineControllerRemote;
         this.reservationControllerRemote = reservationControllerRemote;
 
@@ -66,8 +69,8 @@ public class MainApp {
                     try {
 
                         doLogin();
-                        libraryOperationModule = new LibraryOperationModule(staffEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, bookEntityControllerRemote, fineControllerRemote, reservationControllerRemote, currentStaffEntity);
-                        administrationOperationModule = new AdministrationOperationModule(staffEntityControllerRemote, bookEntityControllerRemote, memberEntityControllerRemote, currentStaffEntity);
+                        libraryOperationModule = new LibraryOperationModule(libraryOperationControllerRemote, staffEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, bookEntityControllerRemote, fineControllerRemote, reservationControllerRemote, currentStaffEntity);
+                        administrationOperationModule = new AdministrationOperationModule(libraryOperationControllerRemote, staffEntityControllerRemote, bookEntityControllerRemote, memberEntityControllerRemote, currentStaffEntity);
                         registrationOperationModule = new RegistrationOperationModule(memberEntityControllerRemote, currentStaffEntity);
                         menuMain();
                     } catch (InvalidLoginException ex) {
@@ -100,7 +103,7 @@ public class MainApp {
 
         if (username.length() > 0 && password.length() > 0) {
             try {
-                currentStaffEntity = staffEntityControllerRemote.staffLogin(username, password);
+                currentStaffEntity = libraryOperationControllerRemote.staffLogin(username, password);
                 System.out.println("Login successful!\n");
             } catch (InvalidLoginException ex) {
                 System.out.println("Invalid login credential: " + ex.getMessage() + "\n");

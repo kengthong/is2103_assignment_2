@@ -38,6 +38,8 @@ public class ReservationEntity implements Serializable {
     private MemberEntity memberEntity;
     @OneToOne(optional = false)
     private BookEntity book;
+    
+    //NEED LIST OF RESERVATIONS FOR A BOOK 
  
     
     
@@ -65,11 +67,11 @@ public class ReservationEntity implements Serializable {
         this.availability = availability;
     }
 
-    public MemberEntity getMembers() {
+    public MemberEntity getMember() {
         return memberEntity;
     }
 
-    public void setMembers(List<MemberEntity> members) {
+    public void setMember(MemberEntity memberEntity) {
         this.memberEntity = memberEntity;
     }
     

@@ -36,7 +36,7 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     
     @Override 
     public boolean checkForFines(String identityNumber) {
-        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber AND f.paid == false ") ; 
+        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.memberEntity.identityNumber = :inIdentityNumber AND f.status = false ") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
         
         if ( query.getResultList().isEmpty() ) {

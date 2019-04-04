@@ -5,6 +5,7 @@
  */
 package libraryadminterminalclient;
 
+import ejb.session.stateful.LibraryOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
 import ejb.session.stateless.MemberEntityControllerRemote;
 import ejb.session.stateless.StaffEntityControllerRemote;
@@ -26,16 +27,18 @@ public class AdministrationOperationModule {
     private BookEntityControllerRemote bookEntityControllerRemote;
     private MemberEntityControllerRemote memberEntityControllerRemote;
     private StaffEntityControllerRemote staffEntityControllerRemote;
+    private LibraryOperationControllerRemote libraryOperationControllerRemote ; 
     private StaffEntity currentStaffEntity;
 
     public AdministrationOperationModule() {
     }
 
-    public AdministrationOperationModule(StaffEntityControllerRemote staffEntityControllerRemote, BookEntityControllerRemote bookEntityControllerRemote, MemberEntityControllerRemote memberEntityControllerRemote, StaffEntity currentStaffEntity) {
+    public AdministrationOperationModule(LibraryOperationControllerRemote libraryOperationControllerRemote, StaffEntityControllerRemote staffEntityControllerRemote, BookEntityControllerRemote bookEntityControllerRemote, MemberEntityControllerRemote memberEntityControllerRemote, StaffEntity currentStaffEntity) {
         this();
         this.memberEntityControllerRemote = memberEntityControllerRemote;
         this.bookEntityControllerRemote = bookEntityControllerRemote;
         this.staffEntityControllerRemote = staffEntityControllerRemote;
+        this.libraryOperationControllerRemote = libraryOperationControllerRemote ; 
         this.currentStaffEntity = currentStaffEntity;
     }
 
@@ -99,20 +102,22 @@ public class AdministrationOperationModule {
                 } else if (response == 2) {
                     doViewMemberDetails();
                 } else if (response == 3) {
-                    System.out.print("Enter Member ID> ");
-                    Long memberId = scanner.nextLong();
+                    System.out.println("Enter Member Identity Number>");
+                    scanner.nextLine() ;
+                    String identityNumber = scanner.nextLine().trim();
                     try {
-                    MemberEntity thisMemberEntity = memberEntityControllerRemote.retrieveMemberByMemberId(memberId);
+                    MemberEntity thisMemberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
                     doUpdateMember(thisMemberEntity);
                     } catch (MemberNotFoundException ex) {
                         System.out.println("Member cannot be found!") ; 
                     }
                     
                 } else if (response == 4) {
-                    System.out.print("Enter Member ID> ");
-                    Long memberId = scanner.nextLong();
+                    System.out.println("Enter Member Identity Number>");
+                    scanner.nextLine() ;
+                    String identityNumber = scanner.nextLine().trim();
                     try { 
-                    MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByMemberId(memberId);
+                    MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
                     doDeleteMember(memberEntity);
                     } catch (MemberNotFoundException ex) {
                         System.out.println("Member cannot be found!") ; 
@@ -166,14 +171,15 @@ public class AdministrationOperationModule {
 
     private void doViewMemberDetails() {
         System.out.println("*** ILS :: Administration Operation :: Member Management :: View Member Details ***\n");
-        System.out.print("Enter Member Id> ");
+        System.out.print("Enter Member Identity Number> ");
         Scanner scanner = new Scanner(System.in);
-        Long memberId = scanner.nextLong();
+        String identityNumber =  scanner.nextLine().trim() ; 
+ 
 
         try {
-            MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByMemberId(memberId);
-            System.out.printf("%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", "Member Id", "Identity Number", "Security Code", "First Name", "Last Name", "Gender", "Age", "Phone", "Address");
-            System.out.printf("%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", memberEntity.getMemberId().toString(), memberEntity.getIdentityNumber(), memberEntity.getSecurityCode(), memberEntity.getFirstName(), memberEntity.getLastName(), memberEntity.getGender().toString(), memberEntity.getAge().toString(), memberEntity.getPhone(), memberEntity.getAddress());
+            MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
+            System.out.printf("%-20s%-20s%-20s%-20s%-20s%-20s%-20s%-20s%-20s\n", "Member Id", "Identity Number", "Security Code", "First Name", "Last Name", "Gender", "Age", "Phone", "Address");
+            System.out.printf("%-20s%-20s%-20s%-20s%-20s%-20s%-20s%-20s%-20s\n", memberEntity.getMemberId().toString(), memberEntity.getIdentityNumber(), memberEntity.getSecurityCode(), memberEntity.getFirstName(), memberEntity.getLastName(), memberEntity.getGender().toString(), memberEntity.getAge().toString(), memberEntity.getPhone(), memberEntity.getAddress());
 
         } catch (MemberNotFoundException ex) {
             System.out.println("Member cannot be found!\n");
@@ -270,10 +276,10 @@ public class AdministrationOperationModule {
         System.out.println("*** ILS :: Administration Operation :: Member Management :: View All Members ***\n");
 
         List<MemberEntity> memberEntities = memberEntityControllerRemote.retrieveAllMembers();
-        System.out.printf("%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", "Member Id", "Identity Number", "Security Code", "First Name", "Last Name", "Gender", "Age", "Phone", "Address");
+        System.out.printf("%-20s%-20s%-20s%-20s%-20s%-20s%-20s%-20s%-20s\n", "Member Id", "Identity Number", "Security Code", "First Name", "Last Name", "Gender", "Age", "Phone", "Address");
 
         for (MemberEntity memberEntity : memberEntities) {
-            System.out.printf("%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", memberEntity.getMemberId().toString(), memberEntity.getIdentityNumber(), memberEntity.getSecurityCode(), memberEntity.getFirstName(), memberEntity.getLastName(), memberEntity.getGender().toString(), memberEntity.getAge().toString(), memberEntity.getPhone(), memberEntity.getAddress());
+            System.out.printf("%-20s%-20s%-20s%-20s%-20s%-20s%-20s%-20s%-20s\n", memberEntity.getMemberId().toString(), memberEntity.getIdentityNumber(), memberEntity.getSecurityCode(), memberEntity.getFirstName(), memberEntity.getLastName(), memberEntity.getGender().toString(), memberEntity.getAge().toString(), memberEntity.getPhone(), memberEntity.getAddress());
         }
 
         System.out.print("Press any key to continue...> ");
@@ -304,19 +310,21 @@ public class AdministrationOperationModule {
                 } else if (response == 2) {
                     doViewBookDetails();
                 } else if (response == 3) {
-                    System.out.print("Enter Book ID> ");
-                    Long bookId = scanner.nextLong();
+                    System.out.println("Enter Book Isbn> ");
+                    scanner.nextLine() ; 
+                    String isbn = scanner.nextLine().trim() ; 
                     try {
-                    BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId);
+                    BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByIsbn(isbn);
                     doUpdateBook(bookEntity);
                     } catch (BookNotFoundException ex) {
                         System.out.println("Book cannot be found!") ; 
                     }
                 } else if (response == 4) {
-                    System.out.print("Enter Book ID> ");
-                    Long bookId = scanner.nextLong();
+                    System.out.println("Enter Book Isbn> ");
+                    scanner.nextLine() ;
+                    String isbn = scanner.nextLine().trim() ; 
                     try {
-                    BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId);
+                    BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByIsbn(isbn);
                     doDeleteBook(bookEntity);
                     } catch (BookNotFoundException ex) {
                         System.out.println("Book cannot be found!") ; 
@@ -360,14 +368,14 @@ public class AdministrationOperationModule {
 
     private void doViewBookDetails() {
         System.out.println("*** ILS :: Administration Operation :: Book Management :: View Book Details ***\n");
-        System.out.print("Enter Book Id> ");
+        System.out.print("Enter Book Isbn> ");
         Scanner scanner = new Scanner(System.in);
-        Long bookId = scanner.nextLong();
+        String isbn = scanner.nextLine().trim() ; 
 
         try {
-            BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId);
-            System.out.printf("%20s%60s%20s%20s\n", "Book Id", "Title", "Published Year", "Isbn");
-            System.out.printf("%20s%60s%20s%20s\n", bookEntity.getBookId().toString(), bookEntity.getTitle(), bookEntity.getPublishedYear().toString(), bookEntity.getIsbn());
+            BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByIsbn(isbn);
+            System.out.printf("%-20s%-60s%-20s%-20s\n", "Book Id", "Title", "Published Year", "Isbn");
+            System.out.printf("%-20s%-60s%-20s%-20s\n", bookEntity.getBookId().toString(), bookEntity.getTitle(), bookEntity.getPublishedYear().toString(), bookEntity.getIsbn());
 
         } catch (BookNotFoundException ex) {
             System.out.println("Book cannot be found!\n");
@@ -433,10 +441,10 @@ public class AdministrationOperationModule {
         System.out.println("*** ILS :: Administration Operation :: Book Management :: View All Books ***\n");
 
         List<BookEntity> bookEntities = bookEntityControllerRemote.retrieveAllBooks();
-        System.out.printf("%20s%20s%20s%20s\n", "Book Id", "Title", "Published Year", "Isbn");
+        System.out.printf("%-20s%-70s%-20s%-20s\n", "Book Id", "Title", "Published Year", "Isbn");
 
         for (BookEntity bookEntity : bookEntities) {
-            System.out.printf("%20s%20s%20s%20s\n", bookEntity.getBookId().toString(), bookEntity.getTitle(), bookEntity.getPublishedYear().toString(), bookEntity.getIsbn());
+            System.out.printf("%-20s%-70s%-20s%-20s\n", bookEntity.getBookId().toString(), bookEntity.getTitle(), bookEntity.getPublishedYear().toString(), bookEntity.getIsbn());
         }
 
         System.out.print("Press any key to continue...> ");
@@ -467,20 +475,26 @@ public class AdministrationOperationModule {
                 } else if (response == 2) {
                     doViewStaffDetails();
                 } else if (response == 3) {
-                    System.out.print("Enter Staff ID> ");
-                    Long staffId = scanner.nextLong();
+                    System.out.println("Enter Staff Username> ");
+                    scanner.nextLine() ; 
+                    String username = scanner.nextLine().trim();
                     try {
-                    StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByStaffId(staffId);
+                    StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByUsername(username);
                     doUpdateStaff(staffEntity);
                     } catch (StaffNotFoundException ex) {
                     System.out.println("Staff cannot be found!") ; 
                 }
                 } else if (response == 4) {
-                    System.out.print("Enter Staff ID> ");
-                    Long staffId = scanner.nextLong();
+                    System.out.println("Enter Staff Username> ");
+                    scanner.nextLine() ; 
+                    String username = scanner.nextLine().trim() ; 
                     try {
-                    StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByStaffId(staffId);
+                    StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByUsername(username);
+                    if (libraryOperationControllerRemote.getActiveStaff().getUserName().equals(username)) {
+                        System.out.println("Staff is currently logged in and cannot be deleted!") ; 
+                    } else {
                     doDeleteStaff(staffEntity);
+                    } 
                     } catch (StaffNotFoundException ex) {
                     System.out.println("Staff cannot be found!") ; 
                 }
@@ -530,8 +544,8 @@ public class AdministrationOperationModule {
 
         try {
             StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByStaffId(staffId);
-            System.out.printf("%20s%20s%20s%20s%20s\n", "Staff Id", "First Name", "Last Name", "Username", "Password");
-            System.out.printf("%20s%20s%20s%20s%20s\n", staffEntity.getStaffId().toString(), staffEntity.getFirstName(), staffEntity.getLastName(), staffEntity.getUserName(), staffEntity.getPassword());
+            System.out.printf("%-20s%-20s%-20s%-20s%-20s\n", "Staff Id", "First Name", "Last Name", "Username", "Password");
+            System.out.printf("%-20s%-20s%-20s%-20s%-20s\n", staffEntity.getStaffId().toString(), staffEntity.getFirstName(), staffEntity.getLastName(), staffEntity.getUserName(), staffEntity.getPassword());
 
         } catch (StaffNotFoundException ex) {
             System.out.println("Staff cannot be found!\n");
@@ -601,10 +615,10 @@ public class AdministrationOperationModule {
         System.out.println("*** ILS :: Administration Operation :: Staff Management :: View All Staff ***\n");
 
         List<StaffEntity> staffEntities = staffEntityControllerRemote.retrieveAllStaff();
-        System.out.printf("%20s%20s%20s%20s%20s\n", "Staff Id", "First Name", "Last Name", "Username", "Password");
+        System.out.printf("%-20s%-20s%-20s%-20s%-20s\n", "Staff Id", "First Name", "Last Name", "Username", "Password");
 
         for (StaffEntity staffEntity : staffEntities) {
-            System.out.printf("%20s%20s%20s%20s%20s\n", staffEntity.getStaffId().toString(), staffEntity.getFirstName(), staffEntity.getLastName(), staffEntity.getUserName(), staffEntity.getPassword());
+            System.out.printf("%-20s%-20s%-20s%-20s%-20s\n", staffEntity.getStaffId().toString(), staffEntity.getFirstName(), staffEntity.getLastName(), staffEntity.getUserName(), staffEntity.getPassword());
         }
 
         System.out.print("Press any key to continue...> ");
