@@ -25,20 +25,33 @@ public class LendingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lendId;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lendDate;    
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    //@JoinColumn(name="memberId", nullable = false)
     private MemberEntity memberEntity;
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    //@JoinColumn(name="bookId", nullable = false)
     private BookEntity book;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dueDate;
     @Column(nullable = false)
     private boolean hasReturned;
+    
+    public LendingEntity() {
+        
+    }
+
+    public LendingEntity(Date lendDate, MemberEntity memberEntity, BookEntity book, Date dueDate, boolean hasReturned) {
+        this.lendDate = lendDate;
+        this.memberEntity = memberEntity;
+        this.book = book;
+        this.dueDate = dueDate;
+        this.hasReturned = hasReturned;
+    }
+    
     
 
     public Long getLendId() {
@@ -81,11 +94,11 @@ public class LendingEntity implements Serializable {
         this.dueDate = dueDate;
     }
 
-    public boolean getStatus() {
+    public boolean getHasReturned() {
         return hasReturned;
     }
 
-    public void setStatus(boolean status) {
+    public void setHasReturned(boolean status) {
         this.hasReturned = status;
     }
     

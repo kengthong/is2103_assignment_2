@@ -7,6 +7,7 @@ package selfkioskclient;
 
 import ejb.session.stateful.SelfKioskOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
+import ejb.session.stateless.LendingEntityControllerRemote;
 import ejb.session.stateless.MemberEntityControllerRemote;
 import entity.MemberEntity;
 import java.util.Scanner;
@@ -19,21 +20,25 @@ import util.exception.InvalidLoginException;
 public class MainApp {
 
     private SelfKioskOperationControllerRemote selfKioskOperationController;
-    private BookEntityControllerRemote bookEntityController;
+    private BookEntityControllerRemote bookEntityControllerRemote;
     private MemberEntityControllerRemote memberEntityControllerRemote;
     private MemberOperationModule memberOperationModule;
+    private LendingEntityControllerRemote lendingEntityControllerRemote;
     
     public MainApp(
             SelfKioskOperationControllerRemote selfKioskOperationController,
-            BookEntityControllerRemote bookEntityController,
-            MemberEntityControllerRemote memberEntityControllerRemote
+            BookEntityControllerRemote bookEntityControllerRemote,
+            MemberEntityControllerRemote memberEntityControllerRemote,
+            LendingEntityControllerRemote lendingEntityControllerRemote
     ) {
         this.selfKioskOperationController = selfKioskOperationController;
-        this.bookEntityController = bookEntityController;
+        this.bookEntityControllerRemote = bookEntityControllerRemote;
         this.memberEntityControllerRemote = memberEntityControllerRemote;
         this.memberOperationModule = new MemberOperationModule(
                 this.selfKioskOperationController,
-                this.bookEntityController
+                this.bookEntityControllerRemote,
+                this.lendingEntityControllerRemote
+                
         );
     }
     

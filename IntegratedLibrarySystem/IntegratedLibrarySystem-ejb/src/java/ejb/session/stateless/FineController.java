@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.MemberHasFinesException;
@@ -23,9 +24,11 @@ import util.exception.MemberHasFinesException;
 @Remote(FineControllerRemote.class)
 public class FineController implements FineControllerRemote, FineControllerLocal {
 
+    @PersistenceContext(unitName = "librarydb2New-ejbPU")
+    private EntityManager entityManager;
 
-    @PersistenceContext(unitName = "librarydb2-ejbPU")
-    private javax.persistence.EntityManager entityManager;
+    
+
     
     public FineController()
     {
@@ -33,6 +36,8 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     
     
     @Override 
+    public boolean checkForFines(String identityNumber) {
+        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.memberEntity.identityNumber = :inIdentityNumber AND f.status = false ") ; 
     public void checkIfMemberHasFines(String identityNumber) throws MemberHasFinesException {
         Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber AND f.paid == false ") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
@@ -56,6 +61,11 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     public void payFine(Long fineId) {
         
     }
+
+    public void persist(Object object) {
+        entityManager.persist(object);
+    }
+
    
     
 }

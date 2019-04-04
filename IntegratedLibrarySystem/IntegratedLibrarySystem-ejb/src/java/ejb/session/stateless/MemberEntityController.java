@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
@@ -28,8 +29,12 @@ import util.exception.MemberNotFoundException;
 @Remote(MemberEntityControllerRemote.class)
 public class MemberEntityController implements MemberEntityControllerRemote, MemberEntityControllerLocal {
 
-    @PersistenceContext(unitName = "librarydb2-ejbPU")
-    private javax.persistence.EntityManager entityManager;
+    @PersistenceContext(unitName = "librarydb2New-ejbPU")
+    private EntityManager entityManager;
+
+    
+
+    
     
     public MemberEntityController()
     {
@@ -95,12 +100,13 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
         return query.getResultList();
     }
     
+    
     public MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException {
         try
         {
             MemberEntity memberEntity = retrieveMemberByUsername(username);
             
-            if(memberEntity.getPassword().equals(password))
+            if(memberEntity.getSecurityCode().equals(password))
             {
                 return memberEntity;
             }
@@ -115,9 +121,6 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
         }
     }
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-    
     public void persist(Object object) {
         entityManager.persist(object);
     }

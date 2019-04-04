@@ -137,7 +137,8 @@ public class MemberOperationModule {
         for (LendingEntity lendingEntity : lentBooks)
         {
             Long lendId = lendingEntity.getLendId();
-            String title = lendingEntity.getTitle();
+//            String title = lendingEntity.getTitle
+            String title = "test";
             // date
             String dueDate = "2019-03-14";
             System.out.println(lendId + "\t| " + title + "\t| " + dueDate);
