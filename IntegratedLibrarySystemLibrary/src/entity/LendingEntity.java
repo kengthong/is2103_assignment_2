@@ -74,7 +74,7 @@ public class LendingEntity implements Serializable {
         return memberEntity;
     }
 
-    public void setMember(MemberEntity member) {
+    public void setMember(MemberEntity memberEntity) {
         this.memberEntity = memberEntity;
     }
 
