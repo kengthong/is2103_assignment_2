@@ -13,8 +13,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Temporal;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -25,14 +27,19 @@ public class ReservationEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
     @Column(length = 60, nullable = false)
     private String title;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date availability;
-    @ManyToMany(mappedBy = "identityNumber")
-    private List<MemberEntity> memberId;
+    @ManyToOne
+    @JoinColumn (name="memberID")
+    private MemberEntity memberEntity;
+    @ManyToOne(optional = false)
+    private BookEntity book;
+    
+    //NEED LIST OF RESERVATIONS FOR A BOOK 
  
     
     
@@ -60,12 +67,20 @@ public class ReservationEntity implements Serializable {
         this.availability = availability;
     }
 
-    public List<MemberEntity> getMemberId() {
-        return memberId;
+    public MemberEntity getMember() {
+        return memberEntity;
     }
 
-    public void setMemberId(List<MemberEntity> memberId) {
-        this.memberId = memberId;
+    public void setMember(MemberEntity memberEntity) {
+        this.memberEntity = memberEntity;
+    }
+    
+    public BookEntity getBook() {
+        return book;
+    }
+    
+    public void setBook(BookEntity book) {
+        this.book = book;
     }
     
     

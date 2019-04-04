@@ -5,15 +5,25 @@
  */
 package selfkioskclient;
 
-import ejb.session.stateful.SelfKioskOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
+import ejb.session.stateless.FineControllerRemote;
 import ejb.session.stateless.LendingEntityControllerRemote;
+import ejb.session.stateless.MemberEntityControllerRemote;
+import ejb.session.stateless.ReservationControllerRemote;
 import entity.BookEntity;
 import entity.LendingEntity;
 import entity.MemberEntity;
+import entity.ReservationEntity;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
+import util.exception.MaxLoansExceeded;
+import util.exception.MemberHasFinesException;
+import util.exception.MemberNotAtTopOfReserveList;
+import util.exception.MemberNotFoundException;
 
 /**
  *
@@ -21,38 +31,34 @@ import util.exception.BookNotFoundException;
  */
 public class MemberOperationModule {
 
-    private SelfKioskOperationControllerRemote selfKioskOperationController;
-    private BookEntityControllerRemote bookEntityController;
+    private BookEntityControllerRemote bookEntityControllerRemote;
+    private FineControllerRemote fineControllerRemote;
+    private LendingEntityControllerRemote lendingEntityControllerRemote;
+    private MemberEntityControllerRemote memberEntityControllerRemote;
+    private ReservationControllerRemote reservationControllerRemote;
     private MemberEntity currentActiveMember;
-    private LendingEntityControllerRemote lendingEntityController;
-    
-    
-    
+
     public MemberOperationModule(
-            SelfKioskOperationControllerRemote selfKioskOperationController,
-            BookEntityControllerRemote bookEntityController,
-            LendingEntityControllerRemote lendingEntityController
+            BookEntityControllerRemote bookEntityControllerRemote,
+            FineControllerRemote fineControllerRemote,
+            LendingEntityControllerRemote lendingEntityControllerRemote,
+            MemberEntityControllerRemote memberEntityControllerRemote,
+            ReservationControllerRemote reservationControllerRemote,
+            MemberEntity currentActiveMember
     ) {
-        this.selfKioskOperationController = selfKioskOperationController;
-        this.bookEntityController = bookEntityController;
-        this.lendingEntityController = lendingEntityController;
-        init();
+        this.lendingEntityControllerRemote = lendingEntityControllerRemote;
+        this.lendingEntityControllerRemote = lendingEntityControllerRemote;
+        this.currentActiveMember = currentActiveMember;
     }
-    
-    private void init()
-    {
-        this.currentActiveMember = this.selfKioskOperationController.getCurrentActiveMember();
-    }
-    
-    public void displayMenu()
-    {
+
+    public void displayMenu() {
         Scanner sc = new Scanner(System.in);
         Integer response = 0;
-        
-        System.out.println("*** Self-Service Kiosk :: Main ***\n") ; 
-        System.out.println("You are logged in as " + this.currentActiveMember + "\n") ; 
-        
-        System.out.println("1: Borrow Book"); 
+
+        System.out.println("*** Self-Service Kiosk :: Main ***\n");
+        System.out.println("You are logged in as " + this.currentActiveMember + "\n");
+
+        System.out.println("1: Borrow Book");
         System.out.println("2: View Lent Books");
         System.out.println("3: Return Book");
         System.out.println("4: Extend Book");
@@ -60,15 +66,13 @@ public class MemberOperationModule {
         System.out.println("6: Search Book");
         System.out.println("7: Reserve Book");
         System.out.println("8: Logout\n");
-        
-        while(response <1 || response >8)
-        {
-            
+
+        while (response < 1 || response > 8) {
+
             System.out.print("> ");
             response = sc.nextInt();
-            
-            switch(response)
-            {
+
+            switch (response) {
                 case 1:
                     //Borrow book
                     doBorrowBook();
@@ -76,64 +80,100 @@ public class MemberOperationModule {
                     //View Lent Books
                     viewLentBook();
                 case 3:
-                    //Return book
+                //Return book
                 case 4:
-                    //Extend book
+                //Extend book
+                    doExtendBook();
                 case 5:
-                    //Pay fines
+                //Pay fines
                 case 6:
-                    //Search book
+                //Search book
                 case 7:
-                    //Reserve book
+                //Reserve book
                 case 8:
-                    //Log out
+                //Log out
                 default:
                     System.out.println("Invalid Option");
             }
         }
     }
-    
-    private void doBorrowBook()
+
+    private void doBorrowBook() 
     {
         Scanner sc = new Scanner(System.in);
-        Integer bookIdEntered = 0;
-        
+
         System.out.println("*** Self-Service Kiosk :: Borrow Book ***\n");
-        
 
+        System.out.print("Enter Book ID: ");
+        Long bookId = sc.nextLong();
+        String identityNumber = currentActiveMember.getIdentityNumber();
 
-            System.out.print("Enter Book ID: ");
-            bookIdEntered = sc.nextInt();
-            Long bookId = (long) bookIdEntered;
-            
-            if(bookId != 0)
-            {
-                try
-                {
-                    BookEntity bookToBorrow = bookEntityController.retrieveBookByBookId(bookId);
-                    String dueDate = "2019-03-25";
-                    System.out.println("Successfully lent book. Due Date: " + dueDate + ".");
-                }
-                catch(BookNotFoundException ex)
-                {
-                }
+        LendingEntity newLendingEntity = new LendingEntity();
+        Date date = new Date();
+
+        try { //check if book and member exists 
+            BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId);
+            MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
+
+            lendingEntityControllerRemote.checkIsBookLent(bookId);
+            fineControllerRemote.checkIfMemberHasFines(identityNumber);
+            lendingEntityControllerRemote.checkIfMemberExceedsMaxLoans(identityNumber);
+            List<ReservationEntity> reservations = reservationControllerRemote.retrieveAllReservationsByBookId(bookId);
+            if (!reservations.isEmpty()) {
+                lendingEntityControllerRemote.checkIfMemberOnReserveList(identityNumber);
             }
+
+            newLendingEntity.setMember(memberEntity);
+            newLendingEntity.setBook(bookEntity);
+            Date duedate = lendingEntityControllerRemote.generateDueDate(date);
+            newLendingEntity.setLendDate(date);
+            newLendingEntity.setDueDate(duedate);
+            newLendingEntity.setHasReturned(false);
+            newLendingEntity = lendingEntityControllerRemote.createNewLending(newLendingEntity);
+
+            Date newDueDate = newLendingEntity.getDueDate();
+            SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+
+            System.out.println("Successfully lent book. Due Date: " + dt1.format(newDueDate) + ".");
+        } catch (BookNotFoundException
+                | MemberNotFoundException
+                | BookIsOnLoanException
+                | MemberHasFinesException
+                | MaxLoansExceeded
+                | MemberNotAtTopOfReserveList ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
-    private void viewLentBook()
+    private void doExtendBook()
     {
+        System.out.println("*** Self-Service Kiosk :: Extend Book ***\n");
+        System.out.println("Currently Lent Books:\n");
+        
+Id |Title                  | Due Date
+4  |The Hobbit             | 2019-03-12
+Enter Book to Extend> 4
+Book successfully extended. New due date: 2019-03-25
+    }
+    
+    private void viewLentBook() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Self-Service Kiosk :: View Lent Books ***\n");
 
         String memberIdentityNumber = this.currentActiveMember.getIdentityNumber();
-        List<LendingEntity> lentBooks = this.lendingEntityController.retrieveBooksLoanedByMember(memberIdentityNumber);
-        
+        List<LendingEntity> lentBooks = this.lendingEntityControllerRemote.retrieveBooksLoanedByMember(memberIdentityNumber);
+
         System.out.println("Currently Lent Books:");
         System.out.println("Id\t| Title\t| Due date");
-        for (LendingEntity lendingEntity : lentBooks)
-        {
+        printLending(lentBooks);
+    }
+    
+    private void printLending(List<LendingEntity> lentBooks)
+    {
+        for (LendingEntity lendingEntity : lentBooks) {
             Long lendId = lendingEntity.getLendId();
-            String title = lendingEntity.getTitle();
+            //            String title = lendingEntity.getTitle
+            String title = "test";
             // date
             String dueDate = "2019-03-14";
             System.out.println(lendId + "\t| " + title + "\t| " + dueDate);

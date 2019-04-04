@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
@@ -26,8 +27,8 @@ import util.exception.BookNotFoundException;
 @Remote(BookEntityControllerRemote.class)
 public class BookEntityController implements BookEntityControllerRemote, BookEntityControllerLocal {
 
-    @PersistenceContext(unitName = "librarydb2-ejbPU")
-    private javax.persistence.EntityManager entityManager;
+    @PersistenceContext(unitName = "librarydb2New-ejbPU")
+    private EntityManager entityManager;
     
     public BookEntityController()
     {
@@ -43,11 +44,17 @@ public class BookEntityController implements BookEntityControllerRemote, BookEnt
     
     @Override 
     public BookEntity retrieveBookByIsbn(String isbn) throws BookNotFoundException {
-        BookEntity bookEntity = entityManager.find(BookEntity.class, isbn) ; 
-        if (bookEntity != null) {
-            return bookEntity ; 
-        } else {
-            throw new BookNotFoundException("Book Isbn" + isbn + "does not exist!") ; 
+       Query query = entityManager.createQuery("SELECT b FROM BookEntity b WHERE b.isbn = :inIsbn");
+        query.setParameter("inIsbn", isbn);
+        
+        try
+        {
+            return (BookEntity)query.getSingleResult();
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+             throw new BookNotFoundException("Book Isbn " + isbn + " does not exist!");
+
         }
     }
     
@@ -85,4 +92,8 @@ public class BookEntityController implements BookEntityControllerRemote, BookEnt
         
         return query.getResultList();
     }    
+
+    public void persist(Object object) {
+        entityManager.persist(object);
+    }
 }

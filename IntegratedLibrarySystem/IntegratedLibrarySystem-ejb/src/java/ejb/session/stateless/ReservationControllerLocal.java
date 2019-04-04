@@ -16,10 +16,13 @@ import util.exception.ReservationNotFoundException;
  */
 @Local
 public interface ReservationControllerLocal {
-    
-    
-        public List<ReservationEntity> retrieveAllReservations() ; 
-        public boolean checkForReservation(Long bookId) ; 
-        public void deleteReservation(Long reservationId) throws ReservationNotFoundException ; 
-    
+
+    public List<ReservationEntity> retrieveAllReservations();
+
+    public boolean checkForReservation(Long bookId);
+
+    public void deleteReservation(Long reservationId) throws ReservationNotFoundException;
+
+    List<ReservationEntity> retrieveAllReservationsByBookId(Long bookId);
+
 }

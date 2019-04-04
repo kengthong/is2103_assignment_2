@@ -11,7 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 
 /**
@@ -23,10 +24,15 @@ public class FineEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @OneToOne(optional = false)
-    private MemberEntity identityNumber;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long fineId;
+    @Column(length = 9, nullable = false)
+    private String identityNumber;
+    //@OneToOne(optional = false)
+    //private MemberEntity identityNumber;
+    @ManyToOne
+    @JoinColumn (name="memberId")
+    private MemberEntity memberEntity;
     @Column(scale = 2, nullable = false)
     private double amount;
     @Column(nullable = false)
@@ -34,19 +40,19 @@ public class FineEntity implements Serializable {
     
     
 
-    public Long getId() {
-        return id;
+    public Long getFineId() {
+        return fineId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setFineId(Long id) {
+        this.fineId = fineId;
     }
 
-    public MemberEntity getIdentityNumber() {
+    public String getIdentityNumber() {
         return identityNumber;
     }
 
-    public void setIdentityNumber(MemberEntity identityNumber) {
+    public void setIdentityNumber(String identityNumber) {
         this.identityNumber = identityNumber;
     }
 
@@ -58,7 +64,7 @@ public class FineEntity implements Serializable {
         this.amount = amount;
     }
 
-    public boolean isStatus() {
+    public boolean getStatus() {
         return status;
     }
 
@@ -69,7 +75,7 @@ public class FineEntity implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (fineId != null ? fineId.hashCode() : 0);
         return hash;
     }
 
@@ -80,7 +86,7 @@ public class FineEntity implements Serializable {
             return false;
         }
         FineEntity other = (FineEntity) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.fineId == null && other.fineId != null) || (this.fineId != null && !this.fineId.equals(other.fineId))) {
             return false;
         }
         return true;
@@ -88,7 +94,7 @@ public class FineEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.FineEntity[ id=" + id + " ]";
+        return "entity.FineEntity[ fineId=" + fineId + " ]";
     }
     
 }

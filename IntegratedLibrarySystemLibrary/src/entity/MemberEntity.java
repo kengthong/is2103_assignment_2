@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +25,7 @@ public class MemberEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
     @Column(length = 9, nullable = false)
     private String identityNumber;
@@ -42,12 +43,30 @@ public class MemberEntity implements Serializable {
     private String phone;
     @Column(length = 60, nullable = false)
     private String address;
-    @OneToMany(mappedBy="member")
+    @OneToMany(mappedBy="memberEntity",fetch = FetchType.LAZY)
     private List<LendingEntity> lendings;
-    @OneToOne(optional = false, mappedBy = "identityNumber")
-    private FineEntity fines;
+    @OneToMany(mappedBy = "memberEntity") 
+    private List<FineEntity> fines;
+    @OneToMany (mappedBy = "memberEntity") 
+    private List<ReservationEntity> reservations ; 
   
-   
+       public MemberEntity() {
+    }
+
+    public MemberEntity(String identityNumber, String securityCode, String firstName, String lastName, String gender, Integer age, String phone, String address) {
+        this.identityNumber = identityNumber;
+        this.securityCode = securityCode;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.age = age;
+        this.phone = phone;
+        this.address = address;
+    }
+    
+    
+    
+    
     public Long getMemberId() {
         return memberId;
     }
@@ -127,15 +146,22 @@ public class MemberEntity implements Serializable {
     public void setLendings(List<LendingEntity> lendings) {
         this.lendings = lendings;
     }
-
-    public FineEntity getFineEntity() {
+    
+    public List<FineEntity> getFines() {
         return fines;
     }
 
-    public void setFineEntity(FineEntity fines) {
+    public void setFines(List<FineEntity> fines) {
         this.fines = fines;
     }
+
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
     
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
+    }
     
     @Override
     public int hashCode() {
@@ -161,5 +187,7 @@ public class MemberEntity implements Serializable {
     public String toString() {
         return "entity.MemberEntity[ id=" + memberId + " ]";
     }
+
+    
     
 }

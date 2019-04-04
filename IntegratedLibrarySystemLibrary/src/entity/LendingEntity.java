@@ -9,10 +9,10 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 
@@ -25,20 +25,33 @@ public class LendingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lendId;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lendDate;    
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private MemberEntity member;
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    //@JoinColumn(name="memberId", nullable = false)
+    private MemberEntity memberEntity;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    //@JoinColumn(name="bookId", nullable = false)
     private BookEntity book;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dueDate;
     @Column(nullable = false)
-    private boolean status;
+    private boolean hasReturned;
+    
+    public LendingEntity() {
+        
+    }
+
+    public LendingEntity(Date lendDate, MemberEntity memberEntity, BookEntity book, Date dueDate, boolean hasReturned) {
+        this.lendDate = lendDate;
+        this.memberEntity = memberEntity;
+        this.book = book;
+        this.dueDate = dueDate;
+        this.hasReturned = hasReturned;
+    }
+    
     
 
     public Long getLendId() {
@@ -58,11 +71,11 @@ public class LendingEntity implements Serializable {
     }
 
     public MemberEntity getMember() {
-        return member;
+        return memberEntity;
     }
 
-    public void setMember(MemberEntity member) {
-        this.member = member;
+    public void setMember(MemberEntity memberEntity) {
+        this.memberEntity = memberEntity;
     }
 
     public BookEntity getBook() {
@@ -81,12 +94,12 @@ public class LendingEntity implements Serializable {
         this.dueDate = dueDate;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean getHasReturned() {
+        return hasReturned;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setHasReturned(boolean status) {
+        this.hasReturned = status;
     }
     
     @Override

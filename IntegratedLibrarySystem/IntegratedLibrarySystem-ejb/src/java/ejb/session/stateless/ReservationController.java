@@ -11,6 +11,7 @@ import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.ReservationNotFoundException;
@@ -23,37 +24,45 @@ import util.exception.ReservationNotFoundException;
 @Local(ReservationControllerLocal.class)
 @Remote(ReservationControllerRemote.class)
 public class ReservationController implements ReservationControllerRemote, ReservationControllerLocal {
+
+    @PersistenceContext(unitName = "librarydb2New-ejbPU")
+    private EntityManager entityManager;
+
     
-    
-    @PersistenceContext(unitName = "librarydb2-ejbPU")
-    private javax.persistence.EntityManager entityManager;
-    
-    public ReservationController()
-    {
+
+    public ReservationController() {
     }
-    
-    @Override 
-    public boolean checkForReservation(Long bookId){
-        
+
+    @Override
+    public boolean checkForReservation(Long bookId) {
+        return false;
     }
-    
+
     @Override
     public List<ReservationEntity> retrieveAllReservations() {
         Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r");
-        
+
         return query.getResultList();
     }
     
+    
+
     @Override
     public void deleteReservation(Long reservationId) throws ReservationNotFoundException {
-        ReservationEntity reservationEntityToRemove = retrieveReservationByReservationId(reservationId);
-        entityManager.remove(reservationEntityToRemove);
+//        ReservationEntity reservationEntityToRemove = retrieveReservationByReservationId(reservationId);
+//        entityManager.remove(reservationEntityToRemove);
     }
-    
-    
-    
-    
+
+    public void persist(Object object) {
+        entityManager.persist(object);
+    }
+
+    @Override
+    public List<ReservationEntity> retrieveAllReservationsByBookId(Long bookId) {
+        Query query = entityManager.createQuery("SELECT r from ReservationEntity r WHERE r.book.bookId = :inBookId");
+        query.setParameter("inBookId", bookId);
+        return query.getResultList();
+    }
 
     
-
 }

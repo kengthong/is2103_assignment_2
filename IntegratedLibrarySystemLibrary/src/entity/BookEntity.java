@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class BookEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookId;
     @Column(length = 60, nullable = false)
     private String title;
@@ -31,10 +32,21 @@ public class BookEntity implements Serializable {
     private String isbn;
     @Column(precision = 4, nullable = false)
     private Integer publishedYear;
-    @OneToMany(mappedBy="book")
+    @OneToMany(mappedBy="book", fetch = FetchType.LAZY)
     private List<LendingEntity> lendings;
     @OneToMany(mappedBy="book")
     private List<ReservationEntity> reservations;
+    
+        public BookEntity() {
+    }
+    
+    public BookEntity(String title, String isbn, Integer publishedYear) {
+        this();
+        
+        this.title = title;
+        this.isbn = isbn;
+        this.publishedYear = publishedYear;
+    }
 
     public Long getBookId() {
         return bookId;
