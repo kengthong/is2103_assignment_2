@@ -20,7 +20,6 @@ import util.exception.InvalidLoginException;
  */
 public class MainApp {
 
-    private SelfKioskOperationControllerRemote selfKioskOperationController;
     private BookEntityControllerRemote bookEntityControllerRemote;
     private LibraryOperationControllerRemote libraryOperationControllerRemote;
 //    private FineControllerRemote fineControllerRemote;
@@ -32,17 +31,17 @@ public class MainApp {
     private MemberEntity currentActiveMember;
 
     public MainApp(
-            LibraryOperationControllerRemote libraryOperationController,
+            LibraryOperationControllerRemote libraryOperationControllerRemote,
             BookEntityControllerRemote bookEntityControllerRemote,
             //            FineControllerRemote fineControllerRemote,
             MemberEntityControllerRemote memberEntityControllerRemote,
             LendingEntityControllerRemote lendingEntityControllerRemote
     //            ReservationControllerRemote reservationControllerRemote
     ) {
-        this.selfKioskOperationController = selfKioskOperationController;
         this.bookEntityControllerRemote = bookEntityControllerRemote;
         this.memberEntityControllerRemote = memberEntityControllerRemote;
         this.libraryOperationControllerRemote = libraryOperationControllerRemote;
+        this.lendingEntityControllerRemote = lendingEntityControllerRemote;
 //        this.fineControllerRemote = fineControllerRemote;
 //        this.reservationControllerRemote = reservationControllerRemote;
     }

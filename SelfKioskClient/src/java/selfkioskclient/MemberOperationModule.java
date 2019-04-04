@@ -48,7 +48,6 @@ public class MemberOperationModule {
     ) {
         this.libraryOperationControllerRemote = libraryOperationControllerRemote;
         this.lendingEntityControllerRemote = lendingEntityControllerRemote;
-        this.lendingEntityControllerRemote = lendingEntityControllerRemote;
         this.currentActiveMember = currentActiveMember;
     }
 
@@ -198,20 +197,15 @@ public class MemberOperationModule {
 
         String identityNumber = this.currentActiveMember.getIdentityNumber();
 
-        List<LendingEntity> lentBooks = null;
-        try {
-            lentBooks = this.lendingEntityControllerRemote.retrieveBooksLoanedByMember(identityNumber);
-            printLending(lentBooks);
-        } catch (NullPointerException e) {
-            printLending(null);
-        }
+        List<LendingEntity> lentBooks = this.lendingEntityControllerRemote.retrieveBooksLoanedByMember(identityNumber);
+        printLending(lentBooks);
     }
 
     private void printLending(List<LendingEntity> lentBooks) {
         System.out.println("Currently Lent Books:");
         System.out.println("Id\t| Title\t| Due date");
 
-        if (lentBooks != null) {
+        if (!lentBooks.isEmpty()) {
             for (LendingEntity lendingEntity : lentBooks) {
                 Long lendId = lendingEntity.getLendId();
                 //            String title = lendingEntity.getTitle
@@ -221,5 +215,7 @@ public class MemberOperationModule {
                 System.out.println(lendId + "\t| " + title + "\t| " + dueDate);
             }
         }
+        
+        System.out.println();
     }
 }

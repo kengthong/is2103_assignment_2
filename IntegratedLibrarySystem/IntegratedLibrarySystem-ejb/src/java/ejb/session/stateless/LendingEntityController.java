@@ -84,15 +84,9 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) { //need to iterate through the list 
-        try {
-            Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber and l.hasReturned = false ORDER BY l.book.bookId ASC");
-            query.setParameter("inIdentityNumber", identityNumber);
-            return query.getResultList();
-            
-        } catch (NoResultException e){
-            //return empty list
-            return Collections.emptyList() ;
-        }
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber and l.hasReturned = false ORDER BY l.book.bookId ASC");
+        query.setParameter("inIdentityNumber", identityNumber);
+        return query.getResultList();
     }
 
     @Override
