@@ -160,19 +160,17 @@ public class LibraryOperationModule {
         System.out.println("*** ILS :: Library Operation :: View Lent Books ***\n");
         System.out.println("Enter Member Identity Number>");
         String identityNumber = scanner.nextLine().trim();
-        System.out.println(libraryOperationControllerRemote.viewLentBooks(identityNumber)) ;
-//        
-//          try { 
-//        MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
-//        List<LendingEntity> lendingEntities = memberEntity.getLendings() ; 
-//        System.out.println(memberEntity.getLendings()) ; 
-//        System.out.printf("%-5s%-50s%-20s\n", "Id","Title", "Due Date") ; 
-//        for (LendingEntity lendingEntity : lendingEntities) { 
-//        System.out.printf("%-5s%-50s%-20s\n", lendingEntity.getLendId() , lendingEntity.getBook().getTitle() , lendingEntity.getDueDate()) ; 
-//        }
-//          } catch (MemberNotFoundException ex) {
-//                System.out.println("Member Cannot Be Found!") ; 
-//                }
+    
+          try { 
+        MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
+        List<LendingEntity> lendingEntities = memberEntity.getLendings() ; 
+        System.out.printf("%-5s%-50s%-20s\n", "Id","Title", "Due Date") ; 
+        for (LendingEntity lendingEntity : lendingEntities) { 
+        System.out.printf("%-5s%-50s%-20s\n", lendingEntity.getLendId() , lendingEntity.getBook().getTitle() , lendingEntity.getDueDate()) ; 
+        }
+          } catch (MemberNotFoundException ex) {
+                System.out.println("Member Cannot Be Found!") ; 
+                }
 
     }
 

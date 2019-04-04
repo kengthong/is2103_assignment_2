@@ -43,7 +43,7 @@ public class MemberEntity implements Serializable {
     private String phone;
     @Column(length = 60, nullable = false)
     private String address;
-    @OneToMany(mappedBy="memberEntity")
+    @OneToMany(mappedBy="memberEntity",fetch = FetchType.LAZY)
     private List<LendingEntity> lendings;
     @OneToMany(mappedBy = "memberEntity") 
     private List<FineEntity> fines;
