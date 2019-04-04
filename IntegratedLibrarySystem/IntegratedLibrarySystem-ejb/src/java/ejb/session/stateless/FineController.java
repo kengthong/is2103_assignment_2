@@ -37,7 +37,7 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     
     @Override 
     public void checkIfMemberHasFines(String identityNumber) throws MemberHasFinesException {
-        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber AND f.paid == false ") ; 
+        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber AND f.status = false ") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
         
         if ( !query.getResultList().isEmpty() ) {

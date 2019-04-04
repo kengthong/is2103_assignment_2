@@ -61,7 +61,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     
     @Override
     public void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList {
-        Query query = entityManager.createQuery("SELECT b FROM BookEntity b WHERE b.reservations.identityNumber = :inIdentityNumber AND  ") ; 
+        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity WHERE r.memberEntity.identityNumber = :inIdentityNumber") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
         
         BookEntity book = (BookEntity)query.getResultList() ; 

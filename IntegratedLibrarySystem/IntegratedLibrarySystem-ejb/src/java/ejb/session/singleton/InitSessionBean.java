@@ -41,8 +41,6 @@ public class InitSessionBean {
     @EJB
     private MemberEntityControllerLocal memberEntityControllerLocal;
     
-    @EJB 
-    private LendingEntityControllerLocal lendingEntityControllerLocal ; 
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -51,13 +49,7 @@ public class InitSessionBean {
 
     @PostConstruct
     public void postConstruct() {
-        Date date = new Date() ; 
-        
-        try {
-        lendingEntityControllerLocal.createNewLending(new LendingEntity(date,memberEntityControllerLocal.retrieveMemberByIdentityNumber("S7483027A"),bookEntityControllerLocal.retrieveBookByIsbn("S38101"),date,true )) ;//true = 1 
-        } catch (MemberNotFoundException | BookNotFoundException ex) {
-            
-        }
+
                 
         try {
 //            staffEntityControllerLocal.retrieveStaffByUsername("manager");
