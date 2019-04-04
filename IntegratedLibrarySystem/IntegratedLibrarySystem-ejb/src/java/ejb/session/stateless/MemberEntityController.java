@@ -101,23 +101,23 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
     }
     
     
-    public MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException {
+    public MemberEntity doMemberLogin(String identityNumber, String securityCode) throws InvalidLoginException {
         try
         {
-            MemberEntity memberEntity = retrieveMemberByUsername(username);
+            MemberEntity memberEntity = retrieveMemberByIdentityNumber(identityNumber);
             
-            if(memberEntity.getSecurityCode().equals(password))
+            if(memberEntity.getSecurityCode().equals(securityCode))
             {
                 return memberEntity;
             }
             else
             {
-                throw new InvalidLoginException("Username does not exist or invalid password!");
+                throw new InvalidLoginException("Invalid identity number or invalid security code!");
             }
         }
         catch(MemberNotFoundException ex)
         {
-            throw new InvalidLoginException("Username does not exist or invalid password!");
+            throw new InvalidLoginException("Invalid identity number or invalid security code!");
         }
     }
 
@@ -125,18 +125,4 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
         entityManager.persist(object);
     }
 
-    @Override
-    public MemberEntity retrieveMemberByUsername(String username) throws MemberNotFoundException {
-        Query query = entityManager.createQuery("SELECT m FROM MemberEntity m WHERE m.username = :inUsername");
-        query.setParameter("inUsername", username);
-        
-        try
-        {
-            return (MemberEntity)query.getSingleResult();
-        }
-        catch(NoResultException | NonUniqueResultException ex)
-        {
-            throw new MemberNotFoundException("Staff Username " + username + " does not exist!");
-        }
-    }
 }

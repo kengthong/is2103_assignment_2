@@ -9,12 +9,14 @@ import entity.BookEntity;
 import entity.LendingEntity;
 import entity.ReservationEntity;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.BookIsOnLoanException;
@@ -82,17 +84,15 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) { //need to iterate through the list 
-//        try {
-//            Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber ORDER BY l.book.bookId ASC");
-//            query.setParameter("inIdentityNumber", identityNumber);
-//        } catch (//No result)
-//                 {
-//            //return empty list
-//            return new List<LendingEntity>();
-//        }
-//        return query.getResultList();
-        
-        return null;
+        try {
+            Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.member.identityNumber = :inIdentityNumber and l.hasReturned = false ORDER BY l.book.bookId ASC");
+            query.setParameter("inIdentityNumber", identityNumber);
+            return query.getResultList();
+            
+        } catch (NoResultException e){
+            //return empty list
+            return Collections.emptyList() ;
+        }
     }
 
     @Override
@@ -152,12 +152,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     public void persist(Object object) {
         entityManager.persist(object);
     }
-
-    @Override
-    public boolean test(Long bookId) {
-        System.out.println("Test " + bookId);
-        return true;
-    }
+    
 
 
 

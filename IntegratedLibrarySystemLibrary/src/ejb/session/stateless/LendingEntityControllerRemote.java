@@ -38,7 +38,6 @@ public interface LendingEntityControllerRemote {
 
     void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList;
 
-    boolean test(Long bookId);
     
 
 
