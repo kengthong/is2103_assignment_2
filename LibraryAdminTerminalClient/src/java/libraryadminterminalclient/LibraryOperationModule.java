@@ -129,12 +129,10 @@ public class LibraryOperationModule {
             }
           
             newLendingEntity.setMember(memberEntity);
-            System.out.println(memberEntity.getMemberId()) ; 
             newLendingEntity.setBook(bookEntity);
             Date duedate = lendingEntityControllerRemote.generateDueDate(date);
             newLendingEntity.setLendDate(date);
             newLendingEntity.setDueDate(duedate);
-            System.out.println(newLendingEntity.getDueDate()); 
              newLendingEntity.setHasReturned(false);
             newLendingEntity = lendingEntityControllerRemote.createNewLending(newLendingEntity);
             
