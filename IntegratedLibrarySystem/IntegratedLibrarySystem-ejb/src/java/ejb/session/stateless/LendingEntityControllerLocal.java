@@ -12,6 +12,7 @@ import javax.ejb.Local;
 import util.exception.BookIsOnLoanException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
+import util.exception.MemberNotAtTopOfReserveList;
 
 /**
  *
@@ -35,9 +36,7 @@ public interface LendingEntityControllerLocal {
 
     void deleteLendingEntity(Long lendId) throws LendingNotFoundException;
 
-    boolean checkForReservations(Long bookId);
-
-    boolean checkIfMemberOnReserveList(String identityNumber);
+    void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList;
     
     
 }

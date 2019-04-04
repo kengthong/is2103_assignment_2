@@ -20,6 +20,7 @@ import javax.persistence.Query;
 import util.exception.BookIsOnLoanException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
+import util.exception.MemberNotAtTopOfReserveList;
 
 /**
  *
@@ -47,23 +48,6 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
             throw new BookIsOnLoanException("Book has been lent out and cannot be borrowed!");
         }
     }
-    
-    
-    @Override
-    public boolean checkForReservations(Long bookId) { //do we remove the member from the list after they have borrowed 
-        System.out.println("Here");
-        return true;
-//        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.book.bookId = :inBookId") ; 
-//        query.setParameter("inBookId", bookId) ; 
-//        
-//        if (query.getResultList().isEmpty()) {
-//            return false ; //there are no reservations 
-//        } else {
-//            return true ; 
-//        }
-    }
-    
-    
 
     @Override
     public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded{
@@ -76,18 +60,15 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     }
     
     @Override
-    public boolean checkIfMemberOnReserveList(String identityNumber) {
+    public void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList {
         Query query = entityManager.createQuery("SELECT b FROM BookEntity b WHERE b.reservations.identityNumber = :inIdentityNumber AND  ") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
         
         BookEntity book = (BookEntity)query.getResultList() ; 
         List<ReservationEntity> reserveList = book.getReservations() ;
-        if (book.getReservations().get(0).getMember().getIdentityNumber().equals(identityNumber) )  {
-            return true ; //member is at the top of reservation list 
-        } else {
-            return false ; 
+        if (!book.getReservations().get(0).getMember().getIdentityNumber().equals(identityNumber) )  {
+            throw new MemberNotAtTopOfReserveList("Book has been reserved by another member");
         }
-        
     } 
 
     @Override

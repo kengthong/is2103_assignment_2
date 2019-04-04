@@ -12,6 +12,7 @@ import javax.ejb.Remote;
 import util.exception.BookIsOnLoanException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
+import util.exception.MemberNotAtTopOfReserveList;
 
 /**
  *
@@ -26,8 +27,6 @@ public interface LendingEntityControllerRemote {
     public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) ; 
     public Date generateDueDate(Date date); 
     public LendingEntity retrieveLendingByBookId(Long bookId);  
-    
-    boolean checkForReservations(Long bookId) ; 
 
     LendingEntity createNewLending(LendingEntity newLendingEntity);
 
@@ -37,7 +36,7 @@ public interface LendingEntityControllerRemote {
 
     void deleteLendingEntity(Long lendId) throws LendingNotFoundException;
 
-    boolean checkIfMemberOnReserveList(String identityNumber);
+    void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList;
 
     boolean test(Long bookId);
     

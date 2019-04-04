@@ -24,8 +24,8 @@ import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
 import util.exception.MaxLoansExceeded;
 import util.exception.MemberHasFinesException;
+import util.exception.MemberNotAtTopOfReserveList;
 import util.exception.MemberNotFoundException;
-import util.exception.ReservationNotFoundException;
 
 /**
  *
