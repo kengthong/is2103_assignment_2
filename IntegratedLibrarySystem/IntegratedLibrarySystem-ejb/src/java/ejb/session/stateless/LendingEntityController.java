@@ -88,7 +88,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public LendingEntity retrieveLendingByBookId(Long bookId) {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity WHERE l.book.bookId = :inBookId");
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false");
         query.setParameter("inBookId", bookId);
         return (LendingEntity) query.getSingleResult();
     }
@@ -169,6 +169,21 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
         } catch(LendingNotFoundException ex)
         {
             return null;
+        }
+    }
+
+    @Override
+    public LendingEntity returnLending(Long lendId) throws LendingNotFoundException {
+        try {
+            LendingEntity lendingEntityToReturn = retrieveLendingByLendingId(lendId);
+            lendingEntityToReturn.setHasReturned(true);
+            entityManager.merge(lendingEntityToReturn);
+            entityManager.flush();
+            
+            return lendingEntityToReturn;
+            
+        } catch (LendingNotFoundException ex) {
+            throw ex;
         }
     }
     
