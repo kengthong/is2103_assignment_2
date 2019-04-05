@@ -48,9 +48,8 @@ public class ReservationController implements ReservationControllerRemote, Reser
     
 
     @Override
-    public void deleteReservation(Long reservationId) throws ReservationNotFoundException {
-//        ReservationEntity reservationEntityToRemove = retrieveReservationByReservationId(reservationId);
-//        entityManager.remove(reservationEntityToRemove);
+    public void deleteReservation(ReservationEntity bookToRemove) throws ReservationNotFoundException {
+        entityManager.remove(bookToRemove);
     }
 
     public void persist(Object object) {
@@ -59,10 +58,38 @@ public class ReservationController implements ReservationControllerRemote, Reser
 
     @Override
     public List<ReservationEntity> retrieveAllReservationsByBookId(Long bookId) {
-        Query query = entityManager.createQuery("SELECT r from ReservationEntity r WHERE r.book.bookId = :inBookId");
+        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.book.bookId = :inBookId");
         query.setParameter("inBookId", bookId);
         return query.getResultList();
     }
 
+
+
+    @Override
+    public List<ReservationEntity> retrieveReservationsByIsbn(String isbn) {
+        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.book.isbn = :inIsbn");
+        query.setParameter("inIsbn", isbn);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ReservationEntity> retrieveReservationsByMember(Long memberId) {
+      Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.memberEntity.memberId = :inMemberId") ; 
+      query.setParameter("inMemberId", memberId ) ; 
+      return query.getResultList() ; 
+    }
+
+    @Override
+    public ReservationEntity retrieveReservationOfMember(Long bookId, Long memberId) {
+      Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.memberEntity.memberId = :inMemberId AND r.book.bookId = :inBookId") ; 
+      query.setParameter("inMemberId", memberId ) ;
+      query.setParameter("inBookId", bookId) ;
+      return (ReservationEntity)query.getSingleResult(); 
+    }
     
-}
+    
+    
+    }
+
+    
+

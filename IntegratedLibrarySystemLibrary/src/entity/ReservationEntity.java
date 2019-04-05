@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,10 +34,10 @@ public class ReservationEntity implements Serializable {
     private String title;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date availability;
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn (name="memberID")
     private MemberEntity memberEntity;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BookEntity book;
     
     //NEED LIST OF RESERVATIONS FOR A BOOK 

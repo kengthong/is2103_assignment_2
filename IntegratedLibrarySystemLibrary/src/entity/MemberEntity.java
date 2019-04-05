@@ -45,9 +45,9 @@ public class MemberEntity implements Serializable {
     private String address;
     @OneToMany(mappedBy="memberEntity",fetch = FetchType.LAZY)
     private List<LendingEntity> lendings;
-    @OneToMany(mappedBy = "memberEntity") 
+    @OneToMany(mappedBy = "memberEntity", fetch = FetchType.LAZY) 
     private List<FineEntity> fines;
-    @OneToMany (mappedBy = "memberEntity") 
+    @OneToMany (mappedBy = "memberEntity", fetch = FetchType.LAZY) 
     private List<ReservationEntity> reservations ; 
   
        public MemberEntity() {
