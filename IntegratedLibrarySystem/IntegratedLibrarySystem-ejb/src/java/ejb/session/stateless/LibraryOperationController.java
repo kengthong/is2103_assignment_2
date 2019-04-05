@@ -188,6 +188,39 @@ public class LibraryOperationController implements LibraryOperationControllerRem
     
    
     
+    @Override
+    public LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, BookIsAlreadyOverdueException, MemberHasFinesException {
+//        If the book is already overdue
+//        o Member has unpaid fines
+//        o The book is reserved by another member    
+
+        try {
+            //retrieve LEnding Entity
+            LendingEntity currentLendingEntity = lendingEntityControllerLocal.retrieveLendingByBookId(bookId);
+            
+            //Compare due date with current date
+            Date dueDate = currentLendingEntity.getDueDate();
+            lendingEntityControllerLocal.checkIsBookOverdue(dueDate);
+            
+            //check for fines
+            fineControllerLocal.checkIfMemberHasFines(identityNumber);
+            //check for reserve
+            List<ReservationEntity> reservations = reservationControllerLocal.retrieveAllReservationsByBookId(bookId);
+            if (!reservations.isEmpty()) {
+                lendingEntityControllerLocal.checkIfMemberOnReserveList(identityNumber);
+            }
+            //extend book
+            Long lendId = currentLendingEntity.getLendId();
+            LendingEntity updatedLendingEntity = lendingEntityControllerLocal.extendBook(lendId);
+            //return lending entity
+            return updatedLendingEntity;
+            
+        } catch (BookIsAlreadyOverdueException 
+                | MemberHasFinesException 
+                | MemberNotAtTopOfReserveList ex){
+            throw ex;
+        }
+    }
     
 
 }

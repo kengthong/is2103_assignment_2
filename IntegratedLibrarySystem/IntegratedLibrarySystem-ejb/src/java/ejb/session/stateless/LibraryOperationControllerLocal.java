@@ -29,10 +29,10 @@ public interface LibraryOperationControllerLocal {
 
     LendingEntity doLendBook(String identityNumber, Long bookId) throws BookNotFoundException, MemberNotFoundException, BookIsOnLoanException, MemberHasFinesException, MaxLoansExceeded, MemberNotAtTopOfReserveList;
 
-    LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, MemberHasFinesException, BookIsAlreadyOverdueException;
-
     void viewReservations();
 
     void deleteReservation(Long bookId, String identityNumber) throws MemberNotFoundException, ReservationNotFoundException ;
+  
+    LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, BookIsAlreadyOverdueException, MemberHasFinesException;
     
 }
