@@ -19,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
@@ -36,42 +37,40 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     @PersistenceContext(unitName = "librarydb2New-ejbPU")
     private EntityManager entityManager;
 
-    
-    
     public LendingEntityController() {
     }
 
     @Override
     public void checkIsBookLent(Long bookId) throws BookIsOnLoanException {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false") ; 
-        query.setParameter("inBookId",bookId) ; 
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false");
+        query.setParameter("inBookId", bookId);
 
-        if (!query.getResultList().isEmpty() ) {
+        if (!query.getResultList().isEmpty()) {
             throw new BookIsOnLoanException("Book has been lent out and cannot be borrowed!");
         }
     }
 
     @Override
-    public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded{
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber") ;
-        query.setParameter("inIdentityNumber", identityNumber) ; 
-        
-        if(query.getResultList().size() >= 3){
+    public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded {
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber");
+        query.setParameter("inIdentityNumber", identityNumber);
+
+        if (query.getResultList().size() >= 3) {
             throw new MaxLoansExceeded("Member has already borrowed 3 books and cannot borrow anymore books!");
         }
     }
-    
+
     @Override
     public void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList {
-        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity WHERE r.memberEntity.identityNumber = :inIdentityNumber") ; 
-        query.setParameter("inIdentityNumber", identityNumber) ; 
-        
-        BookEntity book = (BookEntity)query.getResultList() ; 
-        List<ReservationEntity> reserveList = book.getReservations() ;
-        if (!book.getReservations().get(0).getMember().getIdentityNumber().equals(identityNumber) )  {
+        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity WHERE r.memberEntity.identityNumber = :inIdentityNumber");
+        query.setParameter("inIdentityNumber", identityNumber);
+
+        BookEntity book = (BookEntity) query.getResultList();
+        List<ReservationEntity> reserveList = book.getReservations();
+        if (!book.getReservations().get(0).getMember().getIdentityNumber().equals(identityNumber)) {
             throw new MemberNotAtTopOfReserveList("Book has been reserved by another member");
         }
-    } 
+    }
 
     @Override
     public Date generateDueDate(Date date) {
@@ -108,13 +107,10 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public LendingEntity createNewLending(LendingEntity newLendingEntity) {
-        try
-        {
+        try {
             entityManager.persist(newLendingEntity);
             entityManager.flush();
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
             System.out.println("Exception =" + ex.getMessage());
         }
 
@@ -146,9 +142,38 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     public void persist(Object object) {
         entityManager.persist(object);
     }
+
+    @Override
+    public void checkIsBookOverdue(Date dueDate) throws BookIsAlreadyOverdueException {
+        Date currentDate = new Date();
+
+        if (currentDate.after(dueDate)) {
+            throw new BookIsAlreadyOverdueException("Book is already overdue!");
+        }
+    }
+
+    @Override
+    public LendingEntity extendBook(Long lendId) {
+        try {
+            LendingEntity currentLendingEntity = retrieveLendingByLendingId(lendId);
+            Date dueDate = currentLendingEntity.getDueDate();
+            Calendar c = Calendar.getInstance();
+            c.setTime(dueDate); // Now use today date.
+            c.add(Calendar.DATE, 14); // Adding 5 days
+            Date newDueDate = c.getTime();
+            
+            currentLendingEntity.setDueDate(newDueDate);
+            entityManager.merge(currentLendingEntity);
+            entityManager.flush();
+            
+            return currentLendingEntity;
+            
+        } catch(LendingNotFoundException ex)
+        {
+            return null;
+        }
+    }
     
-
-
-
+    
 
 }
