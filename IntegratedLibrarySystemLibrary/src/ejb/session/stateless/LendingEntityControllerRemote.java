@@ -9,6 +9,7 @@ import entity.LendingEntity;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
@@ -37,6 +38,10 @@ public interface LendingEntityControllerRemote {
     void deleteLendingEntity(Long lendId) throws LendingNotFoundException;
 
     void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList;
+
+    void checkIsBookOverdue(Date dueDate) throws BookIsAlreadyOverdueException;
+
+    LendingEntity extendBook(Long lendId);
 
     
 

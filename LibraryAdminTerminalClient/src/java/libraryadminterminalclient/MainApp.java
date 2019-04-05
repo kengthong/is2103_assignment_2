@@ -69,7 +69,7 @@ public class MainApp {
                     try {
 
                         doLogin();
-                        libraryOperationModule = new LibraryOperationModule(libraryOperationControllerRemote, staffEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, bookEntityControllerRemote, fineControllerRemote, reservationControllerRemote, currentStaffEntity);
+                        this.libraryOperationModule = new LibraryOperationModule(libraryOperationControllerRemote, staffEntityControllerRemote, lendingEntityControllerRemote, memberEntityControllerRemote, bookEntityControllerRemote, fineControllerRemote, reservationControllerRemote, this.currentStaffEntity);
                         administrationOperationModule = new AdministrationOperationModule(libraryOperationControllerRemote, staffEntityControllerRemote, bookEntityControllerRemote, memberEntityControllerRemote, currentStaffEntity);
                         registrationOperationModule = new RegistrationOperationModule(memberEntityControllerRemote, currentStaffEntity);
                         menuMain();
@@ -103,7 +103,7 @@ public class MainApp {
 
         if (username.length() > 0 && password.length() > 0) {
             try {
-                currentStaffEntity = libraryOperationControllerRemote.staffLogin(username, password);
+                this.currentStaffEntity = libraryOperationControllerRemote.staffLogin(username, password);
                 System.out.println("Login successful!\n");
             } catch (InvalidLoginException ex) {
                 System.out.println("Invalid login credential: " + ex.getMessage() + "\n");

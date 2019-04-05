@@ -21,8 +21,14 @@ public interface ReservationControllerLocal {
 
     public boolean checkForReservation(Long bookId);
 
-    public void deleteReservation(Long reservationId) throws ReservationNotFoundException;
+    public void deleteReservation(ReservationEntity bookToRemove) throws ReservationNotFoundException;
 
     List<ReservationEntity> retrieveAllReservationsByBookId(Long bookId);
+
+    List<ReservationEntity> retrieveReservationsByIsbn(String isbn);
+
+    List<ReservationEntity> retrieveReservationsByMember(Long memberId);
+
+    ReservationEntity retrieveReservationOfMember(Long bookId, Long memberId);
 
 }

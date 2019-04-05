@@ -9,16 +9,15 @@ import entity.BookEntity;
 import entity.LendingEntity;
 import entity.ReservationEntity;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
@@ -146,8 +145,39 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     public void persist(Object object) {
         entityManager.persist(object);
     }
-    
 
+    @Override
+    public void checkIsBookOverdue(Date dueDate) throws BookIsAlreadyOverdueException {
+        
+     Date currentDate = new Date();
+
+        if (currentDate.after(dueDate)) {
+            throw new BookIsAlreadyOverdueException("Book is already overdue!");
+        }
+    }
+
+    @Override
+    public LendingEntity extendBook(Long lendId) {
+       try {
+            LendingEntity currentLendingEntity = retrieveLendingByLendingId(lendId);
+            Date dueDate = currentLendingEntity.getDueDate();
+            Calendar c = Calendar.getInstance();
+            c.setTime(dueDate); // Now use today date.
+            c.add(Calendar.DATE, 14); // Adding 5 days
+            Date newDueDate = c.getTime();
+            
+            currentLendingEntity.setDueDate(newDueDate);
+            entityManager.merge(currentLendingEntity);
+            entityManager.flush();
+            
+            return currentLendingEntity;
+            
+        } catch(LendingNotFoundException ex)
+        {
+            return null;
+        }
+    }
+    
 
 
 
