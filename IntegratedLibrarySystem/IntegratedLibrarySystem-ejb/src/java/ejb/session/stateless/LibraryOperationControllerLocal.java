@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.LendingEntity;
 import entity.StaffEntity;
 import javax.ejb.Local;
+import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
 import util.exception.InvalidLoginException;
@@ -26,5 +27,7 @@ public interface LibraryOperationControllerLocal {
     StaffEntity staffLogin(String username, String password) throws InvalidLoginException;
 
     LendingEntity doLendBook(String identityNumber, Long bookId) throws BookNotFoundException, MemberNotFoundException, BookIsOnLoanException, MemberHasFinesException, MaxLoansExceeded, MemberNotAtTopOfReserveList;
+
+    LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, BookIsAlreadyOverdueException, MemberHasFinesException;
     
 }
