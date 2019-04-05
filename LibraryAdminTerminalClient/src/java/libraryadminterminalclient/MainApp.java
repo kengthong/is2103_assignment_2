@@ -5,7 +5,7 @@
  */
 package libraryadminterminalclient;
 
-import ejb.session.stateful.LibraryOperationControllerRemote;
+import ejb.session.stateless.LibraryOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
 import ejb.session.stateless.FineControllerRemote;
 import ejb.session.stateless.LendingEntityControllerRemote;

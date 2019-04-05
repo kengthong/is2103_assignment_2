@@ -36,7 +36,7 @@ public class FineEntity implements Serializable {
     @Column(scale = 2, nullable = false)
     private double amount;
     @Column(nullable = false)
-    private boolean status;
+    private boolean hasPaid;
     
     
 
@@ -64,12 +64,12 @@ public class FineEntity implements Serializable {
         this.amount = amount;
     }
 
-    public boolean getStatus() {
-        return status;
+    public boolean getHasPaid() {
+        return hasPaid;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setHasPaid(boolean hasPaid) {
+        this.hasPaid = hasPaid;
     }
 
     @Override

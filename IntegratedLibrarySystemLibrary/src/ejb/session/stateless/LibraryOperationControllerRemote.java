@@ -5,8 +5,17 @@
  */
 package ejb.session.stateless;
 
+import entity.LendingEntity;
 import entity.StaffEntity;
 import javax.ejb.Remote;
+import util.exception.BookIsAlreadyOverdueException;
+import util.exception.BookIsOnLoanException;
+import util.exception.BookNotFoundException;
+import util.exception.InvalidLoginException;
+import util.exception.MaxLoansExceeded;
+import util.exception.MemberHasFinesException;
+import util.exception.MemberNotAtTopOfReserveList;
+import util.exception.MemberNotFoundException;
 
 /**
  *
@@ -15,6 +24,10 @@ import javax.ejb.Remote;
 @Remote
 public interface LibraryOperationControllerRemote {
 
-    StaffEntity staffLogin(String username, String password);
+    StaffEntity staffLogin(String username, String password) throws InvalidLoginException;
+
+    LendingEntity doLendBook(String identityNumber, Long bookId) throws BookNotFoundException, MemberNotFoundException, BookIsOnLoanException, MemberHasFinesException, MaxLoansExceeded, MemberNotAtTopOfReserveList;
+
+    LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, BookIsAlreadyOverdueException, MemberHasFinesException;
     
 }

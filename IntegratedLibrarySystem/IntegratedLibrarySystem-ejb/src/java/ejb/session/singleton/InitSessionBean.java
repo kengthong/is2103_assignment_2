@@ -74,5 +74,6 @@ public class InitSessionBean {
 
         memberEntityControllerLocal.createNewMember(new MemberEntity("S7483027A" , "password", "Tony", "Teo", "Male", 44, "87297373", "11 Tampines Ave 3"));
         memberEntityControllerLocal.createNewMember(new MemberEntity("S8381028X" , "password2", "Wendy", "Tan", "Female", 35, "97502837", "15 Computing Dr"));
+        memberEntityControllerLocal.createNewMember(new MemberEntity("test" , "pass", "firstname", "lastname", "Female", 22, "2222222", "15 222 Dr"));
     }
 }

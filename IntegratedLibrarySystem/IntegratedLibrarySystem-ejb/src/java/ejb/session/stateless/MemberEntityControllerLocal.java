@@ -20,7 +20,6 @@ public interface MemberEntityControllerLocal {
 
     MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException;
 
-    MemberEntity retrieveMemberByUsername(String username) throws MemberNotFoundException;
     
     public MemberEntity createNewMember(MemberEntity newMemberEntity) ; 
     public MemberEntity retrieveMemberByIdentityNumber(String identityNumber) throws MemberNotFoundException ; 

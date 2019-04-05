@@ -5,7 +5,7 @@
  */
 package libraryadminterminalclient;
 
-import ejb.session.stateful.LibraryOperationControllerRemote;
+import ejb.session.stateless.LibraryOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
 import ejb.session.stateless.FineControllerRemote;
 import ejb.session.stateless.LendingEntityControllerRemote;
@@ -105,7 +105,7 @@ public class LibraryOperationModule {
 
     private void doLendBook() {
         
-        libraryOperationControllerRemote.doLendBook() ; 
+        
         
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** ILS :: Library Operation :: Lend Book ***\n");
@@ -113,28 +113,29 @@ public class LibraryOperationModule {
         String identityNumber = scanner.nextLine().trim();
         System.out.print("Enter Book ID> ");
         Long bookId = scanner.nextLong();
-        LendingEntity newLendingEntity = new LendingEntity();
-        Date date = new Date();
+//        LendingEntity newLendingEntity = new LendingEntity();
+//        Date date = new Date();
 
         try { //check if book and member exists 
-            BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId);
-            MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
-          
-            lendingEntityControllerRemote.checkIsBookLent(bookId);
-            fineControllerRemote.checkIfMemberHasFines(identityNumber);
-            lendingEntityControllerRemote.checkIfMemberExceedsMaxLoans(identityNumber);
-            List<ReservationEntity> reservations = reservationControllerRemote.retrieveAllReservationsByBookId(bookId);
-            if(!reservations.isEmpty()){
-                lendingEntityControllerRemote.checkIfMemberOnReserveList(identityNumber);
-            }
-          
-            newLendingEntity.setMember(memberEntity);
-            newLendingEntity.setBook(bookEntity);
-            Date duedate = lendingEntityControllerRemote.generateDueDate(date);
-            newLendingEntity.setLendDate(date);
-            newLendingEntity.setDueDate(duedate);
-             newLendingEntity.setHasReturned(false);
-            newLendingEntity = lendingEntityControllerRemote.createNewLending(newLendingEntity);
+//            BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId);
+//            MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
+//          
+//            lendingEntityControllerRemote.checkIsBookLent(bookId);
+//            fineControllerRemote.checkIfMemberHasFines(identityNumber);
+//            lendingEntityControllerRemote.checkIfMemberExceedsMaxLoans(identityNumber);
+//            List<ReservationEntity> reservations = reservationControllerRemote.retrieveAllReservationsByBookId(bookId);
+//            if(!reservations.isEmpty()){
+//                lendingEntityControllerRemote.checkIfMemberOnReserveList(identityNumber);
+//            }
+//          
+//            newLendingEntity.setMember(memberEntity);
+//            newLendingEntity.setBook(bookEntity);
+//            Date duedate = lendingEntityControllerRemote.generateDueDate(date);
+//            newLendingEntity.setLendDate(date);
+//            newLendingEntity.setDueDate(duedate);
+//             newLendingEntity.setHasReturned(false);
+//            newLendingEntity = lendingEntityControllerRemote.createNewLending(newLendingEntity);
+            LendingEntity newLendingEntity = libraryOperationControllerRemote.doLendBook(identityNumber, bookId) ; 
             
             Date newDueDate = newLendingEntity.getDueDate() ; 
             SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd") ; 
@@ -175,7 +176,7 @@ public class LibraryOperationModule {
     }
 
     private void doReturnBook() {
-        libraryOperationControllerRemote.doReturnBook() ; 
+//        libraryOperationControllerRemote.doReturnBook() ; 
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("*** ILS :: Library Operation :: Return Book ***\n");
 //        System.out.println("Enter Member Identity Number> ");
@@ -201,7 +202,7 @@ public class LibraryOperationModule {
     }
 
     private void doExtendBook() {
-        libraryOperationControllerRemote.doExtendBook() ; 
+//        libraryOperationControllerRemote.doExtendBook() ; 
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("*** ILS :: Library Operation :: Extend Book ***\n");
 //        System.out.println("Enter Member Identity Number> ");
@@ -232,7 +233,7 @@ public class LibraryOperationModule {
     }
 
     private void doPayFines() {
-        libraryOperationControllerRemote.doPayFines() ; 
+//        libraryOperationControllerRemote.doPayFines() ; 
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("*** ILS :: Library Operation :: Pay Fines ***\n");
 //        System.out.println("Enter Member Identity Number>\n");

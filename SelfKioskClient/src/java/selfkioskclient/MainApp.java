@@ -7,10 +7,9 @@ package selfkioskclient;
 
 import ejb.session.stateful.SelfKioskOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
-import ejb.session.stateless.FineControllerRemote;
 import ejb.session.stateless.LendingEntityControllerRemote;
+import ejb.session.stateless.LibraryOperationControllerRemote;
 import ejb.session.stateless.MemberEntityControllerRemote;
-import ejb.session.stateless.ReservationControllerRemote;
 import entity.MemberEntity;
 import java.util.Scanner;
 import util.exception.InvalidLoginException;
@@ -21,28 +20,30 @@ import util.exception.InvalidLoginException;
  */
 public class MainApp {
 
-    private SelfKioskOperationControllerRemote selfKioskOperationController;
     private BookEntityControllerRemote bookEntityControllerRemote;
-    private FineControllerRemote fineControllerRemote;
+    private LibraryOperationControllerRemote libraryOperationControllerRemote;
+//    private FineControllerRemote fineControllerRemote;
     private MemberEntityControllerRemote memberEntityControllerRemote;
     private MemberOperationModule memberOperationModule;
     private LendingEntityControllerRemote lendingEntityControllerRemote;
-    private ReservationControllerRemote reservationControllerRemote;
+//    private ReservationControllerRemote reservationControllerRemote;
 
     private MemberEntity currentActiveMember;
 
     public MainApp(
+            LibraryOperationControllerRemote libraryOperationControllerRemote,
             BookEntityControllerRemote bookEntityControllerRemote,
-            FineControllerRemote fineControllerRemote,
+            //            FineControllerRemote fineControllerRemote,
             MemberEntityControllerRemote memberEntityControllerRemote,
-            LendingEntityControllerRemote lendingEntityControllerRemote,
-            ReservationControllerRemote reservationControllerRemote
+            LendingEntityControllerRemote lendingEntityControllerRemote
+    //            ReservationControllerRemote reservationControllerRemote
     ) {
-        this.selfKioskOperationController = selfKioskOperationController;
         this.bookEntityControllerRemote = bookEntityControllerRemote;
         this.memberEntityControllerRemote = memberEntityControllerRemote;
-        this.fineControllerRemote = fineControllerRemote;
-        this.reservationControllerRemote = reservationControllerRemote;
+        this.libraryOperationControllerRemote = libraryOperationControllerRemote;
+        this.lendingEntityControllerRemote = lendingEntityControllerRemote;
+//        this.fineControllerRemote = fineControllerRemote;
+//        this.reservationControllerRemote = reservationControllerRemote;
     }
 
     public void run() {
@@ -51,9 +52,10 @@ public class MainApp {
 
         System.out.println("*** Welcome to Self-Service Kiosk *** \n");
 
-        while (response < 1 || response > 2) {
-            System.out.println("1: Login");
-            System.out.println("2: Exit\n");
+        while (response < 1 || response > 3) {
+            System.out.println("1: Register");
+            System.out.println("2: Login");
+            System.out.println("3: Exit\n");
             System.out.print("> ");
             response = sc.nextInt();
 
@@ -64,11 +66,12 @@ public class MainApp {
                 try {
                     doLogin();
                     this.memberOperationModule = new MemberOperationModule(
+                            this.libraryOperationControllerRemote,
                             this.bookEntityControllerRemote,
-                            this.fineControllerRemote,
+                            //                            this.fineControllerRemote,
                             this.lendingEntityControllerRemote,
                             this.memberEntityControllerRemote,
-                            this.reservationControllerRemote,
+                            //                            this.reservationControllerRemote,
                             this.currentActiveMember
                     );
                     memberOperationModule.displayMenu();
@@ -82,27 +85,24 @@ public class MainApp {
 
     private void doLogin() throws InvalidLoginException {
         Scanner sc = new Scanner(System.in);
-        String username = "";
-        String password = "";
+        String identityNumber = "";
+        String securityCode = "";
         System.out.println("*** Self-Service Kiosk :: Login ***\n");
 
-        while (true) {
-            System.out.print("Enter username> ");
-            username = sc.nextLine().trim();
-            System.out.print("Enter password> ");
-            password = sc.nextLine().trim();
+        System.out.print("Enter Identity Number> ");
+        identityNumber = sc.nextLine().trim();
+        System.out.print("Enter Security Code> ");
+        securityCode = sc.nextLine().trim();
 
-            if (username.length() > 0 && password.length() > 0) {
-                try {
-                    this.currentActiveMember = this.memberEntityControllerRemote.doMemberLogin(username, password);
-
-                    System.out.println("Login successful!");
-                } catch (InvalidLoginException ex) {
-                    System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
-                    throw new InvalidLoginException();
-                }
+        if (identityNumber.length() > 0 && securityCode.length() > 0) {
+            try {
+                this.currentActiveMember = this.memberEntityControllerRemote.doMemberLogin(identityNumber, securityCode);
+                System.out.println("Login successful!\n");
+            } catch (InvalidLoginException ex) {
+                throw ex;
             }
         }
+
     }
 
     private void doRegisterMember() {

@@ -5,10 +5,10 @@
  */
 package libraryadminterminalclient;
 
-import ejb.session.stateful.LibraryOperationControllerRemote;
 import ejb.session.stateless.BookEntityControllerRemote;
 import ejb.session.stateless.FineControllerRemote;
 import ejb.session.stateless.LendingEntityControllerRemote;
+import ejb.session.stateless.LibraryOperationControllerRemote;
 import ejb.session.stateless.MemberEntityControllerRemote;
 import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.StaffEntityControllerRemote;
@@ -20,7 +20,9 @@ import util.exception.MemberNotFoundException;
  */
 public class Main {
 
-    
+    @EJB
+    private static LibraryOperationControllerRemote libraryOperationControllerRemote;
+
     @EJB
     private static BookEntityControllerRemote bookEntityControllerRemote;
     
@@ -39,8 +41,7 @@ public class Main {
     @EJB 
     private static ReservationControllerRemote reservationControllerRemote;
     
-    @EJB
-    private static LibraryOperationControllerRemote libraryOperationControllerRemote;
+    
   
 
     
