@@ -43,6 +43,8 @@ public interface LendingEntityControllerRemote {
 
     LendingEntity extendBook(Long lendId);
 
+    LendingEntity returnLending(Long lendId) throws LendingNotFoundException;
+
     
 
 

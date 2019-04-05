@@ -168,21 +168,21 @@ public class LibraryOperationModule {
     
         private void printLending(List<LendingEntity> lentBooks) {
         System.out.println("Currently Lent Books:");
-        System.out.println("Id\t| Title\t| Due date");
-        
+//        System.out.println("Id\t| Title\t| Due date");
 
+        System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due date");
         if (!lentBooks.isEmpty()) {
             for (LendingEntity lendingEntity : lentBooks) {
-                Long lendId = lendingEntity.getLendId();
-                //            String title = lendingEntity.getTitle
-                String title = lendingEntity.getBook().getTitle() ;  
-                // date
-                Date dueDate = lendingEntity.getDueDate() ; 
-                SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd") ;
-                System.out.println(lendId + "\t| " + title + "\t| " + dt1.format(dueDate));
+                Long bookId = lendingEntity.getBook().getBookId();
+                String title = lendingEntity.getBook().getTitle();
+                
+                Date dueDate = lendingEntity.getDueDate();
+                SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+                String dd = dt1.format(dueDate);
+                System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", dd);
             }
         }
-        
+
         System.out.println();
     }
     

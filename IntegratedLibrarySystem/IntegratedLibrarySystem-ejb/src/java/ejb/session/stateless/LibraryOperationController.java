@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.BookEntity;
+import entity.FineEntity;
 import entity.LendingEntity;
 import entity.MemberEntity;
 import entity.ReservationEntity;
@@ -13,6 +14,7 @@ import entity.StaffEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -21,6 +23,7 @@ import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
 import util.exception.InvalidLoginException;
+import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
 import util.exception.MemberHasFinesException;
 import util.exception.MemberNotAtTopOfReserveList;
@@ -59,11 +62,11 @@ public class LibraryOperationController implements LibraryOperationControllerRem
     }
 
     @Override
-    public StaffEntity staffLogin(String username, String password) throws InvalidLoginException{
-        try{
+    public StaffEntity staffLogin(String username, String password) throws InvalidLoginException {
+        try {
             StaffEntity retrievedStaffEntity = staffEntityControllerLocal.staffLogin(username, password);
             return retrievedStaffEntity;
-        } catch (InvalidLoginException ex){
+        } catch (InvalidLoginException ex) {
             throw ex;
         }
     }
@@ -93,17 +96,15 @@ public class LibraryOperationController implements LibraryOperationControllerRem
             newLendingEntity.setDueDate(duedate);
             newLendingEntity.setHasReturned(false);
             newLendingEntity = lendingEntityControllerLocal.createNewLending(newLendingEntity);
-            
+
             return newLendingEntity;
-            
-        } catch(
-                BookNotFoundException | 
-                MemberNotFoundException | 
-                BookIsOnLoanException | 
-                MemberHasFinesException |
-                MaxLoansExceeded |
-                MemberNotAtTopOfReserveList ex
-            ) {
+
+        } catch (BookNotFoundException
+                | MemberNotFoundException
+                | BookIsOnLoanException
+                | MemberHasFinesException
+                | MaxLoansExceeded
+                | MemberNotAtTopOfReserveList ex) {
             throw ex;
         }
     }
@@ -114,15 +115,14 @@ public class LibraryOperationController implements LibraryOperationControllerRem
 //        If the book is already overdue
 //        o Member has unpaid fines
 //        o The book is reserved by another member    
-
         try {
             //retrieve LEnding Entity
             LendingEntity currentLendingEntity = lendingEntityControllerLocal.retrieveLendingByBookId(bookId);
-            
+
             //Compare due date with current date
             Date dueDate = currentLendingEntity.getDueDate();
             lendingEntityControllerLocal.checkIsBookOverdue(dueDate);
-            
+
             //check for fines
             fineControllerLocal.checkIfMemberHasFines(identityNumber);
             //check for reserve
@@ -135,92 +135,77 @@ public class LibraryOperationController implements LibraryOperationControllerRem
             LendingEntity updatedLendingEntity = lendingEntityControllerLocal.extendBook(lendId);
             //return lending entity
             return updatedLendingEntity;
-            
-        } catch (BookIsAlreadyOverdueException 
-                | MemberHasFinesException 
-                | MemberNotAtTopOfReserveList ex){
+
+        } catch (BookIsAlreadyOverdueException
+                | MemberHasFinesException
+                | MemberNotAtTopOfReserveList ex) {
             throw ex;
         }
     }
-    
-
 
     @Override
     public void viewReservations() {
-            System.out.print("Enter Book ID>\n");
+        System.out.print("Enter Book ID>\n");
         Scanner scanner = new Scanner(System.in);
-        Long bookId = scanner.nextLong() ; 
-    
-        try {
-        BookEntity bookEntity = bookEntityControllerLocal.retrieveBookByBookId(bookId) ;        
-        
-        List <ReservationEntity> reservationEntities = reservationControllerLocal.retrieveAllReservationsByBookId(bookId) ;
-        if(!reservationEntities.isEmpty()) {
-            for (ReservationEntity reservationEntity : reservationEntities) {
-            Long reservationId = reservationEntity.getReservationId() ; 
-            Long memberId = reservationEntity.getMember().getMemberId() ; 
-            System.out.println(reservationId + "\t|" + memberId) ;    
-            }
-        }
-        System.out.println() ;
-        } catch (BookNotFoundException ex){
-                System.out.println("Book cannot be found!") ; 
-        }
-        
-        System.out.println() ; 
-        
+        Long bookId = scanner.nextLong();
 
-        } 
+        try {
+            BookEntity bookEntity = bookEntityControllerLocal.retrieveBookByBookId(bookId);
+
+            List<ReservationEntity> reservationEntities = reservationControllerLocal.retrieveAllReservationsByBookId(bookId);
+            if (!reservationEntities.isEmpty()) {
+                for (ReservationEntity reservationEntity : reservationEntities) {
+                    Long reservationId = reservationEntity.getReservationId();
+                    Long memberId = reservationEntity.getMember().getMemberId();
+                    System.out.println(reservationId + "\t|" + memberId);
+                }
+            }
+            System.out.println();
+        } catch (BookNotFoundException ex) {
+            System.out.println("Book cannot be found!");
+        }
+
+        System.out.println();
+
+    }
 
     @Override
     public void deleteReservation(Long bookId, String identityNumber) throws MemberNotFoundException, ReservationNotFoundException {
         try {
-        MemberEntity memberEntity = memberEntityControllerLocal.retrieveMemberByIdentityNumber(identityNumber); 
-        ReservationEntity reservationToDelete = reservationControllerLocal.retrieveReservationOfMember(bookId,memberEntity.getMemberId()) ;
-        reservationControllerLocal.deleteReservation(reservationToDelete); 
-        
-        } catch (MemberNotFoundException | ReservationNotFoundException ex) {
-           throw ex ;
-        }
-    }
-    
-    
-    
-   
-    
-    @Override
-    public LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, BookIsAlreadyOverdueException, MemberHasFinesException {
-//        If the book is already overdue
-//        o Member has unpaid fines
-//        o The book is reserved by another member    
+            MemberEntity memberEntity = memberEntityControllerLocal.retrieveMemberByIdentityNumber(identityNumber);
+            ReservationEntity reservationToDelete = reservationControllerLocal.retrieveReservationOfMember(bookId, memberEntity.getMemberId());
+            reservationControllerLocal.deleteReservation(reservationToDelete);
 
-        try {
-            //retrieve LEnding Entity
-            LendingEntity currentLendingEntity = lendingEntityControllerLocal.retrieveLendingByBookId(bookId);
-            
-            //Compare due date with current date
-            Date dueDate = currentLendingEntity.getDueDate();
-            lendingEntityControllerLocal.checkIsBookOverdue(dueDate);
-            
-            //check for fines
-            fineControllerLocal.checkIfMemberHasFines(identityNumber);
-            //check for reserve
-            List<ReservationEntity> reservations = reservationControllerLocal.retrieveAllReservationsByBookId(bookId);
-            if (!reservations.isEmpty()) {
-                lendingEntityControllerLocal.checkIfMemberOnReserveList(identityNumber);
-            }
-            //extend book
-            Long lendId = currentLendingEntity.getLendId();
-            LendingEntity updatedLendingEntity = lendingEntityControllerLocal.extendBook(lendId);
-            //return lending entity
-            return updatedLendingEntity;
-            
-        } catch (BookIsAlreadyOverdueException 
-                | MemberHasFinesException 
-                | MemberNotAtTopOfReserveList ex){
+        } catch (MemberNotFoundException | ReservationNotFoundException ex) {
             throw ex;
         }
     }
-    
+
+    @Override
+    public void doReturnBook(Long bookId, Long memberId) throws LendingNotFoundException, MemberNotFoundException {
+        try {
+            LendingEntity currentLendingEntity = lendingEntityControllerLocal.retrieveLendingByBookId(bookId);
+            currentLendingEntity = lendingEntityControllerLocal.returnLending(currentLendingEntity.getLendId());
+            Date currentDate = new Date();
+            Date dueDate = currentLendingEntity.getDueDate();
+
+            if (currentDate.after(dueDate)) {
+                MemberEntity currentMemberEntity = memberEntityControllerLocal.retrieveMemberByMemberId(memberId);
+                long diff = currentDate.getTime() - dueDate.getTime();
+                int days = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+                System.out.println("\n\n days=" + days + " \n\n");
+
+                FineEntity newFineEntity = new FineEntity();
+                newFineEntity.setMemberEntity(currentMemberEntity);
+                newFineEntity.setAmount(days);
+                newFineEntity.setHasPaid(false);
+
+                newFineEntity = fineControllerLocal.createFine(newFineEntity);
+            }
+        } catch (LendingNotFoundException
+                | MemberNotFoundException ex) {
+            throw ex;
+        }
+    }
 
 }
