@@ -42,6 +42,8 @@ public interface LendingEntityControllerLocal {
     void checkIsBookOverdue(Date dueDate) throws BookIsAlreadyOverdueException;
 
     LendingEntity extendBook(Long lendId);
+
+    LendingEntity returnLending(Long lendId) throws LendingNotFoundException;
     
     
 }

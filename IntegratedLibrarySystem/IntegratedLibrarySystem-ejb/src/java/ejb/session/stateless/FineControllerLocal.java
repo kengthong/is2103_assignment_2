@@ -26,6 +26,4 @@ public interface FineControllerLocal {
     FineEntity createFine(FineEntity newFineEntity) ; 
 
     FineEntity retrieveFineByFineId(Long fineId);
-
-
 }

@@ -16,8 +16,14 @@ import util.exception.MemberHasFinesException;
  */
 @Remote
 public interface FineControllerRemote {
-    
+
     public void checkIfMemberHasFines(String identityNumber) throws MemberHasFinesException;
+
+    public List<FineEntity> retrieveFinesByMember(String identityNumber);
+
+    public void payFine(Long fineId);
+
+    FineEntity createFine(FineEntity newFineEntity);
 
     public List<FineEntity> retrieveFinesByMember(String identityNumber);
 

@@ -83,7 +83,5 @@ public class FineController implements FineControllerRemote, FineControllerLocal
         
         return newFineEntity;
     }
-
-
     
 }

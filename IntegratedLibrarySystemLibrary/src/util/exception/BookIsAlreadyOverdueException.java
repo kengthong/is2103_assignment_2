@@ -10,8 +10,8 @@ package util.exception;
  * @author kengthong
  */
 public class BookIsAlreadyOverdueException extends Exception {
-    
-        public BookIsAlreadyOverdueException() {
+
+    public BookIsAlreadyOverdueException() {
     }
 
     

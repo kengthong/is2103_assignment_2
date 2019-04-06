@@ -12,6 +12,7 @@ import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
 import util.exception.InvalidLoginException;
+import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
 import util.exception.MemberHasFinesException;
 import util.exception.MemberNotAtTopOfReserveList;
@@ -31,6 +32,11 @@ public interface LibraryOperationControllerRemote {
 
     LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, MemberHasFinesException, BookIsAlreadyOverdueException;
 
+    void viewReservations();
+
     void deleteReservation(Long bookId, String identityNumber) throws MemberNotFoundException, ReservationNotFoundException ;
-    
+
+    LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, BookIsAlreadyOverdueException, MemberHasFinesException;
+
+    void doReturnBook(Long bookId, Long memberId) throws LendingNotFoundException, MemberNotFoundException;
 }
