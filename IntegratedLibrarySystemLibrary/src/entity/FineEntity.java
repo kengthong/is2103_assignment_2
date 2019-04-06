@@ -26,8 +26,6 @@ public class FineEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fineId;
-    @Column(length = 9, nullable = false)
-    private String identityNumber;
     //@OneToOne(optional = false)
     //private MemberEntity identityNumber;
     @ManyToOne
@@ -37,23 +35,22 @@ public class FineEntity implements Serializable {
     private double amount;
     @Column(nullable = false)
     private boolean hasPaid;
-    
-    
 
+    public FineEntity() {
+    }
+
+    public FineEntity(MemberEntity memberEntity, double amount, boolean hasPaid) {
+        this.memberEntity = memberEntity;
+        this.amount = amount;
+        this.hasPaid = hasPaid;
+    }
+    
     public Long getFineId() {
         return fineId;
     }
 
     public void setFineId(Long id) {
         this.fineId = fineId;
-    }
-
-    public String getIdentityNumber() {
-        return identityNumber;
-    }
-
-    public void setIdentityNumber(String identityNumber) {
-        this.identityNumber = identityNumber;
     }
 
     public double getAmount() {
@@ -95,6 +92,14 @@ public class FineEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.FineEntity[ fineId=" + fineId + " ]";
+    }
+
+    public MemberEntity getMemberEntity() {
+        return memberEntity;
+    }
+
+    public void setMemberEntity(MemberEntity memberEntity) {
+        this.memberEntity = memberEntity;
     }
     
 }

@@ -31,8 +31,6 @@ public interface LibraryOperationControllerLocal {
 
     LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, MemberHasFinesException, BookIsAlreadyOverdueException;
 
-    void viewReservations();
-
     void deleteReservation(Long bookId, String identityNumber) throws MemberNotFoundException, ReservationNotFoundException ;
     
 }

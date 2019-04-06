@@ -146,33 +146,6 @@ public class LibraryOperationController implements LibraryOperationControllerRem
 
 
     @Override
-    public void viewReservations() {
-            System.out.print("Enter Book ID>\n");
-        Scanner scanner = new Scanner(System.in);
-        Long bookId = scanner.nextLong() ; 
-    
-        try {
-        BookEntity bookEntity = bookEntityControllerLocal.retrieveBookByBookId(bookId) ;        
-        
-        List <ReservationEntity> reservationEntities = reservationControllerLocal.retrieveAllReservationsByBookId(bookId) ;
-        if(!reservationEntities.isEmpty()) {
-            for (ReservationEntity reservationEntity : reservationEntities) {
-            Long reservationId = reservationEntity.getReservationId() ; 
-            Long memberId = reservationEntity.getMember().getMemberId() ; 
-            System.out.println(reservationId + "\t|" + memberId) ;    
-            }
-        }
-        System.out.println() ;
-        } catch (BookNotFoundException ex){
-                System.out.println("Book cannot be found!") ; 
-        }
-        
-        System.out.println() ; 
-        
-
-        } 
-
-    @Override
     public void deleteReservation(Long bookId, String identityNumber) throws MemberNotFoundException, ReservationNotFoundException {
         try {
         MemberEntity memberEntity = memberEntityControllerLocal.retrieveMemberByIdentityNumber(identityNumber); 

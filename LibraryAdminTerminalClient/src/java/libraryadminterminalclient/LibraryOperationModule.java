@@ -12,6 +12,8 @@ import ejb.session.stateless.LendingEntityControllerRemote;
 import ejb.session.stateless.MemberEntityControllerRemote;
 import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.StaffEntityControllerRemote;
+import entity.BookEntity;
+import entity.FineEntity;
 import entity.LendingEntity;
 import entity.MemberEntity;
 import entity.ReservationEntity;
@@ -241,40 +243,53 @@ public class LibraryOperationModule {
     }
 
     private void doPayFines() {
-//        libraryOperationControllerRemote.doPayFines() ; 
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("*** ILS :: Library Operation :: Pay Fines ***\n");
-//        System.out.println("Enter Member Identity Number>\n");
-//        String identityNumber = scanner.nextLine().trim();
-//
-//        try {
-//            memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
-//            System.out.println("Unpaid Fines for Member:\n");
-//            fineControllerRemote.retrieveFinesByMember(identityNumber);
-//            //if list is empty System.out.println("There are no outstanding fines!") ; 
-//            System.out.println("Enter Fine ID to Settle>\n");
-//            Long fineId = scanner.nextLong();
-//            fineControllerRemote.payFine(fineId);
-//            System.out.println("Select Payment Method (1: Cash, 2: Card)>");
-//            int method = scanner.nextInt();
-//            if (method == 1) {
-//                System.out.println("Fine successfully paid.");
-//            } else if (method == 2) {
-//                System.out.println("Enter Name of Card>");
-//                scanner.nextLine().trim();
-//                System.out.println("Enter Card Number>");
-//                scanner.nextLine().trim();
-//                System.out.println("Enter Card Expiry>");
-//                scanner.nextLine().trim();
-//                System.out.println("Enter Pin>");
-//                scanner.nextLine().trim();
-//                System.out.println("Fine successfully paid.");
-//
-//            }
-//
-//        } catch (MemberNotFoundException ex) {
-//            System.out.println("Member Identity Number cannot be found!");
-//        }
+        
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("*** ILS :: Library Operation :: Pay Fines ***\n");
+        System.out.print("Enter Member Identity Number>");
+        String identityNumber = scanner.nextLine().trim();
+
+        try {
+            memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
+            List <FineEntity> fineEntities = fineControllerRemote.retrieveFinesByMember(identityNumber);
+            
+            if (!fineEntities.isEmpty()) {
+            System.out.println("Unpaid Fines For Member:") ; 
+            System.out.println("Fine ID\t| Amount ") ; 
+                for (FineEntity fineEntity : fineEntities) {
+                    Long fineId = fineEntity.getFineId() ; 
+                    Double amount = fineEntity.getAmount() ; 
+                    System.out.println(fineId + "\t|" + amount) ;
+                }
+            System.out.println("Enter Fine ID to Settle>\n");
+            Long fineIdToPay = scanner.nextLong();
+            FineEntity fineEntity = fineControllerRemote.retrieveFineByFineId(fineIdToPay) ; 
+            fineEntity.setHasPaid(true) ; 
+            System.out.println("Select Payment Method (1: Cash, 2: Card)>");
+            int method = scanner.nextInt();
+            if (method == 1) {
+                System.out.println("Fine successfully paid.");
+            } else if (method == 2) {
+                System.out.println("Enter Name of Card>");
+                scanner.nextLine().trim();
+                System.out.println("Enter Card Number>");
+                scanner.nextLine().trim();
+                System.out.println("Enter Card Expiry>");
+                scanner.nextLine().trim();
+                System.out.println("Enter Pin>");
+                scanner.nextLine().trim();
+                System.out.println("Fine successfully paid.");
+
+            }
+  
+            } else {
+               System.out.println("There are no outstanding fines for member!") ; 
+            }
+
+
+        } catch (MemberNotFoundException ex) {
+            System.out.println("Member Identity Number cannot be found!");
+        }
 
     }
 
@@ -297,9 +312,9 @@ public class LibraryOperationModule {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    this.libraryOperationControllerRemote.viewReservations();
+                    viewReservations();
                 } else if (response == 2) {
-                    System.out.println("Enter Member Identity Number>");
+                    System.out.print("Enter Member Identity Number>");
                     scanner.nextLine() ; 
                     String identityNumber = scanner.nextLine().trim();
                     printReservations(identityNumber) ; 
@@ -317,32 +332,57 @@ public class LibraryOperationModule {
 
     }
     
+        private void viewReservations() {
+            System.out.print("Enter Book ID>");
+        Scanner scanner = new Scanner(System.in);
+        Long bookId = scanner.nextLong() ; 
+    
+        try {
+        BookEntity bookEntity = bookEntityControllerRemote.retrieveBookByBookId(bookId) ;        
+        
+        List <ReservationEntity> reservationEntities = reservationControllerRemote.retrieveAllReservationsByBookId(bookId) ;
+        if(!reservationEntities.isEmpty()) {
+            System.out.println("Reservations under this book:") ; 
+            System.out.println("Reservation ID\t| Member ID\t| Member Identity Number") ; 
+            for (ReservationEntity reservationEntity : reservationEntities) {
+            Long reservationId = reservationEntity.getReservationId() ; 
+            Long memberId = reservationEntity.getMember().getMemberId() ;
+            String memberIdentity = reservationEntity.getMember().getIdentityNumber() ; 
+            System.out.println(reservationId + "\t|" + memberId+ "\t|" + memberIdentity) ;    
+            }
+        } else {
+            System.out.println("There are no reservations made for this book!") ; 
+        }
+        System.out.println() ;
+        } catch (BookNotFoundException ex){
+                System.out.println("Book cannot be found!") ; 
+        }
+        
+        System.out.println() ; 
+        
+
+        } 
+    
     private void printReservations(String identityNumber) {
         Scanner scanner = new Scanner(System.in) ; 
                     
-                    System.out.println("Books reserved by member:") ; 
-                    System.out.println("Book ID\t| Title") ; 
         
 
         
         try {
             MemberEntity memberEntity = this.memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber) ;
-            System.out.println(memberEntity.getMemberId()) ; 
 
-      
-        
        List<ReservationEntity> reservedBooks = this.reservationControllerRemote.retrieveReservationsByMember(memberEntity.getMemberId()) ; 
                if (!reservedBooks.isEmpty()) {
+            System.out.println("Books reserved by member:") ; 
+            System.out.println("Book ID\t| Title") ; 
             for (ReservationEntity reservationEntity : reservedBooks) {
                 Long bookId = reservationEntity.getBook().getBookId();
                 String title = reservationEntity.getBook().getTitle() ;  
 
                 System.out.println(bookId + "\t| " + title) ; 
             }
-        }
-        
-        System.out.println();
-        
+                    
         System.out.println("Book ID of Reservation to be deleted>") ; 
                     Long bookId = scanner.nextLong() ; 
                     try {
@@ -350,6 +390,10 @@ public class LibraryOperationModule {
                     } catch (MemberNotFoundException | ReservationNotFoundException ex ) {
                                     System.out.println(ex.getMessage());
                     }
+        
+        } else {
+                   System.out.println("No books have been reserved by member!") ; 
+               }
         
         } catch (MemberNotFoundException ex) {
             System.out.println(ex.getMessage());
