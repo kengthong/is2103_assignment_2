@@ -16,13 +16,14 @@ import util.exception.MemberHasFinesException;
  */
 @Local
 public interface FineControllerLocal {
-
+    
     public void checkIfMemberHasFines(String identityNumber) throws MemberHasFinesException;
 
     public List<FineEntity> retrieveFinesByMember(String identityNumber);
 
     public void payFine(Long fineId);
 
-    FineEntity createFine(FineEntity newFineEntity);
+    FineEntity createFine(FineEntity newFineEntity) ; 
 
+    FineEntity retrieveFineByFineId(Long fineId);
 }

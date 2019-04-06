@@ -40,7 +40,11 @@ public class ReservationEntity implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BookEntity book;
     
-    //NEED LIST OF RESERVATIONS FOR A BOOK 
+    //NEED LIST OF RESERVATIONS FOR A BOOK
+    
+    public ReservationEntity() {
+    }
+
  
     
     
