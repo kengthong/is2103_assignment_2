@@ -30,23 +30,30 @@ public class ReservationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
-    @Column(length = 60, nullable = false)
-    private String title;
+//    @Column(length = 60, nullable = false)
+//    private String title;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date availability;
     @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn (name="memberID")
+//    @JoinColumn (name="memberID")
     private MemberEntity memberEntity;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BookEntity book;
+    @Column(nullable=false)
+    private boolean hasFulfilled;
     
-    //NEED LIST OF RESERVATIONS FOR A BOOK
-    
+    //NEED LIST OF RESERVATIONS FOR A BOOK 
+
     public ReservationEntity() {
     }
 
- 
-    
+    public ReservationEntity(String title, Date availability, MemberEntity memberEntity, BookEntity book, boolean hasFulfilled) {
+//        this.title = title;
+        this.availability = availability;
+        this.memberEntity = memberEntity;
+        this.book = book;
+        this.hasFulfilled = hasFulfilled;
+    }
     
     public Long getReservationId() {
         return reservationId;
@@ -56,13 +63,13 @@ public class ReservationEntity implements Serializable {
         this.reservationId = reservationId;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+//    public String getTitle() {
+//        return title;
+//    }
+//
+//    public void setTitle(String title) {
+//        this.title = title;
+//    }
 
     public Date getAvailability() {
         return availability;
@@ -86,6 +93,14 @@ public class ReservationEntity implements Serializable {
     
     public void setBook(BookEntity book) {
         this.book = book;
+    }
+    
+    public boolean getHasFulfilled() {
+        return hasFulfilled;
+    }
+
+    public void setHasFulfilled(boolean hasFulfilled) {
+        this.hasFulfilled = hasFulfilled;
     }
     
     

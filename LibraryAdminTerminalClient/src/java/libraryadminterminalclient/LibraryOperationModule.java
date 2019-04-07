@@ -22,9 +22,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import util.exception.BookHasBeenReservedException;
 import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
+import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
 import util.exception.MemberHasFinesException;
 import util.exception.MemberNotAtTopOfReserveList;
@@ -228,8 +230,9 @@ public class LibraryOperationModule {
             SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
             System.out.println("Book successfully extended. New due date: " + dt1.format(newDueDate));
         } catch (BookIsAlreadyOverdueException
+                | LendingNotFoundException
                 | MemberHasFinesException
-                | MemberNotAtTopOfReserveList ex) {
+                | BookHasBeenReservedException ex) {
             System.out.print("Extend book failed, ");
             System.out.println(ex.getMessage());
         }
