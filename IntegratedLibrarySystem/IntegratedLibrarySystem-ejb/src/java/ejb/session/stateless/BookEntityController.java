@@ -21,7 +21,6 @@ import util.exception.BookNotFoundException;
  *
  * @author hiixdayah
  */
-
 @Stateless
 @Local(BookEntityControllerLocal.class)
 @Remote(BookEntityControllerRemote.class)
@@ -29,69 +28,59 @@ public class BookEntityController implements BookEntityControllerRemote, BookEnt
 
     @PersistenceContext(unitName = "librarydb2New-ejbPU")
     private EntityManager entityManager;
-    
-    public BookEntityController()
-    {
+
+    public BookEntityController() {
     }
-    
+
     @Override
-    public BookEntity createNewBook(BookEntity newBookEntity)  {
+    public BookEntity createNewBook(BookEntity newBookEntity) {
         entityManager.persist(newBookEntity);
         entityManager.flush();
-        
+
         return newBookEntity;
     }
-    
-    @Override 
+
+    @Override
     public BookEntity retrieveBookByIsbn(String isbn) throws BookNotFoundException {
-       Query query = entityManager.createQuery("SELECT b FROM BookEntity b WHERE b.isbn = :inIsbn");
+        Query query = entityManager.createQuery("SELECT b FROM BookEntity b WHERE b.isbn = :inIsbn");
         query.setParameter("inIsbn", isbn);
-        
-        try
-        {
-            return (BookEntity)query.getSingleResult();
-        }
-        catch(NoResultException | NonUniqueResultException ex)
-        {
-             throw new BookNotFoundException("Book Isbn " + isbn + " does not exist!");
+
+        try {
+            return (BookEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new BookNotFoundException("Book Isbn " + isbn + " does not exist!");
 
         }
     }
-    
+
     @Override
-    public BookEntity retrieveBookByBookId(Long bookId) throws BookNotFoundException
-    {
+    public BookEntity retrieveBookByBookId(Long bookId) throws BookNotFoundException {
         BookEntity bookEntity = entityManager.find(BookEntity.class, bookId);
-        
-        if(bookEntity != null)
-        {
+
+        if (bookEntity != null) {
             return bookEntity;
-        }
-        else
-        {
+        } else {
             throw new BookNotFoundException("Book ID " + bookId + " does not exist!");
         }
     }
-    
+
     @Override
     public void updateBook(BookEntity bookEntity) {
         entityManager.merge(bookEntity);
     }
-    
+
     @Override
-    public void deleteBook(Long bookId) throws BookNotFoundException
-    {
+    public void deleteBook(Long bookId) throws BookNotFoundException {
         BookEntity bookEntityToRemove = retrieveBookByBookId(bookId);
         entityManager.remove(bookEntityToRemove);
     }
-    
+
     @Override
-    public List<BookEntity> retrieveAllBooks()
-    {
+    public List<BookEntity> retrieveAllBooks() {
         Query query = entityManager.createQuery("SELECT b FROM BookEntity b");
-        
+
         return query.getResultList();
-    }    
+    }
 
     public void persist(Object object) {
         entityManager.persist(object);

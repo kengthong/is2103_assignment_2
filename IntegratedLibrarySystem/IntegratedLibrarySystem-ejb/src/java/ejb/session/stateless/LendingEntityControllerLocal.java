@@ -21,13 +21,18 @@ import util.exception.MemberNotAtTopOfReserveList;
  */
 @Local
 public interface LendingEntityControllerLocal {
-    
+
     public void checkIsBookLent(Long bookId) throws BookIsOnLoanException;
+
     public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded;
-    public void setBookAvailable(String identityNumber, Long returnBookId) ;
-    public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) ; 
-    public Date generateDueDate(Date date); 
-    public LendingEntity retrieveLendingByBookId(Long bookId);      
+
+    public void setBookAvailable(String identityNumber, Long returnBookId);
+
+    public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber);
+
+    public Date generateDueDate(Date date);
+
+    public LendingEntity retrieveLendingByBookId(Long bookId) throws LendingNotFoundException;
 
     LendingEntity createNewLending(LendingEntity newLendingEntity);
 
@@ -37,13 +42,10 @@ public interface LendingEntityControllerLocal {
 
     void deleteLendingEntity(Long lendId) throws LendingNotFoundException;
 
-    void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList;
-
     void checkIsBookOverdue(Date dueDate) throws BookIsAlreadyOverdueException;
 
     LendingEntity extendBook(Long lendId);
 
     LendingEntity returnLending(Long lendId) throws LendingNotFoundException;
-    
-    
+
 }

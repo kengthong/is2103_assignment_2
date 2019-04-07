@@ -15,6 +15,8 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.BookIsAlreadyOverdueException;
@@ -59,18 +61,6 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     }
 
     @Override
-    public void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList {
-        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity WHERE r.memberEntity.identityNumber = :inIdentityNumber");
-        query.setParameter("inIdentityNumber", identityNumber);
-
-        BookEntity book = (BookEntity) query.getResultList();
-        List<ReservationEntity> reserveList = book.getReservations();
-        if (!book.getReservations().get(0).getMember().getIdentityNumber().equals(identityNumber)) {
-            throw new MemberNotAtTopOfReserveList("Book has been reserved by another member");
-        }
-    }
-
-    @Override
     public Date generateDueDate(Date date) {
         Calendar duedate = Calendar.getInstance();
         duedate.setTime(date);
@@ -87,10 +77,17 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     }
 
     @Override
-    public LendingEntity retrieveLendingByBookId(Long bookId) {
+    public LendingEntity retrieveLendingByBookId(Long bookId) throws LendingNotFoundException {
         Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false");
         query.setParameter("inBookId", bookId);
-        return (LendingEntity) query.getSingleResult();
+        
+        try {
+            return (LendingEntity) query.getSingleResult();
+        } catch(NoResultException | NonUniqueResultException ex)
+        {
+             throw new LendingNotFoundException("Book has not been loaned before.");
+
+        }
     }
 
     @Override
