@@ -109,9 +109,7 @@ public class ReservationController implements ReservationControllerRemote, Reser
         
         return newReservationEntity;
     }
-    
-    
-
+   
     @Override
     public void fulfillReservation(ReservationEntity currentReservationEntity) {
         currentReservationEntity.setHasFulfilled(true);

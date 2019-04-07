@@ -25,4 +25,11 @@ public interface FineControllerRemote {
 
     FineEntity createFine(FineEntity newFineEntity);
 
+    public List<FineEntity> retrieveFinesByMember(String identityNumber);
+
+    public void payFine(Long fineId);
+
+    FineEntity createFine(FineEntity newFineEntity);
+
+    FineEntity retrieveFineByFineId(Long fineId);
 }

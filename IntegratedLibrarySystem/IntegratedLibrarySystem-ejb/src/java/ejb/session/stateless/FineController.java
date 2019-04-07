@@ -56,6 +56,17 @@ public class FineController implements FineControllerRemote, FineControllerLocal
 
     }
     
+    @Override
+    public FineEntity retrieveFineByFineId(Long fineId) {
+        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.fineId = :inFineId") ;
+        query.setParameter("inFineId", fineId) ; 
+        
+        return (FineEntity) query.getSingleResult() ;
+        
+    }
+    
+    
+    
     @Override 
     public void payFine(Long fineId) {
         
@@ -72,7 +83,5 @@ public class FineController implements FineControllerRemote, FineControllerLocal
         
         return newFineEntity;
     }
-
-   
     
 }
