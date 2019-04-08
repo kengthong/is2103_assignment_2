@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.BookHasBeenReservedException;
 import util.exception.MemberNotAtTopOfReserveList;
 import util.exception.MultipleReservationException;
 import util.exception.ReservationNotFoundException;
@@ -125,4 +126,14 @@ public class ReservationController implements ReservationControllerRemote, Reser
             throw new MemberNotAtTopOfReserveList("Book has been reserved by another member");
         }
     }
+
+    @Override
+    public void checkIfBookHasReservations(Long bookId) throws BookHasBeenReservedException {
+        List<ReservationEntity> reservations = retrieveAllUnfulfilledReservationsByBookId(bookId);
+        if(!reservations.isEmpty()) {
+            throw new BookHasBeenReservedException("Book has been reserved.");
+        }
+    }
+    
+    
 }

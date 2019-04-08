@@ -112,12 +112,12 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
             }
             else
             {
-                throw new InvalidLoginException("Invalid identity number or invalid security code!");
+                throw new InvalidLoginException("Invalid Login Credentials!");
             }
         }
         catch(MemberNotFoundException ex)
         {
-            throw new InvalidLoginException("Invalid identity number or invalid security code!");
+            throw new InvalidLoginException("Invalid Login Credentials!");
         }
     }
 

@@ -38,15 +38,15 @@ public interface LibraryOperationControllerRemote {
 
     void viewReservations();
 
-    void deleteReservation(Long bookId, String identityNumber) throws MemberNotFoundException, ReservationNotFoundException ;
+    void deleteReservation(Long bookId, String identityNumber) throws MemberNotFoundException, ReservationNotFoundException;
 
     LendingEntity doExtendBook(String identityNumber, Long bookId) throws LendingNotFoundException, BookHasBeenReservedException, MemberHasFinesException, BookIsAlreadyOverdueException;
 
     void doReturnBook(Long bookId, Long memberId) throws LendingNotFoundException, MemberNotFoundException;
 
-    List<Object[]> searchBookToReserve(String titleToSearch);
-
-    void doReserveBook(MemberEntity currentMember, Long bookId) throws BookNotFoundException, BookIsAlreadyLoanedByMemberException,BookIsAvailableForLoanException, MultipleReservationException, MemberHasFinesException;
+    void doReserveBook(MemberEntity currentMember, Long bookId) throws BookNotFoundException, BookIsAlreadyLoanedByMemberException, BookIsAvailableForLoanException, MultipleReservationException, MemberHasFinesException;
 
     List<Object[]> searchBook(String titleToSearch);
+
+    void setFines(Integer amount, MemberEntity currentMember);
 }

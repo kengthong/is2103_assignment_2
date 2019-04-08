@@ -102,7 +102,7 @@ public class AdministrationOperationModule {
                 } else if (response == 2) {
                     doViewMemberDetails();
                 } else if (response == 3) {
-                    System.out.println("Enter Member Identity Number>");
+                    System.out.print("Enter Member Identity Number> ");
                     scanner.nextLine() ;
                     String identityNumber = scanner.nextLine().trim();
                     try {
@@ -113,7 +113,7 @@ public class AdministrationOperationModule {
                     }
                     
                 } else if (response == 4) {
-                    System.out.println("Enter Member Identity Number>");
+                    System.out.print("Enter Member Identity Number> ");
                     scanner.nextLine() ;
                     String identityNumber = scanner.nextLine().trim();
                     try { 
@@ -310,7 +310,7 @@ public class AdministrationOperationModule {
                 } else if (response == 2) {
                     doViewBookDetails();
                 } else if (response == 3) {
-                    System.out.println("Enter Book Isbn> ");
+                    System.out.print("Enter Book Isbn> ");
                     scanner.nextLine() ; 
                     String isbn = scanner.nextLine().trim() ; 
                     try {
@@ -320,7 +320,7 @@ public class AdministrationOperationModule {
                         System.out.println("Book cannot be found!") ; 
                     }
                 } else if (response == 4) {
-                    System.out.println("Enter Book Isbn> ");
+                    System.out.print("Enter Book Isbn> ");
                     scanner.nextLine() ;
                     String isbn = scanner.nextLine().trim() ; 
                     try {
@@ -456,7 +456,7 @@ public class AdministrationOperationModule {
         Integer response = 0;
 
         while (true) {
-            System.out.println("*** ILS :: Administration Operation :: Member Management ***\n");
+            System.out.println("*** ILS :: Administration Operation :: Staff Management ***\n");
             System.out.println("1: Add Staff");
             System.out.println("2: View Staff Details");
             System.out.println("3: Update Staff");
@@ -475,7 +475,7 @@ public class AdministrationOperationModule {
                 } else if (response == 2) {
                     doViewStaffDetails();
                 } else if (response == 3) {
-                    System.out.println("Enter Staff Username> ");
+                    System.out.print("Enter Staff Username> ");
                     scanner.nextLine() ; 
                     String username = scanner.nextLine().trim();
                     try {
@@ -485,7 +485,7 @@ public class AdministrationOperationModule {
                     System.out.println("Staff cannot be found!") ; 
                 }
                 } else if (response == 4) {
-                    System.out.println("Enter Staff Username> ");
+                    System.out.print("Enter Staff Username> ");
                     scanner.nextLine() ; 
                     String username = scanner.nextLine().trim() ; 
                     try {
