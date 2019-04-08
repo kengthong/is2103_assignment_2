@@ -29,7 +29,7 @@ public class FineEntity implements Serializable {
     //@OneToOne(optional = false)
     //private MemberEntity identityNumber;
     @ManyToOne
-    @JoinColumn (name="memberId")
+//    @JoinColumn (name="memberId")
     private MemberEntity memberEntity;
     @Column(scale = 2, nullable = false)
     private double amount;

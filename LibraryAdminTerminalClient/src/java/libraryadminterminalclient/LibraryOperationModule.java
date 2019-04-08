@@ -26,6 +26,7 @@ import util.exception.BookHasBeenReservedException;
 import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
+import util.exception.FineNotFoundException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
 import util.exception.MemberHasFinesException;
@@ -142,7 +143,7 @@ public class LibraryOperationModule {
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** ILS :: Library Operation :: View Lent Books ***\n");
-        System.out.println("Enter Member Identity Number>");
+        System.out.print("Enter Member Identity Number> ");
         String identityNumber = scanner.nextLine().trim();
 
         List<LendingEntity> lentBooks = this.lendingEntityControllerRemote.retrieveBooksLoanedByMember(identityNumber);
@@ -173,7 +174,7 @@ public class LibraryOperationModule {
     private void doReturnBook() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** ILS :: Library Operation :: Return Book ***\n");
-        System.out.println("Enter Member Identity Number> ");
+        System.out.print("Enter Member Identity Number> ");
         String identityNumber = scanner.nextLine().trim();
         
         List<LendingEntity> lentBooks = this.lendingEntityControllerRemote.retrieveBooksLoanedByMember(identityNumber);
@@ -201,7 +202,7 @@ public class LibraryOperationModule {
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** ILS :: Library Operation :: Extend Book ***\n");
-        System.out.println("Enter Member Identity Number> ");
+        System.out.print("Enter Member Identity Number> ");
         String identityNumber = scanner.nextLine().trim();
         List<LendingEntity> lentBooks = this.lendingEntityControllerRemote.retrieveBooksLoanedByMember(identityNumber);
         printLending(lentBooks);
@@ -228,7 +229,7 @@ public class LibraryOperationModule {
         
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** ILS :: Library Operation :: Pay Fines ***\n");
-        System.out.print("Enter Member Identity Number>");
+        System.out.print("Enter Member Identity Number> ");
         String identityNumber = scanner.nextLine().trim();
 
         try {
@@ -243,15 +244,12 @@ public class LibraryOperationModule {
                     Double amount = fineEntity.getAmount() ; 
                     System.out.println(fineId + "\t|" + amount) ;
                 }
-            System.out.println("Enter Fine ID to Settle>\n");
+            System.out.print("Enter Fine ID to Settle> ");
             Long fineIdToPay = scanner.nextLong();
-            FineEntity fineEntity = fineControllerRemote.retrieveFineByFineId(fineIdToPay) ; 
-            fineEntity.setHasPaid(true) ; 
+    
             System.out.println("Select Payment Method (1: Cash, 2: Card)>");
             int method = scanner.nextInt();
-            if (method == 1) {
-                System.out.println("Fine successfully paid.");
-            } else if (method == 2) {
+             if (method == 2) {
                 System.out.println("Enter Name of Card>");
                 scanner.nextLine().trim();
                 System.out.println("Enter Card Number>");
@@ -260,6 +258,7 @@ public class LibraryOperationModule {
                 scanner.nextLine().trim();
                 System.out.println("Enter Pin>");
                 scanner.nextLine().trim();
+                fineControllerRemote.setHasPaidTrue(fineIdToPay);
                 System.out.println("Fine successfully paid.");
 
             }
@@ -269,7 +268,8 @@ public class LibraryOperationModule {
             }
 
 
-        } catch (MemberNotFoundException ex) {
+        } catch (MemberNotFoundException 
+                | FineNotFoundException ex) {
             System.out.println("Member Identity Number cannot be found!");
         }
 
@@ -295,7 +295,7 @@ public class LibraryOperationModule {
                 if (response == 1) {
                     viewReservations();
                 } else if (response == 2) {
-                    System.out.println("Enter Member Identity Number>");
+                    System.out.print("Enter Member Identity Number> ");
                     scanner.nextLine();
                     String identityNumber = scanner.nextLine().trim();
                     printReservations(identityNumber);
@@ -314,7 +314,7 @@ public class LibraryOperationModule {
     }
     
         private void viewReservations() {
-            System.out.print("Enter Book ID>");
+            System.out.print("Enter Book ID> ");
         Scanner scanner = new Scanner(System.in);
         Long bookId = scanner.nextLong() ; 
     
@@ -364,7 +364,7 @@ public class LibraryOperationModule {
                 System.out.format("%-10d %-1s %-60s %n", bookId, "|", title) ; 
             }
                     
-            System.out.println("Book ID of Reservation to be deleted>") ; 
+            System.out.print("Book ID of Reservation to be deleted> ") ; 
             Long bookId = scanner.nextLong() ; 
             try {
                 this.libraryOperationControllerRemote.deleteReservation(bookId, identityNumber) ; 

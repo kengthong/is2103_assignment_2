@@ -11,6 +11,7 @@ import entity.LendingEntity;
 import entity.MemberEntity;
 import entity.ReservationEntity;
 import entity.StaffEntity;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -96,7 +97,7 @@ public class LibraryOperationController implements LibraryOperationControllerRem
             lendingEntityControllerLocal.checkIfMemberExceedsMaxLoans(identityNumber);
             List<ReservationEntity> reservations = reservationControllerLocal.retrieveAllUnfulfilledReservationsByBookId(bookId);
             if (!reservations.isEmpty()) {
-                reservationControllerLocal.checkIfMemberOnReserveList(reservations,identityNumber);
+                reservationControllerLocal.checkIfMemberOnReserveList(reservations, identityNumber);
                 reservationControllerLocal.fulfillReservation(reservations.get(0));
             }
 
@@ -219,35 +220,49 @@ public class LibraryOperationController implements LibraryOperationControllerRem
         }
     }
 
-    @Override
-    public List<Object[]> searchBookToReserve(String titleToSearch) {
 
-        Query query = entityManager.createQuery(
-                "SELECT b.bookId, b.title, l1.hasReturned as hasReturned, l1.dueDate as dueDate \n"
-                + "FROM BookEntity b, LendingEntity l1 \n"
-                + "WHERE b.title LIKE :inTitleToSearch \n"
-                + "and l1.book.bookId = b.bookId\n"
-                + "and l1.hasReturned = false"
-        );
-        titleToSearch = "%" + titleToSearch + "%";
-        query.setParameter("inTitleToSearch", titleToSearch);
-        return query.getResultList();
-    }
-    
     @Override
     public List<Object[]> searchBook(String titleToSearch) {
         Query query = entityManager.createQuery(
-                "SELECT b.bookId, b.title, l1.hasReturned as hasReturned, l1.dueDate as dueDate \n"
-                + "FROM BookEntity b, LendingEntity l1 \n"
+                "SELECT b.bookId, b.title, b.title\n"
+                + "FROM BookEntity b \n"
                 + "WHERE b.title LIKE :inTitleToSearch \n"
-                + "and l1.book.bookId = b.bookId\n"
-                + "and l1.hasReturned = false"
         );
+
         titleToSearch = "%" + titleToSearch + "%";
         query.setParameter("inTitleToSearch", titleToSearch);
-        return query.getResultList();
+        List<Object[]> results = query.getResultList();
+
+        for (Object[] result : results) {
+            //if book is on  loan. If yes, get due date, 
+            //if no, check for reservations. If no reservations, append currently available
+            Long bookId = (Long) result[0];
+            try {
+                
+                
+                lendingEntityControllerLocal.checkIsBookLent(bookId);
+                reservationControllerLocal.checkIfBookHasReservations(bookId);
+                result[2] = "Currently Available";
+            } catch (BookIsOnLoanException ex) {
+                //retrieve lending and get due date
+                try {
+                    LendingEntity currentLending = lendingEntityControllerLocal.retrieveLendingByBookId(bookId);
+                    Date dueDate = currentLending.getDueDate();
+                    SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+                    result[2] = "Due on " + dt1.format(dueDate);
+                } catch (LendingNotFoundException ex1) {
+                }
+                
+            } catch (BookHasBeenReservedException ex) {
+                // has been reserved
+                result[2] = "Reserved";
+            }
+
+        }
+
+        return results;
+
     }
-    
 
     public void persist(Object object) {
         entityManager.persist(object);
@@ -313,9 +328,19 @@ public class LibraryOperationController implements LibraryOperationControllerRem
             return currentLendingEntity;
         } catch (LendingNotFoundException ex) {
             throw new BookIsAvailableForLoanException("Member cannot reserve books that are currently available in the library.");
-        } 
+        }
 
     }
 
+    @Override
+    public void setFines(Integer amount, MemberEntity currentMember) {
+        FineEntity newFineEntity = new FineEntity();
+        newFineEntity.setMemberEntity(currentMember);
+        newFineEntity.setAmount(amount);
+        newFineEntity.setHasPaid(false);
+        fineControllerLocal.createFine(newFineEntity);
+    }
+    
+    
 
 }

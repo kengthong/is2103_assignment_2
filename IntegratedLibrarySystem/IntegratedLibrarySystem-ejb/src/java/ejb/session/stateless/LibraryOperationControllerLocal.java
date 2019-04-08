@@ -44,10 +44,10 @@ public interface LibraryOperationControllerLocal {
 
     void doReturnBook(Long bookId, Long memberId) throws LendingNotFoundException, MemberNotFoundException;
 
-    List<Object[]> searchBookToReserve(String titleToSearch);
-
     void doReserveBook(MemberEntity currentMember, Long bookId) throws BookNotFoundException, BookIsAlreadyLoanedByMemberException,BookIsAvailableForLoanException, MultipleReservationException, MemberHasFinesException;
 
     List<Object[]> searchBook(String titleToSearch);
+
+    void setFines(Integer amount, MemberEntity currentMember);
     
 }
