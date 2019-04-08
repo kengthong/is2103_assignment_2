@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.FineEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.FineNotFoundException;
 import util.exception.MemberHasFinesException;
 
 /**
@@ -25,5 +26,7 @@ public interface FineControllerRemote {
 
     FineEntity createFine(FineEntity newFineEntity);
 
-    FineEntity retrieveFineByFineId(Long fineId);
+    FineEntity retrieveFineByFineId(Long fineId) throws FineNotFoundException;
+
+    void setHasPaidTrue(Long fineId) throws FineNotFoundException;
 }

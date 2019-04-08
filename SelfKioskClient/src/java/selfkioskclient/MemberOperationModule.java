@@ -6,9 +6,11 @@
 package selfkioskclient;
 
 import ejb.session.stateless.BookEntityControllerRemote;
+import ejb.session.stateless.FineControllerRemote;
 import ejb.session.stateless.LendingEntityControllerRemote;
 import ejb.session.stateless.LibraryOperationControllerRemote;
 import ejb.session.stateless.MemberEntityControllerRemote;
+import entity.FineEntity;
 import entity.LendingEntity;
 import entity.MemberEntity;
 import java.text.SimpleDateFormat;
@@ -21,6 +23,7 @@ import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsAvailableForLoanException;
 import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
+import util.exception.FineNotFoundException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
 import util.exception.MemberHasFinesException;
@@ -36,7 +39,7 @@ public class MemberOperationModule {
 
     private BookEntityControllerRemote bookEntityControllerRemote;
     private LibraryOperationControllerRemote libraryOperationControllerRemote;
-//    private FineControllerRemote fineControllerRemote;
+    private FineControllerRemote fineControllerRemote;
     private LendingEntityControllerRemote lendingEntityControllerRemote;
     private MemberEntityControllerRemote memberEntityControllerRemote;
 //    private ReservationControllerRemote reservationControllerRemote;
@@ -45,12 +48,13 @@ public class MemberOperationModule {
     public MemberOperationModule(
             LibraryOperationControllerRemote libraryOperationControllerRemote,
             BookEntityControllerRemote bookEntityControllerRemote,
-            //            FineControllerRemote fineControllerRemote,
+            FineControllerRemote fineControllerRemote,
             LendingEntityControllerRemote lendingEntityControllerRemote,
             MemberEntityControllerRemote memberEntityControllerRemote,
             //            ReservationControllerRemote reservationControllerRemote,
             MemberEntity currentActiveMember
     ) {
+        this.fineControllerRemote = fineControllerRemote;
         this.libraryOperationControllerRemote = libraryOperationControllerRemote;
         this.lendingEntityControllerRemote = lendingEntityControllerRemote;
         this.currentActiveMember = currentActiveMember;
@@ -94,16 +98,18 @@ public class MemberOperationModule {
 
                 } else if (response == 5) {
                     //Pay fines
-
+                    doPayFines();
                 } else if (response == 6) {
                     //Search book
-
+                    doSearchBook();
                 } else if (response == 7) {
                     //Reserve book
                     doReserveBook();
                 } else if (response == 8) {
                     //Logout
 //                    doLogOut();
+                } else if (response == 9) {
+                    libraryOperationControllerRemote.setFines(369, currentActiveMember);
                 } else {
                     System.out.println("Invalid option, please try again!\n");
                 }
@@ -122,6 +128,7 @@ public class MemberOperationModule {
 
         System.out.print("Enter Book ID: ");
         Long bookId = sc.nextLong();
+        System.out.println() ; 
         String identityNumber = currentActiveMember.getIdentityNumber();
 
         try {
@@ -165,23 +172,67 @@ public class MemberOperationModule {
 
     }
 
-    private void doReserveBook() {
-        List<Object[]> results;
-//        String identityNumber = currentActiveMember.getIdentityNumber();
+    private void doPayFines() {
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("*** Self-Service Kiosk :: Pay Fines ***\n");
+//        System.out.print("Enter Member Identity Number>");
+        String identityNumber = currentActiveMember.getIdentityNumber();
+
+        try {
+//            memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
+            List<FineEntity> fineEntities = fineControllerRemote.retrieveFinesByMember(identityNumber);
+
+            if (!fineEntities.isEmpty()) {
+                System.out.println("Unpaid Fines For Member:");
+                System.out.println("Fine ID\t| Amount ");
+                for (FineEntity fineEntity : fineEntities) {
+                    Long fineId = fineEntity.getFineId();
+                    Double amount = fineEntity.getAmount();
+                    System.out.println(fineId + "\t|" + amount);
+                }
+                System.out.print("Enter Fine ID to Settle> ");
+                Long fineIdToPay = scanner.nextLong();
+//                FineEntity fineEntity = fineControllerRemote.retrieveFineByFineId(fineIdToPay);
+//                fineEntity.setHasPaid(true);
+                
+                System.out.print("Enter Name of Card> ");
+                scanner.nextLine().trim();
+                System.out.print("Enter Card Number> ");
+                scanner.nextLine().trim();
+                System.out.print("Enter Card Expiry> ");
+                scanner.nextLine().trim();
+                System.out.print("Enter Pin> ");
+                scanner.nextLine().trim();
+                fineControllerRemote.setHasPaidTrue(fineIdToPay);
+                System.out.println("Fine successfully paid.");
+
+            } else {
+                System.out.println("There are no outstanding fines for member!\n");
+            }
+
+        } catch (FineNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
+    private void doReserveBook() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("*** Self-Service Kiosk :: Reserve Book ***\n");
+        System.out.println("*** Self-Service Kiosk :: Search Book ***\n");
+
         System.out.print("Enter Title to Search> ");
         String titleToSearch = sc.nextLine().trim();
+        System.out.println();
 
-        results = libraryOperationControllerRemote.searchBookToReserve(titleToSearch);
-        printReserveResults(results);
-        
-        if(results.isEmpty()){
+        List<Object[]> results = libraryOperationControllerRemote.searchBook(titleToSearch);
+        printSearchResults(results);
+
+        if (results.isEmpty()) {
             return;
         }
 
-        System.out.print("Enter Book to Reserve> ");
+        System.out.print("Enter Book ID to Reserve> ");
         Long bookId = sc.nextLong();
 
         try {
@@ -189,8 +240,8 @@ public class MemberOperationModule {
             System.out.println("Book successfully reserved.");
         } catch (BookIsAvailableForLoanException
                 | MultipleReservationException
-                | MemberHasFinesException 
-                | BookNotFoundException 
+                | MemberHasFinesException
+                | BookNotFoundException
                 | BookIsAlreadyLoanedByMemberException ex) {
             System.out.println(ex.getMessage());
             System.out.println();
@@ -223,6 +274,21 @@ public class MemberOperationModule {
         }
     }
 
+    private void doSearchBook() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Self-Service Kiosk :: Search Book ***\n");
+
+        System.out.print("Enter Title to Search> ");
+        String titleToSearch = sc.nextLine().trim();
+        System.out.println();
+
+        List<Object[]> results = libraryOperationControllerRemote.searchBook(titleToSearch);
+        printSearchResults(results);
+        System.out.print("Enter any button to go back to the menu> ");
+        sc.nextLine().trim();
+        System.out.println();
+    }
+
     private void printLending(List<LendingEntity> lentBooks) {
         System.out.println("Currently Lent Books:");
 //        System.out.println("Id\t| Title\t| Due date");
@@ -243,7 +309,28 @@ public class MemberOperationModule {
         System.out.println();
     }
 
-    private void printReserveResults(List<Object[]> results) {
+//    private void printReserveResults(List<Object[]> results) {
+//        System.out.println("Search Results:");
+//
+//        System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Availability");
+//        if (!results.isEmpty()) {
+//            for (Object[] result : results) {
+//                Long bookId = (Long) result[0];
+//                String title = (String) result[1];
+//                Boolean hasReturned = (Boolean) result[2];
+//                Date dueDate = (Date) result[3];
+//
+//                SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+//                String dd = "Due on " + dt1.format(dueDate);
+//
+//                System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", dd);
+//            }
+//        } else {
+//            System.out.println("No such book to reserve.");
+//        }
+//        System.out.println();
+//    }
+    private void printSearchResults(List<Object[]> results) {
         System.out.println("Search Results:");
 
         System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Availability");
@@ -251,17 +338,14 @@ public class MemberOperationModule {
             for (Object[] result : results) {
                 Long bookId = (Long) result[0];
                 String title = (String) result[1];
-                Boolean hasReturned = (Boolean) result[2];
-                Date dueDate = (Date) result[3];
+                String status = (String) result[2];
 
-                SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
-                String dd = "Due on " + dt1.format(dueDate);
-
-                System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", dd);
+                System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", status);
             }
         } else {
-            System.out.println("No such book to reserve.");
+            System.out.println("No such book found.\n");
         }
+
     }
 
     private void viewLentBook() {
