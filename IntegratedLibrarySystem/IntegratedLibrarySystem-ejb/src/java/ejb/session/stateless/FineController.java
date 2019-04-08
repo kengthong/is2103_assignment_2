@@ -35,9 +35,10 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     }
     
     
+    
     @Override 
     public void checkIfMemberHasFines(String identityNumber) throws MemberHasFinesException {
-        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber AND f.hasPaid = false ") ; 
+        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.memberEntity.identityNumber = :inIdentityNumber AND f.hasPaid = false ") ; 
         query.setParameter("inIdentityNumber", identityNumber) ; 
         
         if ( !query.getResultList().isEmpty() ) {
@@ -55,6 +56,17 @@ public class FineController implements FineControllerRemote, FineControllerLocal
 
     }
     
+    @Override
+    public FineEntity retrieveFineByFineId(Long fineId) {
+        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.fineId = :inFineId") ;
+        query.setParameter("inFineId", fineId) ; 
+        
+        return (FineEntity) query.getSingleResult() ;
+        
+    }
+    
+    
+    
     @Override 
     public void payFine(Long fineId) {
         
@@ -64,6 +76,12 @@ public class FineController implements FineControllerRemote, FineControllerLocal
         entityManager.persist(object);
     }
 
-   
+    @Override
+    public FineEntity createFine(FineEntity newFineEntity) {
+        entityManager.persist(newFineEntity);
+        entityManager.flush();
+        
+        return newFineEntity;
+    }
     
 }

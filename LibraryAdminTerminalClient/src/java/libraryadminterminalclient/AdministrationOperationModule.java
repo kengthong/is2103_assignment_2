@@ -452,64 +452,61 @@ public class AdministrationOperationModule {
     }
 
     private void doManageStaff() {
-//        Scanner scanner = new Scanner(System.in);
-//        Integer response = 0;
-//
-//        while (true) {
-//            System.out.println("*** ILS :: Administration Operation :: Member Management ***\n");
-//            System.out.println("1: Add Staff");
-//            System.out.println("2: View Staff Details");
-//            System.out.println("3: Update Staff");
-//            System.out.println("4: Delete Staff");
-//            System.out.println("5: View All Staff");
-//            System.out.println("6: Back\n");
-//            response = 0;
-//
-//            while (response < 1 || response > 6) {
-//                System.out.print("> ");
-//
-//                response = scanner.nextInt();
-//
-//                if (response == 1) {
-//                    doCreateNewStaff();
-//                } else if (response == 2) {
-//                    doViewStaffDetails();
-//                } else if (response == 3) {
-//                    System.out.println("Enter Staff Username> ");
-//                    scanner.nextLine() ; 
-//                    String username = scanner.nextLine().trim();
-//                    try {
-//                    StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByUsername(username);
-//                    doUpdateStaff(staffEntity);
-//                    } catch (StaffNotFoundException ex) {
-//                    System.out.println("Staff cannot be found!") ; 
-//                }
-//                } else if (response == 4) {
-//                    System.out.println("Enter Staff Username> ");
-//                    scanner.nextLine() ; 
-//                    String username = scanner.nextLine().trim() ; 
-//                    try {
-//                    StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByUsername(username);
-//                    if (libraryOperationControllerRemote.getActiveStaff().getUserName().equals(username)) {
-//                        System.out.println("Staff is currently logged in and cannot be deleted!") ; 
-//                    } else {
-//                    doDeleteStaff(staffEntity);
-//                    } 
-//                    } catch (StaffNotFoundException ex) {
-//                    System.out.println("Staff cannot be found!") ; 
-//                }
-//                } else if (response == 5) {
-//                    doViewAllStaff();
-//                } else if (response == 6) {
-//                    break;
-//                } else {
-//                    System.out.println("Invalid option, please try again!\n");
-//                }
-//            }
-//            if (response == 6) {
-//                break;
-//            }
-//        }
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        while (true) {
+            System.out.println("*** ILS :: Administration Operation :: Member Management ***\n");
+            System.out.println("1: Add Staff");
+            System.out.println("2: View Staff Details");
+            System.out.println("3: Update Staff");
+            System.out.println("4: Delete Staff");
+            System.out.println("5: View All Staff");
+            System.out.println("6: Back\n");
+            response = 0;
+
+            while (response < 1 || response > 6) {
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+
+                if (response == 1) {
+                    doCreateNewStaff();
+                } else if (response == 2) {
+                    doViewStaffDetails();
+                } else if (response == 3) {
+                    System.out.println("Enter Staff Username> ");
+                    scanner.nextLine() ; 
+                    String username = scanner.nextLine().trim();
+                    try {
+                    StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByUsername(username);
+                    doUpdateStaff(staffEntity);
+                    } catch (StaffNotFoundException ex) {
+                    System.out.println("Staff cannot be found!") ; 
+                }
+                } else if (response == 4) {
+                    System.out.println("Enter Staff Username> ");
+                    scanner.nextLine() ; 
+                    String username = scanner.nextLine().trim() ; 
+                    try {
+                    StaffEntity staffEntity = staffEntityControllerRemote.retrieveStaffByUsername(username);
+                    doDeleteStaff(staffEntity);
+                    
+                    } catch (StaffNotFoundException ex) {
+                    System.out.println("Staff cannot be found!") ; 
+                }
+                } else if (response == 5) {
+                    doViewAllStaff();
+                } else if (response == 6) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+            if (response == 6) {
+                break;
+            }
+        }
 
     }
 
@@ -599,8 +596,12 @@ public class AdministrationOperationModule {
 
         if (input.equals("Y")) {
             try {
-                staffEntityControllerRemote.deleteStaff(staffEntity.getStaffId());
+                if (currentStaffEntity.getStaffId().equals(staffEntity.getStaffId())) {
+                    System.out.println("Staff is currently logged in and cannot be deleted!") ; 
+                } else {
+                staffEntityControllerRemote.deleteStaff(staffEntity.getStaffId()) ; 
                 System.out.println("Staff deleted successfully!\n");
+                }
             } catch (StaffNotFoundException ex) {
                 System.out.println("An error has occurred while deleting staff: " + ex.getMessage() + "\n");
             }

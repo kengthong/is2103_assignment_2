@@ -8,6 +8,8 @@ package ejb.session.stateless;
 import entity.ReservationEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.MemberNotAtTopOfReserveList;
+import util.exception.MultipleReservationException;
 import util.exception.ReservationNotFoundException;
 
 /**
@@ -21,8 +23,24 @@ public interface ReservationControllerLocal {
 
     public boolean checkForReservation(Long bookId);
 
-    public void deleteReservation(Long reservationId) throws ReservationNotFoundException;
+    public void deleteReservation(ReservationEntity bookToRemove) throws ReservationNotFoundException;
 
     List<ReservationEntity> retrieveAllReservationsByBookId(Long bookId);
+
+    List<ReservationEntity> retrieveReservationsByIsbn(String isbn);
+
+    List<ReservationEntity> retrieveReservationsByMember(Long memberId);
+
+    ReservationEntity retrieveReservationOfMember(Long bookId, Long memberId);
+
+    List<ReservationEntity> retrieveAllUnfulfilledReservationsByBookId(Long bookId);
+
+    void checkForMultipleReservationsOnSameBook(String identityNumber, Long bookId) throws MultipleReservationException;
+
+    ReservationEntity createReservation(ReservationEntity newReservationEntity);
+
+    void fulfillReservation(ReservationEntity currentReservationEntity);
+
+    void checkIfMemberOnReserveList(List<ReservationEntity> reservations, String identityNumber) throws MemberNotAtTopOfReserveList;
 
 }

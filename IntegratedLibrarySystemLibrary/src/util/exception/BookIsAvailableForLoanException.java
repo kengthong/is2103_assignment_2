@@ -9,13 +9,13 @@ package util.exception;
  *
  * @author kengthong
  */
-public class BookIsAlreadyOverdueException extends Exception {
+public class BookIsAvailableForLoanException extends Exception {
 
-    public BookIsAlreadyOverdueException() {
+    public BookIsAvailableForLoanException() {
     }
 
     
-    public BookIsAlreadyOverdueException(String msg) {
+    public BookIsAvailableForLoanException(String msg) {
         super(msg);
     }
 }

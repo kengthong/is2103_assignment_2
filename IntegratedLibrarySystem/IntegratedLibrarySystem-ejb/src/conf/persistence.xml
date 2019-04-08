@@ -3,11 +3,11 @@
   <persistence-unit name="librarydb2New-ejbPU" transaction-type="JTA">
     <jta-data-source>jdbc/librarydb2New</jta-data-source>
     <class>entity.BookEntity</class>
-    <class>entity.FineEntity</class>
     <class>entity.LendingEntity</class>
     <class>entity.MemberEntity</class>
     <class>entity.ReservationEntity</class>
     <class>entity.StaffEntity</class>
+    <class>entity.FineEntity</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

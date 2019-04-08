@@ -9,7 +9,6 @@ import entity.BookEntity;
 import entity.LendingEntity;
 import entity.ReservationEntity;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -17,6 +16,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.BookIsAlreadyOverdueException;
@@ -49,6 +49,9 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
             throw new BookIsOnLoanException("Book has been lent out and cannot be borrowed!");
         }
     }
+    
+     
+    
 
     @Override
     public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded {
@@ -57,18 +60,6 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
         if (query.getResultList().size() >= 3) {
             throw new MaxLoansExceeded("Member has already borrowed 3 books and cannot borrow anymore books!");
-        }
-    }
-
-    @Override
-    public void checkIfMemberOnReserveList(String identityNumber) throws MemberNotAtTopOfReserveList {
-        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity WHERE r.memberEntity.identityNumber = :inIdentityNumber");
-        query.setParameter("inIdentityNumber", identityNumber);
-
-        BookEntity book = (BookEntity) query.getResultList();
-        List<ReservationEntity> reserveList = book.getReservations();
-        if (!book.getReservations().get(0).getMember().getIdentityNumber().equals(identityNumber)) {
-            throw new MemberNotAtTopOfReserveList("Book has been reserved by another member");
         }
     }
 
@@ -89,10 +80,17 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     }
 
     @Override
-    public LendingEntity retrieveLendingByBookId(Long bookId) {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity WHERE l.book.bookId = :inBookId");
+    public LendingEntity retrieveLendingByBookId(Long bookId) throws LendingNotFoundException {
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false");
         query.setParameter("inBookId", bookId);
-        return (LendingEntity) query.getSingleResult();
+        
+        try {
+            return (LendingEntity) query.getSingleResult();
+        } catch(NoResultException | NonUniqueResultException ex)
+        {
+             throw new LendingNotFoundException("Book has not been loaned before.");
+
+        }
     }
 
     @Override
@@ -173,7 +171,23 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
             return null;
         }
     }
-    
+
+    @Override
+    public LendingEntity returnLending(Long lendId) throws LendingNotFoundException {
+        try {
+            LendingEntity lendingEntityToReturn = retrieveLendingByLendingId(lendId);
+            lendingEntityToReturn.setHasReturned(true);
+            entityManager.merge(lendingEntityToReturn);
+            entityManager.flush();
+            
+            return lendingEntityToReturn;
+            
+        } catch (LendingNotFoundException ex) {
+            throw ex;
+        }
+    }
+
+
     
 
 }

@@ -75,11 +75,14 @@ public class MainApp {
                             this.currentActiveMember
                     );
                     memberOperationModule.displayMenu();
+                    this.currentActiveMember = null;
                 } catch (InvalidLoginException ex) {
                 }
             } else if (response == 3) {
                 break;
             }
+            
+            response = 0;
         }
     }
 
