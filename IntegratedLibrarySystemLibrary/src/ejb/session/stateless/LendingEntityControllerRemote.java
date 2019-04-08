@@ -48,4 +48,5 @@ public interface LendingEntityControllerRemote {
 
     LendingEntity returnLending(Long lendId) throws LendingNotFoundException;
 
+
 }

@@ -49,6 +49,9 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
             throw new BookIsOnLoanException("Book has been lent out and cannot be borrowed!");
         }
     }
+    
+     
+    
 
     @Override
     public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded {
@@ -183,7 +186,8 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
             throw ex;
         }
     }
-    
+
+
     
 
 }
