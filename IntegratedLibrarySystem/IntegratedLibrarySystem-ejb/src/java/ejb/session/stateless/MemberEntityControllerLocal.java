@@ -18,9 +18,7 @@ import util.exception.MemberNotFoundException;
 @Local
 public interface MemberEntityControllerLocal {
 
-    MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException;
-
-    
+    public MemberEntity doMemberLogin(String username, String password) throws InvalidLoginException ;
     public MemberEntity createNewMember(MemberEntity newMemberEntity) ; 
     public MemberEntity retrieveMemberByIdentityNumber(String identityNumber) throws MemberNotFoundException ; 
     public void updateMember(MemberEntity memberEntity) ; 
