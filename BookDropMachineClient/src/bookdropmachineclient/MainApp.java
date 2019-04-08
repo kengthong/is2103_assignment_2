@@ -7,7 +7,7 @@ package bookdropmachineclient;
 
 import entity.FineEntity;
 import entity.LendingEntity;
-import entity.MemberEntity;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +22,7 @@ import util.exception.LendingNotFoundException;
 import util.exception.MemberHasFinesException;
 import util.exception.MemberNotFoundException;
 import util.exception.MultipleReservationException;
+
 
 /**
  *
@@ -89,7 +90,7 @@ public class MainApp {
             try {
                 currentMemberEntity = memberLogin(identityNumber, securitycode);
                 System.out.println("Login successful!\n");
-            } catch (InvalidLoginException ex) {
+            } catch (InvalidLoginException_Exception ex) {
                 System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                 throw new InvalidLoginException();
             }
