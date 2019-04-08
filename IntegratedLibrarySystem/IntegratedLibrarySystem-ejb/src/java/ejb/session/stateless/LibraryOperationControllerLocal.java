@@ -35,8 +35,6 @@ public interface LibraryOperationControllerLocal {
     StaffEntity staffLogin(String username, String password) throws InvalidLoginException;
 
     LendingEntity doLendBook(String identityNumber, Long bookId) throws BookNotFoundException, MemberNotFoundException, BookIsOnLoanException, MemberHasFinesException, MaxLoansExceeded, MemberNotAtTopOfReserveList;
-
-    LendingEntity doExtendBook(String identityNumber, Long bookId) throws MemberNotAtTopOfReserveList, MemberHasFinesException, BookIsAlreadyOverdueException;
   
     void viewReservations();
 

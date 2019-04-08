@@ -48,4 +48,6 @@ public interface LendingEntityControllerLocal {
 
     LendingEntity returnLending(Long lendId) throws LendingNotFoundException;
 
+
+
 }
