@@ -244,15 +244,12 @@ public class LibraryOperationModule {
                     Double amount = fineEntity.getAmount() ; 
                     System.out.println(fineId + "\t|" + amount) ;
                 }
-            System.out.println("Enter Fine ID to Settle>\n");
+            System.out.print("Enter Fine ID to Settle> ");
             Long fineIdToPay = scanner.nextLong();
-            FineEntity fineEntity = fineControllerRemote.retrieveFineByFineId(fineIdToPay) ; 
-            fineEntity.setHasPaid(true) ; 
+    
             System.out.println("Select Payment Method (1: Cash, 2: Card)>");
             int method = scanner.nextInt();
-            if (method == 1) {
-                System.out.println("Fine successfully paid.");
-            } else if (method == 2) {
+             if (method == 2) {
                 System.out.println("Enter Name of Card>");
                 scanner.nextLine().trim();
                 System.out.println("Enter Card Number>");
@@ -261,6 +258,7 @@ public class LibraryOperationModule {
                 scanner.nextLine().trim();
                 System.out.println("Enter Pin>");
                 scanner.nextLine().trim();
+                fineControllerRemote.setHasPaidTrue(fineIdToPay);
                 System.out.println("Fine successfully paid.");
 
             }
