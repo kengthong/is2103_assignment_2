@@ -241,12 +241,14 @@ public class MainApp {
                 Long bookId = (Long) items.get(0);
                 String title = (String) items.get(1);
 //                Boolean hasReturned = (Boolean) items.get(2);
-                Date dueDate = (Date) items.get(2);
-
-                SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
-                String dd = "Due on " + dt1.format(dueDate);
-
-                System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", dd);
+//                Date dueDate = (Date) items.get(2);
+//
+//                SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+//                String dd = "Due on " + dt1.format(dueDate);
+                
+                /*Added this part*/
+                String status = (String) items.get(2);
+                System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", status);
             }
         } else {
             System.out.println("No such book to reserve.");

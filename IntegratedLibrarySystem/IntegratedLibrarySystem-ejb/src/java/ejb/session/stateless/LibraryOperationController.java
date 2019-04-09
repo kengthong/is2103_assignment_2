@@ -255,7 +255,7 @@ public class LibraryOperationController implements LibraryOperationControllerRem
                 
                 
                 lendingEntityControllerLocal.checkIsBookLent(bookId);
-                reservationControllerLocal.checkForReservation(bookId);
+                reservationControllerLocal.checkIfBookHasReservations(bookId);
                 result[2] = "Currently Available";
             } catch (BookIsOnLoanException ex) {
                 //retrieve lending and get due date
