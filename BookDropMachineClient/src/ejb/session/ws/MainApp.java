@@ -3,25 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bookdropmachineclient;
-
-import entity.FineEntity;
-import entity.LendingEntity;
+package ejb.session.ws;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import util.exception.BookHasBeenReservedException;
-import util.exception.BookIsAlreadyLoanedByMemberException;
-import util.exception.BookIsAlreadyOverdueException;
-import util.exception.BookIsAvailableForLoanException;
-import util.exception.BookNotFoundException;
+import javax.xml.datatype.XMLGregorianCalendar;
+import net.java.dev.jaxb.array.AnyTypeArray;
 import util.exception.InvalidLoginException;
-import util.exception.LendingNotFoundException;
-import util.exception.MemberHasFinesException;
-import util.exception.MemberNotFoundException;
-import util.exception.MultipleReservationException;
 
 
 /**
@@ -77,8 +67,6 @@ public class MainApp {
         
         private void doLogin() throws InvalidLoginException {
         Scanner scanner = new Scanner(System.in);
-        String identitynum = "";
-        String securitycode = "";
 
         System.out.println("*** BDM Client :: Login ***\n");
         System.out.print("Enter Identity Number> ");
@@ -88,7 +76,7 @@ public class MainApp {
 
         if (identityNumber.length() > 0 && securityCode.length() > 0) {
             try {
-                currentMemberEntity = memberLogin(identityNumber, securitycode);
+                currentMemberEntity = memberLogin(identityNumber, securityCode);
                 System.out.println("Login successful!\n");
             } catch (InvalidLoginException_Exception ex) {
                 System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
@@ -114,7 +102,7 @@ public class MainApp {
             System.out.println("6: Logout\n");
             response = 0;
 
-            /*while (response < 1 || response > 6) {
+            while (response < 1 || response > 6) {
                 System.out.print("> ");
                 response = scanner.nextInt();
                 if (response == 1) {
@@ -125,14 +113,14 @@ public class MainApp {
                     doExtendBook();
                 } else if (response == 4) {
                     doPayFines();
-                } else if (response == 5) {
+                } /*else if (response == 5) {
                     doReserveBook();
                 } else if (response == 6) {
                     break;
-                } else {
+                }*/ else {
                     System.out.println("Invalid option, please try again!\n");
                 }
-            }*/
+            }
 
             if (response == 6) {
                 break;
@@ -142,25 +130,27 @@ public class MainApp {
     
 
     
-    /*private void viewLentBook() {
+    private void viewLentBook() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** BDM Client :: View Lent Books ***\n");
 
         String identityNumber = currentMemberEntity.getIdentityNumber();
-
-        List<LendingEntity> lentBooks = retrieveBooksLoanedByMember(identityNumber); 
-        printLending(lentBooks);
+        
+        
+            List<LendingEntity> lentBooks = retrieveBooksLoanedByMember(identityNumber); 
+            printLending(lentBooks);
+    
     }
     
         private void printLending(List<LendingEntity> lentBooks) {
         System.out.println("Currently Lent Books:");
-System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due date");
+        System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due date");
         if (!lentBooks.isEmpty()) {
             for (LendingEntity lendingEntity : lentBooks) {
                 Long bookId = lendingEntity.getBook().getBookId();
                 String title = lendingEntity.getBook().getTitle();
 
-                Date dueDate = lendingEntity.getDueDate();
+                XMLGregorianCalendar dueDate = lendingEntity.getDueDate();
                 SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
                 String dd = dt1.format(dueDate);
                 System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", dd);
@@ -177,17 +167,17 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due
 
         String identityNumber = currentMemberEntity.getIdentityNumber();
         Long memberId = currentMemberEntity.getMemberId();
-        List<LendingEntity> lentBooks = retrieveBooksLoanedByMember(identityNumber);
-        printLending(lentBooks);
 
-        System.out.print("Enter Book to Return> ");
-        Long bookId = sc.nextLong();
         try {
+            List<LendingEntity> lentBooks = retrieveBooksLoanedByMember(identityNumber);
+            printLending(lentBooks);
+            System.out.print("Enter Book to Return> ");
+            Long bookId = sc.nextLong();
             doReturnBook(bookId, memberId);
             System.out.println("Please drop to machine complete return.") ; 
             System.out.println("Book successfully returned.");
-        } catch (LendingNotFoundException
-                | MemberNotFoundException ex) {
+        } catch (LendingNotFoundException_Exception
+                | MemberNotFoundException_Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -196,29 +186,27 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due
         Scanner sc = new Scanner(System.in);
         System.out.println("*** BDM Client :: Extend Book ***\n");
         String identityNumber = currentMemberEntity.getIdentityNumber();
+
+
+        try {
         List<LendingEntity> lentBooks = retrieveBooksLoanedByMember(identityNumber);
         printLending(lentBooks);
 
         System.out.print("Enter Book to Extend> ");
-        Long bookId = sc.nextLong();
-
-        try {
+        Long bookId = sc.nextLong();            
             LendingEntity updatedLendingEntity = doExtendBook(identityNumber, bookId);
-            Date newDueDate = updatedLendingEntity.getDueDate();
+            XMLGregorianCalendar newDueDate = updatedLendingEntity.getDueDate();
             SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
             System.out.println("Book successfully extended. New due date: " + dt1.format(newDueDate));
-        } catch (BookIsAlreadyOverdueException
-                | LendingNotFoundException
-                | MemberHasFinesException
-                | BookHasBeenReservedException ex) {
+        } catch (LendingNotFoundException_Exception | MemberHasFinesException_Exception | BookIsAlreadyOverdueException_Exception |BookHasBeenReservedException_Exception  ex) {
             System.out.print("Extend book failed. ");
             System.out.println(ex.getMessage());
         }
 
     }
         
-   private void doReserveBook() {
-        List<Object[]> results;
+    private void doReserveBook(){
+        List<AnyTypeArray> results;
 //        String identityNumber = currentActiveMember.getIdentityNumber();
 
         Scanner sc = new Scanner(System.in);
@@ -239,25 +227,22 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due
         try {
             doReserveBook(currentMemberEntity, bookId);
             System.out.println("Book successfully reserved.");
-        } catch (BookIsAvailableForLoanException
-                | MultipleReservationException
-                | MemberHasFinesException 
-                | BookNotFoundException 
-                | BookIsAlreadyLoanedByMemberException ex) {
+        } catch (BookIsAlreadyLoanedByMemberException_Exception | BookIsAvailableForLoanException_Exception | BookNotFoundException_Exception | MemberHasFinesException_Exception | MultipleReservationException_Exception  ex) {
             System.out.println(ex.getMessage());
             System.out.println();
         }
    }
         
-        private void printReserveResults(List<Object[]> results) {
+        private void printReserveResults(List<AnyTypeArray> results) {
         System.out.println("Search Results:");
 System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Availability");
         if (!results.isEmpty()) {
-            for (Object[] result : results) {
-                Long bookId = (Long) result[0];
-                String title = (String) result[1];
-                Boolean hasReturned = (Boolean) result[2];
-                Date dueDate = (Date) result[3];
+            for (AnyTypeArray result : results) {
+                List<Object> items = result.getItem();
+                Long bookId = (Long) items.get(0);
+                String title = (String) items.get(1);
+//                Boolean hasReturned = (Boolean) items.get(2);
+                Date dueDate = (Date) items.get(2);
 
                 SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
                 String dd = "Due on " + dt1.format(dueDate);
@@ -269,7 +254,7 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Ava
         }
     }
         
-        private void doPayFines() {
+        private void doPayFines()   {
         
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** BDM Client :: Pay Fines ***\n");
@@ -294,9 +279,7 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Ava
             fineEntity.setHasPaid(true) ; 
             System.out.println("Select Payment Method (1: Cash, 2: Card)>");
             int method = scanner.nextInt();
-            if (method == 1) {
-                System.out.println("Fine successfully paid.");
-            } else if (method == 2) {
+
                 System.out.println("Enter Name of Card>");
                 scanner.nextLine().trim();
                 System.out.println("Enter Card Number>");
@@ -305,38 +288,84 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Ava
                 scanner.nextLine().trim();
                 System.out.println("Enter Pin>");
                 scanner.nextLine().trim();
+                setHasPaidTrue(fineIdToPay) ; 
                 System.out.println("Fine successfully paid.");
 
             }
   
-            } else {
+             else {
                System.out.println("There are no outstanding fines for member!") ; 
             }
+        }
 
-
-        } catch (MemberNotFoundException ex) {
+          catch (MemberNotFoundException_Exception |  FineNotFoundException_Exception ex) {
             System.out.println("Member Identity Number cannot be found!");
         }
 
-    }*/
+    }
 
-    /*(private static bookdropmachineclient.LendingEntity doExtendBook(java.lang.String identityNumber, java.lang.Long bookId) throws LendingNotFoundException_Exception, BookIsAlreadyOverdueException_Exception, BookHasBeenReservedException_Exception, MemberHasFinesException_Exception {
-        bookdropmachineclient.BookDropWebService_Service service = new bookdropmachineclient.BookDropWebService_Service();
-        bookdropmachineclient.BookDropWebService port = service.getBookDropWebServicePort();
-        return port.doExtendBook(identityNumber, bookId);
-    }*/
-
-    private static bookdropmachineclient.MemberEntity memberLogin(java.lang.String identityNumber, java.lang.String securityCode) throws InvalidLoginException_Exception {
-        bookdropmachineclient.BookDropWebService_Service service = new bookdropmachineclient.BookDropWebService_Service();
-        bookdropmachineclient.BookDropWebService port = service.getBookDropWebServicePort();
+    private static ejb.session.ws.MemberEntity memberLogin(java.lang.String identityNumber, java.lang.String securityCode) throws InvalidLoginException_Exception {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
         return port.memberLogin(identityNumber, securityCode);
     }
-        
-        
-    
-    
-    
-    
-          
 
+    private static java.util.List<ejb.session.ws.LendingEntity> retrieveBooksLoanedByMember(java.lang.String identityNumber) {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        return port.retrieveBooksLoanedByMember(identityNumber);
     }
+
+    private static void doReturnBook(java.lang.Long bookId, java.lang.Long memberId) throws LendingNotFoundException_Exception, MemberNotFoundException_Exception {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        port.doReturnBook(bookId, memberId);
+    }
+
+    private static LendingEntity doExtendBook(java.lang.String identityNumber, java.lang.Long bookId) throws LendingNotFoundException_Exception, MemberHasFinesException_Exception, BookIsAlreadyOverdueException_Exception, BookHasBeenReservedException_Exception {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        return port.doExtendBook(identityNumber, bookId);
+    }
+
+    private static void doReserveBook(ejb.session.ws.MemberEntity currentMember, java.lang.Long bookId) throws BookIsAlreadyLoanedByMemberException_Exception, BookIsAvailableForLoanException_Exception, BookNotFoundException_Exception, MemberHasFinesException_Exception, MultipleReservationException_Exception {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        port.doReserveBook(currentMember, bookId);
+    }
+
+    private static FineEntity retrieveFineByFineId(java.lang.Long fineIdToPay) throws FineNotFoundException_Exception {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        return port.retrieveFineByFineId(fineIdToPay);
+    }
+
+    private static java.util.List<ejb.session.ws.FineEntity> retrieveFinesByMember(java.lang.String identityNumber) {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        return port.retrieveFinesByMember(identityNumber);
+    }
+
+    private static MemberEntity retrieveMemberByIdentityNumber(java.lang.String identityNumber) throws MemberNotFoundException_Exception {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        return port.retrieveMemberByIdentityNumber(identityNumber);
+    }  
+
+    private static void setHasPaidTrue(java.lang.Long fineIdToPay) throws FineNotFoundException_Exception {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        port.setHasPaidTrue(fineIdToPay);
+    }
+
+    private static java.util.List<net.java.dev.jaxb.array.AnyTypeArray> searchBookToReserve(java.lang.String titleToSearch) {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        return port.searchBookToReserve(titleToSearch);
+    }
+
+    
+    
+    
+    
+}

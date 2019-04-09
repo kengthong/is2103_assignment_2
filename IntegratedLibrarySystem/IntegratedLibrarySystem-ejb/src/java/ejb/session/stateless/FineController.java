@@ -11,8 +11,11 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.FineNotFoundException;
 import util.exception.MemberHasFinesException;
 
 /**
@@ -57,11 +60,15 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     }
     
     @Override
-    public FineEntity retrieveFineByFineId(Long fineId) {
+    public FineEntity retrieveFineByFineId(Long fineId) throws FineNotFoundException {
         Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.fineId = :inFineId") ;
         query.setParameter("inFineId", fineId) ; 
         
-        return (FineEntity) query.getSingleResult() ;
+        try {
+            return (FineEntity) query.getSingleResult() ;
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new FineNotFoundException("Fine does not exist");
+        }
         
     }
     
@@ -83,5 +90,19 @@ public class FineController implements FineControllerRemote, FineControllerLocal
         
         return newFineEntity;
     }
+
+    @Override
+    public void setHasPaidTrue(Long fineId) throws FineNotFoundException {
+        
+        try {
+            FineEntity fineEntity = retrieveFineByFineId(fineId);
+            fineEntity.setHasPaid(true);
+            entityManager.flush();
+        } catch(FineNotFoundException ex) {
+            throw ex;
+        }
+    }       
+    
+    
     
 }

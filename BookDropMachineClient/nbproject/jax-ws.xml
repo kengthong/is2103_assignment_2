@@ -5,7 +5,7 @@
     <client name="BookDropWebService">
       <wsdl-url>http://localhost:8080/BookDropWebService/BookDropWebService?wsdl</wsdl-url>
       <local-wsdl-file>localhost_8080/BookDropWebService/BookDropWebService.wsdl</local-wsdl-file>
-      <package-name forceReplace="true">bookdropmachineclient</package-name>
+      <package-name>ejb.session.ws</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
         <wsimport-option>
@@ -31,10 +31,6 @@
         <wsimport-option>
           <wsimport-option-name>xendorsed</wsimport-option-name>
           <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>package</wsimport-option-name>
-          <wsimport-option-value>bookdropmachineclient</wsimport-option-value>
         </wsimport-option>
       </wsimport-options>
     </client>

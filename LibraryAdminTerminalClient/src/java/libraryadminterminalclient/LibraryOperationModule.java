@@ -26,6 +26,7 @@ import util.exception.BookHasBeenReservedException;
 import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
+import util.exception.FineNotFoundException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
 import util.exception.MemberHasFinesException;
@@ -224,7 +225,7 @@ public class LibraryOperationModule {
 
     }
 
-    private void doPayFines() {
+    private void doPayFines()  {
         
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** ILS :: Library Operation :: Pay Fines ***\n");
@@ -269,7 +270,7 @@ public class LibraryOperationModule {
             }
 
 
-        } catch (MemberNotFoundException ex) {
+        } catch (MemberNotFoundException |  FineNotFoundException ex) {
             System.out.println("Member Identity Number cannot be found!");
         }
 

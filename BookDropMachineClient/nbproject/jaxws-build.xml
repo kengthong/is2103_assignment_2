@@ -19,7 +19,7 @@
     <target name="wsimport-client-BookDropWebService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/BookDropWebService"/>
         <property name="wsdl-BookDropWebService" location="xml-resources/web-service-references/BookDropWebService/wsdl/localhost_8080/BookDropWebService/BookDropWebService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/BookDropWebService" destdir="${build.generated.dir}/jax-wsCache/BookDropWebService" wsdl="${wsdl-BookDropWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/BookDropWebService/BookDropWebService?wsdl" xnocompile="true" xendorsed="true" package="bookdropmachineclient">
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/BookDropWebService" destdir="${build.generated.dir}/jax-wsCache/BookDropWebService" wsdl="${wsdl-BookDropWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/BookDropWebService/BookDropWebService?wsdl" xnocompile="true" xendorsed="true">
             <depends file="${wsdl-BookDropWebService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/BookDropWebService"/>
         </wsimport>
@@ -31,7 +31,7 @@
     </target>
     <target name="wsimport-client-clean-BookDropWebService" depends="-init-project">
         <delete dir="${build.generated.dir}/jax-wsCache/BookDropWebService"/>
-        <delete dir="${build.generated.sources.dir}/jax-ws/bookdropmachineclient"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/ejb/session/ws"/>
     </target>
     <target name="wsimport-client-generate" depends="wsimport-client-BookDropWebService"/>
 </project>

@@ -104,7 +104,9 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
     public MemberEntity doMemberLogin(String identityNumber, String securityCode) throws InvalidLoginException {
         try
         {
+            System.err.println("id " + identityNumber + " sc " + securityCode);
             MemberEntity memberEntity = retrieveMemberByIdentityNumber(identityNumber);
+            System.err.println(memberEntity);
             
             if(memberEntity.getSecurityCode().equals(securityCode))
             {
