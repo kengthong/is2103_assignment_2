@@ -3,25 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bookdropmachineclient;
 
-import entity.FineEntity;
-import entity.LendingEntity;
+package bookdropmachineclient;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import util.exception.BookHasBeenReservedException;
-import util.exception.BookIsAlreadyLoanedByMemberException;
-import util.exception.BookIsAlreadyOverdueException;
-import util.exception.BookIsAvailableForLoanException;
-import util.exception.BookNotFoundException;
+import javax.xml.datatype.XMLGregorianCalendar;
 import util.exception.InvalidLoginException;
-import util.exception.LendingNotFoundException;
-import util.exception.MemberHasFinesException;
-import util.exception.MemberNotFoundException;
-import util.exception.MultipleReservationException;
 
 
 /**
@@ -77,8 +67,6 @@ public class MainApp {
         
         private void doLogin() throws InvalidLoginException {
         Scanner scanner = new Scanner(System.in);
-        String identitynum = "";
-        String securitycode = "";
 
         System.out.println("*** BDM Client :: Login ***\n");
         System.out.print("Enter Identity Number> ");
@@ -88,7 +76,7 @@ public class MainApp {
 
         if (identityNumber.length() > 0 && securityCode.length() > 0) {
             try {
-                currentMemberEntity = memberLogin(identityNumber, securitycode);
+                currentMemberEntity = memberLogin(identityNumber, securityCode);
                 System.out.println("Login successful!\n");
             } catch (InvalidLoginException_Exception ex) {
                 System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
@@ -114,12 +102,12 @@ public class MainApp {
             System.out.println("6: Logout\n");
             response = 0;
 
-            /*while (response < 1 || response > 6) {
+            while (response < 1 || response > 6) {
                 System.out.print("> ");
                 response = scanner.nextInt();
                 if (response == 1) {
                     viewLentBook() ; 
-                } else if (response == 2) {
+                } /* else if (response == 2) {
                     doReturnBook();
                 } else if (response == 3) {
                     doExtendBook();
@@ -139,17 +127,22 @@ public class MainApp {
             }
         }
     }
+    }
     
 
     
-    /*private void viewLentBook() {
+    private void viewLentBook()  {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** BDM Client :: View Lent Books ***\n");
 
         String identityNumber = currentMemberEntity.getIdentityNumber();
-
+        try {
         List<LendingEntity> lentBooks = retrieveBooksLoanedByMember(identityNumber); 
         printLending(lentBooks);
+    } catch (LendingNotFoundException_Exception ex)  {
+        
+    }
+        
     }
     
         private void printLending(List<LendingEntity> lentBooks) {
@@ -160,7 +153,8 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due
                 Long bookId = lendingEntity.getBook().getBookId();
                 String title = lendingEntity.getBook().getTitle();
 
-                Date dueDate = lendingEntity.getDueDate();
+                XMLGregorianCalendar dueDate = lendingEntity.getDueDate();
+                Date dueD = dueDate.toGregorianCalendar().getTime();
                 SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
                 String dd = dt1.format(dueDate);
                 System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", dd);
@@ -169,7 +163,7 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due
 
         System.out.println();
     }
-    
+    /*
     private void doReturnBook() {
 
         Scanner sc = new Scanner(System.in);
@@ -254,7 +248,8 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Due
 System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Availability");
         if (!results.isEmpty()) {
             for (Object[] result : results) {
-                Long bookId = (Long) result[0];
+                Long bookId = (Long)
+                result[0];
                 String title = (String) result[1];
                 Boolean hasReturned = (Boolean) result[2];
                 Date dueDate = (Date) result[3];
@@ -331,6 +326,16 @@ System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Ava
         bookdropmachineclient.BookDropWebService port = service.getBookDropWebServicePort();
         return port.memberLogin(identityNumber, securityCode);
     }
+
+    private static java.util.List<bookdropmachineclient.LendingEntity> retrieveBooksLoanedByMember(java.lang.String identityNumber) throws LendingNotFoundException_Exception {
+        bookdropmachineclient.BookDropWebService_Service service = new bookdropmachineclient.BookDropWebService_Service();
+        bookdropmachineclient.BookDropWebService port = service.getBookDropWebServicePort();
+        return port.retrieveBooksLoanedByMember(identityNumber);
+    }
+    
+    
+    
+
         
         
     

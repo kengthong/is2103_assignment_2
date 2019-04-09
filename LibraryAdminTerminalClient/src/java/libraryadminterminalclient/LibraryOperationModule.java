@@ -261,7 +261,10 @@ public class LibraryOperationModule {
                 fineControllerRemote.setHasPaidTrue(fineIdToPay);
                 System.out.println("Fine successfully paid.");
 
-            }
+            } else { 
+                fineControllerRemote.setHasPaidTrue(fineIdToPay);
+                System.out.println("Fine successfully paid.");
+             }
   
             } else {
                System.out.println("There are no outstanding fines for member!") ; 

@@ -32,10 +32,10 @@ public class BookEntity implements Serializable {
     private String isbn;
     @Column(precision = 4, nullable = false)
     private Integer publishedYear;
-    @OneToMany(mappedBy="book", fetch = FetchType.LAZY)
-    private List<LendingEntity> lendings;
-    @OneToMany(mappedBy="book")
-    private List<ReservationEntity> reservations;
+    //@OneToMany(mappedBy="book", fetch = FetchType.LAZY)
+    //private List<LendingEntity> lendings;
+    //@OneToMany(mappedBy="book")
+    //private List<ReservationEntity> reservations;
     
         public BookEntity() {
     }
@@ -80,22 +80,22 @@ public class BookEntity implements Serializable {
         this.publishedYear = publishedYear;
     }
 
-    public List<LendingEntity> getLendings() {
-        return lendings;
-    }
-
-    public void setLendings(List<LendingEntity> lendings) {
-        this.lendings = lendings;
-    }
-    
-    public List<ReservationEntity> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(List<ReservationEntity> reservations) {
-        this.reservations = reservations;
-    }
-    
+//    public List<LendingEntity> getLendings() {
+//        return lendings;
+//    }
+//
+//    public void setLendings(List<LendingEntity> lendings) {
+//        this.lendings = lendings;
+//    }
+//    
+//    public List<ReservationEntity> getReservations() {
+//        return reservations;
+//    }
+//
+//    public void setReservations(List<ReservationEntity> reservations) {
+//        this.reservations = reservations;
+//    }
+//    
     @Override
     public int hashCode() {
         int hash = 0;

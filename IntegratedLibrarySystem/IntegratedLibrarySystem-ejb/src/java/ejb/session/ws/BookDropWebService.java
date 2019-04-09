@@ -80,12 +80,12 @@ public class BookDropWebService {
         return lendingEntity ; 
     }
     
-    @WebMethod(operationName = "searchBookToReserve")
-    public List<Object[]> searchBookToReserve(@WebParam(name = "titleToSearch") String titleToSearch)
-    { 
-        List<Object[]> books = libraryOperationControllerLocal.searchBookToReserve(titleToSearch);
-        return books ; 
-    }
+//    @WebMethod(operationName = "searchBookToReserve")
+//    public List<Object[]> searchBookToReserve(@WebParam(name = "titleToSearch") String titleToSearch)
+//    { 
+//        List<Object[]> books = libraryOperationControllerLocal.searchBookToReserve(titleToSearch);
+//        return books ; 
+//    }
     
     @WebMethod(operationName = "doReserveBook")
     public void doReserveBook(@WebParam(name = "currentMember") MemberEntity currentMember, 
@@ -94,11 +94,11 @@ public class BookDropWebService {
         libraryOperationControllerLocal.doReserveBook(currentMember, bookId); 
     }
     
-    @WebMethod(operationName = "retrieveFineByFineId")
-    public FineEntity retrieveFineByFineId(@WebParam(name = "fineIdToPay") Long fineIdToPay) {
-        FineEntity fineEntity = fineControllerLocal.retrieveFineByFineId(fineIdToPay) ; 
-        return fineEntity ; 
-    }
+//    @WebMethod(operationName = "retrieveFineByFineId")
+//    public FineEntity retrieveFineByFineId(@WebParam(name = "fineIdToPay") Long fineIdToPay) {
+//        FineEntity fineEntity = fineControllerLocal.retrieveFineByFineId(fineIdToPay) ; 
+//        return fineEntity ; 
+//    }
     
     @WebMethod(operationName = "retrieveFinesByMember") 
     public List<FineEntity> retrieveFinesByMember(@WebParam(name = "identityNumber") String identityNumber) {

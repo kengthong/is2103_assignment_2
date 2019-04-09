@@ -43,12 +43,12 @@ public class MemberEntity implements Serializable {
     private String phone;
     @Column(length = 60, nullable = false)
     private String address;
-    @OneToMany(mappedBy="memberEntity",fetch = FetchType.LAZY)
-    private List<LendingEntity> lendings;
-    @OneToMany(mappedBy = "memberEntity", fetch = FetchType.LAZY) 
-    private List<FineEntity> fines;
-    @OneToMany (mappedBy = "memberEntity", fetch = FetchType.LAZY) 
-    private List<ReservationEntity> reservations ; 
+//    @OneToMany(mappedBy="memberEntity",fetch = FetchType.LAZY)
+//    private List<LendingEntity> lendings;
+//    @OneToMany(mappedBy = "memberEntity", fetch = FetchType.LAZY) 
+//    private List<FineEntity> fines;
+//    @OneToMany (mappedBy = "memberEntity", fetch = FetchType.LAZY) 
+//    private List<ReservationEntity> reservations ; 
   
        public MemberEntity() {
     }
@@ -139,29 +139,29 @@ public class MemberEntity implements Serializable {
         this.address = address;
     }
 
-    public List<LendingEntity> getLendings() {
-        return lendings;
-    }
-
-    public void setLendings(List<LendingEntity> lendings) {
-        this.lendings = lendings;
-    }
-    
-    public List<FineEntity> getFines() {
-        return fines;
-    }
-
-    public void setFines(List<FineEntity> fines) {
-        this.fines = fines;
-    }
-
-    public List<ReservationEntity> getReservations() {
-        return reservations;
-    }
-    
-    public void setReservations(List<ReservationEntity> reservations) {
-        this.reservations = reservations;
-    }
+//    public List<LendingEntity> getLendings() {
+//        return lendings;
+//    }
+//
+//    public void setLendings(List<LendingEntity> lendings) {
+//        this.lendings = lendings;
+//    }
+//    
+//    public List<FineEntity> getFines() {
+//        return fines;
+//    }
+//
+//    public void setFines(List<FineEntity> fines) {
+//        this.fines = fines;
+//    }
+//
+//    public List<ReservationEntity> getReservations() {
+//        return reservations;
+//    }
+//    
+//    public void setReservations(List<ReservationEntity> reservations) {
+//        this.reservations = reservations;
+//    }
     
     @Override
     public int hashCode() {
