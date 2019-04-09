@@ -11,6 +11,7 @@ import entity.LendingEntity;
 import entity.MemberEntity;
 import entity.ReservationEntity;
 import entity.StaffEntity;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -237,15 +238,44 @@ public class LibraryOperationController implements LibraryOperationControllerRem
     @Override
     public List<Object[]> searchBook(String titleToSearch) {
         Query query = entityManager.createQuery(
-                "SELECT b.bookId, b.title, l1.hasReturned as hasReturned, l1.dueDate as dueDate \n"
-                + "FROM BookEntity b, LendingEntity l1 \n"
+                "SELECT b.bookId, b.title, b.title\n"
+                + "FROM BookEntity b \n"
                 + "WHERE b.title LIKE :inTitleToSearch \n"
-                + "and l1.book.bookId = b.bookId\n"
-                + "and l1.hasReturned = false"
         );
+
         titleToSearch = "%" + titleToSearch + "%";
         query.setParameter("inTitleToSearch", titleToSearch);
-        return query.getResultList();
+        List<Object[]> results = query.getResultList();
+
+        for (Object[] result : results) {
+            //if book is on  loan. If yes, get due date, 
+            //if no, check for reservations. If no reservations, append currently available
+            Long bookId = (Long) result[0];
+            try {
+                
+                
+                lendingEntityControllerLocal.checkIsBookLent(bookId);
+                reservationControllerLocal.checkForReservation(bookId);
+                result[2] = "Currently Available";
+            } catch (BookIsOnLoanException ex) {
+                //retrieve lending and get due date
+                try {
+                    LendingEntity currentLending = lendingEntityControllerLocal.retrieveLendingByBookId(bookId);
+                    Date dueDate = currentLending.getDueDate();
+                    SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+                    result[2] = "Due on " + dt1.format(dueDate);
+                } catch (LendingNotFoundException ex1) {
+                }
+                
+            } catch (BookHasBeenReservedException ex) {
+                // has been reserved
+                result[2] = "Reserved";
+            }
+
+        }
+
+        return results;
+
     }
     
 

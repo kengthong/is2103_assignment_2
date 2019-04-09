@@ -69,7 +69,8 @@ public class BookDropWebService {
 
         for (LendingEntity le : lendingEntity) {
             em.detach(le);
-            le.setMember(null);
+            le.getMember().setLendings(null);
+            le.getBook().setLendings(null);
         }
 
         return lendingEntity;

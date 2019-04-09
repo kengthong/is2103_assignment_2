@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.java.dev.jaxb.array.AnyTypeArray;
-import util.exception.InvalidLoginException;
+
+
 
 
 /**
@@ -46,12 +47,9 @@ public class MainApp {
                 response = scanner.nextInt();
                 if (response == 1) {
 
-                    try {
 
                         doLogin();
                         menuMain();
-                    } catch (InvalidLoginException ex) {
-                    }
 
                 } else if (response == 2) {
                     break;
@@ -65,7 +63,7 @@ public class MainApp {
         }
     }
         
-        private void doLogin() throws InvalidLoginException {
+        private void doLogin() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("*** BDM Client :: Login ***\n");
@@ -80,7 +78,6 @@ public class MainApp {
                 System.out.println("Login successful!\n");
             } catch (InvalidLoginException_Exception ex) {
                 System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
-                throw new InvalidLoginException();
             }
         } else {
             System.out.println("Invalid login credential!");
@@ -113,11 +110,11 @@ public class MainApp {
                     doExtendBook();
                 } else if (response == 4) {
                     doPayFines();
-                } /*else if (response == 5) {
+                } else if (response == 5) {
                     doReserveBook();
                 } else if (response == 6) {
                     break;
-                }*/ else {
+                } else {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
@@ -151,8 +148,9 @@ public class MainApp {
                 String title = lendingEntity.getBook().getTitle();
 
                 XMLGregorianCalendar dueDate = lendingEntity.getDueDate();
+                Date due  = dueDate.toGregorianCalendar().getTime();
                 SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
-                String dd = dt1.format(dueDate);
+                String dd = dt1.format(due);
                 System.out.format("%-5d %-1s %-60s %-1s %-10s %n", bookId, "|", title, "|", dd);
             }
         }
@@ -196,8 +194,9 @@ public class MainApp {
         Long bookId = sc.nextLong();            
             LendingEntity updatedLendingEntity = doExtendBook(identityNumber, bookId);
             XMLGregorianCalendar newDueDate = updatedLendingEntity.getDueDate();
+            Date newDue = newDueDate.toGregorianCalendar().getTime();
             SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
-            System.out.println("Book successfully extended. New due date: " + dt1.format(newDueDate));
+            System.out.println("Book successfully extended. New due date: " + dt1.format(newDue));
         } catch (LendingNotFoundException_Exception | MemberHasFinesException_Exception | BookIsAlreadyOverdueException_Exception |BookHasBeenReservedException_Exception  ex) {
             System.out.print("Extend book failed. ");
             System.out.println(ex.getMessage());
@@ -235,7 +234,7 @@ public class MainApp {
         
         private void printReserveResults(List<AnyTypeArray> results) {
         System.out.println("Search Results:");
-System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Availability");
+        System.out.format("%-5s %-1s %-60s %-1s %-10s %n", "Id", "|", "Title", "|", "Availability");
         if (!results.isEmpty()) {
             for (AnyTypeArray result : results) {
                 List<Object> items = result.getItem();

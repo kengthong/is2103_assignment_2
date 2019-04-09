@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.ReservationEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.BookHasBeenReservedException;
 import util.exception.MemberNotAtTopOfReserveList;
 import util.exception.MemberNotFoundException;
 import util.exception.MultipleReservationException;
@@ -43,5 +44,7 @@ public interface ReservationControllerRemote {
     void fulfillReservation(ReservationEntity currentReservationEntity);
 
     void checkIfMemberOnReserveList(List<ReservationEntity> reservations, String identityNumber) throws MemberNotAtTopOfReserveList;
+
+    void checkIfBookHasReservations(long bookId) throws BookHasBeenReservedException;
 
 }
