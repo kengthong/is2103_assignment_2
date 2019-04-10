@@ -12,6 +12,8 @@
 
 <xs:element name="BookNotFoundException" type="tns:BookNotFoundException"/>
 
+<xs:element name="FineIsAlreadyPaidException" type="tns:FineIsAlreadyPaidException"/>
+
 <xs:element name="FineNotFoundException" type="tns:FineNotFoundException"/>
 
 <xs:element name="InvalidLoginException" type="tns:InvalidLoginException"/>
@@ -79,6 +81,12 @@
 </xs:complexType>
 
 <xs:complexType name="FineNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="FineIsAlreadyPaidException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -191,6 +199,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="retrieveFinesByMember">
+<xs:sequence>
+<xs:element name="identityNumber" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveFinesByMemberResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:fineEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="doExtendBook">
 <xs:sequence>
 <xs:element name="identityNumber" type="xs:string" minOccurs="0"/>
@@ -228,6 +248,17 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="doReturnBook">
+<xs:sequence>
+<xs:element name="bookId" type="xs:long" minOccurs="0"/>
+<xs:element name="memberId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="doReturnBookResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="doReserveBook">
 <xs:sequence>
 <xs:element name="currentMember" type="tns:memberEntity" minOccurs="0"/>
@@ -260,29 +291,6 @@
 <xs:complexType name="BookNotFoundException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="doReturnBook">
-<xs:sequence>
-<xs:element name="bookId" type="xs:long" minOccurs="0"/>
-<xs:element name="memberId" type="xs:long" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="doReturnBookResponse">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="retrieveFinesByMember">
-<xs:sequence>
-<xs:element name="identityNumber" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveFinesByMemberResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:fineEntity" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

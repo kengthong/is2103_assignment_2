@@ -18,6 +18,7 @@ import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsAvailableForLoanException;
 import util.exception.BookIsOnLoanException;
 import util.exception.BookNotFoundException;
+import util.exception.FineIsAlreadyPaidException;
 import util.exception.FineNotFoundException;
 import util.exception.LendingNotFoundException;
 import util.exception.MaxLoansExceeded;
@@ -186,6 +187,7 @@ public class MemberOperationModule {
                     Double amount = fineEntity.getAmount();
                     System.out.println(fineId + "\t|" + amount);
                 }
+                System.out.println();
                 System.out.print("Enter Fine ID to Settle> ");
                 Long fineIdToPay = scanner.nextLong();
                 scanner.nextLine();
@@ -196,18 +198,18 @@ public class MemberOperationModule {
                 scanner.nextLine().trim();
                 System.out.print("Enter Card Number> ");
                 scanner.nextLine().trim();
-                System.out.print("Enter Card Expiry> ");
+                System.out.print("Enter Card Expiry (MMYYYY)> ");
                 scanner.nextLine().trim();
                 System.out.print("Enter Pin> ");
                 scanner.nextLine().trim();
                 fineControllerRemote.setHasPaidTrue(fineIdToPay);
-                System.out.println("Fine successfully paid.");
+                System.out.println("Fine successfully paid.\n");
 
             } else {
                 System.out.println("There are no outstanding fines for member!\n");
             }
 
-        } catch (FineNotFoundException ex) {
+        } catch (FineNotFoundException | FineIsAlreadyPaidException ex) {
             System.out.println(ex.getMessage());
         }
 
@@ -233,14 +235,14 @@ public class MemberOperationModule {
 
         try {
             libraryOperationControllerRemote.doReserveBook(currentActiveMember, bookId);
-            System.out.println("Book successfully reserved.");
+            System.out.println("Book successfully reserved.\n");
         } catch (BookIsAvailableForLoanException
                 | MultipleReservationException
                 | MemberHasFinesException
                 | BookNotFoundException
                 | BookIsAlreadyLoanedByMemberException ex) {
             System.out.println(ex.getMessage());
-            System.out.println();
+            
         }
 //
 //Id |Title | Availability

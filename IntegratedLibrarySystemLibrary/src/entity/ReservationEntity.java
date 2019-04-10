@@ -34,10 +34,10 @@ public class ReservationEntity implements Serializable {
 //    private String title;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date availability;
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne
 //    @JoinColumn (name="memberID")
     private MemberEntity memberEntity;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private BookEntity book;
     @Column(nullable=false)
     private boolean hasFulfilled;

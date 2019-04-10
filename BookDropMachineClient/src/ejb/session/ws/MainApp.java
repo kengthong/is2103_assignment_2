@@ -38,12 +38,14 @@ public class MainApp {
                 System.out.print("> ");
                 response = scanner.nextInt();
                 if (response == 1) {
+
                     try {
                         doLogin();
                         menuMain();
                     } catch (InvalidLoginException_Exception ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                     }
+
                 } else if (response == 2) {
                     break;
                 } else {
@@ -210,7 +212,7 @@ public class MainApp {
             return;
         }
 
-        System.out.print("Enter Book ID to Reserve> ");
+        System.out.print("Enter Book ID to Reserve: ");
         Long bookId = sc.nextLong();
 
         try {
@@ -259,7 +261,7 @@ public class MainApp {
 
             if (!fineEntities.isEmpty()) {
                 System.out.println("Unpaid Fines For Member:");
-                System.out.println("Fine ID\t| Amount ");
+                System.out.println("ID\t| Amount ");
                 for (FineEntity fineEntity : fineEntities) {
                     Long fineId = fineEntity.getFineId();
                     Double amount = fineEntity.getAmount();
@@ -269,24 +271,24 @@ public class MainApp {
                 Long fineIdToPay = scanner.nextLong();
                 FineEntity fineEntity = retrieveFineByFineId(fineIdToPay);
                 fineEntity.setHasPaid(true);
-                System.out.println("Select Payment Method (1: Cash, 2: Card)>");
-                int method = scanner.nextInt();
+//                System.out.println("Select Payment Method (1: Cash, 2: Card)>");
+//                int method = scanner.nextInt();
 
-                System.out.println("Enter Name of Card>");
+                System.out.println("Enter Name of Card> ");
                 scanner.nextLine().trim();
-                System.out.println("Enter Card Number>");
+                System.out.println("Enter Card Number> ");
                 scanner.nextLine().trim();
-                System.out.println("Enter Card Expiry>");
+                System.out.println("Enter Card Expiry (MMYYYY)> ");
                 scanner.nextLine().trim();
-                System.out.println("Enter Pin>");
+                System.out.println("Enter Pin> ");
                 scanner.nextLine().trim();
                 setHasPaidTrue(fineIdToPay);
-                System.out.println("Fine successfully paid.");
+                System.out.println("Fine successfully paid.\n");
 
             } else {
-                System.out.println("There are no outstanding fines for member!");
+                System.out.println("There are no outstanding fines for member!\n");
             }
-        } catch (FineNotFoundException_Exception ex) {
+        } catch (FineNotFoundException_Exception | FineIsAlreadyPaidException_Exception ex) {
             System.out.println(ex.getMessage());
         }
 
@@ -339,17 +341,19 @@ public class MainApp {
         ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
         return port.retrieveMemberByIdentityNumber(identityNumber);
     }
-
-    private static void setHasPaidTrue(java.lang.Long fineIdToPay) throws FineNotFoundException_Exception {
-        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
-        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
-        port.setHasPaidTrue(fineIdToPay);
-    }
-
+    
     private static java.util.List<net.java.dev.jaxb.array.AnyTypeArray> searchBookToReserve(java.lang.String titleToSearch) {
         ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
         ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
         return port.searchBookToReserve(titleToSearch);
     }
+
+    private static void setHasPaidTrue(java.lang.Long fineIdToPay) throws FineIsAlreadyPaidException_Exception, FineNotFoundException_Exception {
+        ejb.session.ws.BookDropWebService_Service service = new ejb.session.ws.BookDropWebService_Service();
+        ejb.session.ws.BookDropWebService port = service.getBookDropWebServicePort();
+        port.setHasPaidTrue(fineIdToPay);
+    }
+
+    
 
 }

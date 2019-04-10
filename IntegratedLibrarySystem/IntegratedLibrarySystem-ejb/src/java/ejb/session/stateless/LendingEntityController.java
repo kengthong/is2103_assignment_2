@@ -52,7 +52,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded {
-        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber");
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber and l.hasReturned = false");
         query.setParameter("inIdentityNumber", identityNumber);
 
         if (query.getResultList().size() >= 3) {

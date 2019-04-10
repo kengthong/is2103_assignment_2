@@ -102,7 +102,7 @@ public class AdministrationOperationModule {
                 } else if (response == 2) {
                     doViewMemberDetails();
                 } else if (response == 3) {
-                    System.out.println("Enter Member Identity Number>");
+                    System.out.print("Enter Member Identity Number>");
                     scanner.nextLine() ;
                     String identityNumber = scanner.nextLine().trim();
                     try {
@@ -113,7 +113,7 @@ public class AdministrationOperationModule {
                     }
                     
                 } else if (response == 4) {
-                    System.out.println("Enter Member Identity Number>");
+                    System.out.print("Enter Member Identity Number>");
                     scanner.nextLine() ;
                     String identityNumber = scanner.nextLine().trim();
                     try { 

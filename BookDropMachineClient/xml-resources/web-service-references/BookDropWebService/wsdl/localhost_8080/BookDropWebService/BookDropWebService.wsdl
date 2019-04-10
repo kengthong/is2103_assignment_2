@@ -7,6 +7,60 @@
 <xsd:import namespace="http://jaxb.dev.java.net/array" schemaLocation="http://localhost:8080/BookDropWebService/BookDropWebService?xsd=2"/>
 </xsd:schema>
 </types>
+<message name="persist">
+<part name="parameters" element="tns:persist"/>
+</message>
+<message name="persistResponse">
+<part name="parameters" element="tns:persistResponse"/>
+</message>
+<message name="retrieveBooksLoanedByMember">
+<part name="parameters" element="tns:retrieveBooksLoanedByMember"/>
+</message>
+<message name="retrieveBooksLoanedByMemberResponse">
+<part name="parameters" element="tns:retrieveBooksLoanedByMemberResponse"/>
+</message>
+<message name="retrieveMemberByIdentityNumber">
+<part name="parameters" element="tns:retrieveMemberByIdentityNumber"/>
+</message>
+<message name="retrieveMemberByIdentityNumberResponse">
+<part name="parameters" element="tns:retrieveMemberByIdentityNumberResponse"/>
+</message>
+<message name="MemberNotFoundException">
+<part name="fault" element="tns:MemberNotFoundException"/>
+</message>
+<message name="retrieveFinesByMember">
+<part name="parameters" element="tns:retrieveFinesByMember"/>
+</message>
+<message name="retrieveFinesByMemberResponse">
+<part name="parameters" element="tns:retrieveFinesByMemberResponse"/>
+</message>
+<message name="retrieveFineByFineId">
+<part name="parameters" element="tns:retrieveFineByFineId"/>
+</message>
+<message name="retrieveFineByFineIdResponse">
+<part name="parameters" element="tns:retrieveFineByFineIdResponse"/>
+</message>
+<message name="FineNotFoundException">
+<part name="fault" element="tns:FineNotFoundException"/>
+</message>
+<message name="setHasPaidTrue">
+<part name="parameters" element="tns:setHasPaidTrue"/>
+</message>
+<message name="setHasPaidTrueResponse">
+<part name="parameters" element="tns:setHasPaidTrueResponse"/>
+</message>
+<message name="FineIsAlreadyPaidException">
+<part name="fault" element="tns:FineIsAlreadyPaidException"/>
+</message>
+<message name="memberLogin">
+<part name="parameters" element="tns:memberLogin"/>
+</message>
+<message name="memberLoginResponse">
+<part name="parameters" element="tns:memberLoginResponse"/>
+</message>
+<message name="InvalidLoginException">
+<part name="fault" element="tns:InvalidLoginException"/>
+</message>
 <message name="doExtendBook">
 <part name="parameters" element="tns:doExtendBook"/>
 </message>
@@ -24,6 +78,18 @@
 </message>
 <message name="BookIsAlreadyOverdueException">
 <part name="fault" element="tns:BookIsAlreadyOverdueException"/>
+</message>
+<message name="doReturnBook">
+<part name="parameters" element="tns:doReturnBook"/>
+</message>
+<message name="doReturnBookResponse">
+<part name="parameters" element="tns:doReturnBookResponse"/>
+</message>
+<message name="searchBookToReserve">
+<part name="parameters" element="tns:searchBookToReserve"/>
+</message>
+<message name="searchBookToReserveResponse">
+<part name="parameters" element="tns:searchBookToReserveResponse"/>
 </message>
 <message name="doReserveBook">
 <part name="parameters" element="tns:doReserveBook"/>
@@ -43,70 +109,40 @@
 <message name="BookNotFoundException">
 <part name="fault" element="tns:BookNotFoundException"/>
 </message>
-<message name="memberLogin">
-<part name="parameters" element="tns:memberLogin"/>
-</message>
-<message name="memberLoginResponse">
-<part name="parameters" element="tns:memberLoginResponse"/>
-</message>
-<message name="InvalidLoginException">
-<part name="fault" element="tns:InvalidLoginException"/>
-</message>
-<message name="doReturnBook">
-<part name="parameters" element="tns:doReturnBook"/>
-</message>
-<message name="doReturnBookResponse">
-<part name="parameters" element="tns:doReturnBookResponse"/>
-</message>
-<message name="MemberNotFoundException">
-<part name="fault" element="tns:MemberNotFoundException"/>
-</message>
-<message name="setHasPaidTrue">
-<part name="parameters" element="tns:setHasPaidTrue"/>
-</message>
-<message name="setHasPaidTrueResponse">
-<part name="parameters" element="tns:setHasPaidTrueResponse"/>
-</message>
-<message name="FineNotFoundException">
-<part name="fault" element="tns:FineNotFoundException"/>
-</message>
-<message name="persist">
-<part name="parameters" element="tns:persist"/>
-</message>
-<message name="persistResponse">
-<part name="parameters" element="tns:persistResponse"/>
-</message>
-<message name="retrieveFineByFineId">
-<part name="parameters" element="tns:retrieveFineByFineId"/>
-</message>
-<message name="retrieveFineByFineIdResponse">
-<part name="parameters" element="tns:retrieveFineByFineIdResponse"/>
-</message>
-<message name="retrieveBooksLoanedByMember">
-<part name="parameters" element="tns:retrieveBooksLoanedByMember"/>
-</message>
-<message name="retrieveBooksLoanedByMemberResponse">
-<part name="parameters" element="tns:retrieveBooksLoanedByMemberResponse"/>
-</message>
-<message name="searchBookToReserve">
-<part name="parameters" element="tns:searchBookToReserve"/>
-</message>
-<message name="searchBookToReserveResponse">
-<part name="parameters" element="tns:searchBookToReserveResponse"/>
-</message>
-<message name="retrieveFinesByMember">
-<part name="parameters" element="tns:retrieveFinesByMember"/>
-</message>
-<message name="retrieveFinesByMemberResponse">
-<part name="parameters" element="tns:retrieveFinesByMemberResponse"/>
-</message>
-<message name="retrieveMemberByIdentityNumber">
-<part name="parameters" element="tns:retrieveMemberByIdentityNumber"/>
-</message>
-<message name="retrieveMemberByIdentityNumberResponse">
-<part name="parameters" element="tns:retrieveMemberByIdentityNumberResponse"/>
-</message>
 <portType name="BookDropWebService">
+<operation name="persist">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/persistRequest" message="tns:persist"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/persistResponse" message="tns:persistResponse"/>
+</operation>
+<operation name="retrieveBooksLoanedByMember">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveBooksLoanedByMemberRequest" message="tns:retrieveBooksLoanedByMember"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveBooksLoanedByMemberResponse" message="tns:retrieveBooksLoanedByMemberResponse"/>
+</operation>
+<operation name="retrieveMemberByIdentityNumber">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveMemberByIdentityNumberRequest" message="tns:retrieveMemberByIdentityNumber"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveMemberByIdentityNumberResponse" message="tns:retrieveMemberByIdentityNumberResponse"/>
+<fault message="tns:MemberNotFoundException" name="MemberNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveMemberByIdentityNumber/Fault/MemberNotFoundException"/>
+</operation>
+<operation name="retrieveFinesByMember">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFinesByMemberRequest" message="tns:retrieveFinesByMember"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFinesByMemberResponse" message="tns:retrieveFinesByMemberResponse"/>
+</operation>
+<operation name="retrieveFineByFineId">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFineByFineIdRequest" message="tns:retrieveFineByFineId"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFineByFineIdResponse" message="tns:retrieveFineByFineIdResponse"/>
+<fault message="tns:FineNotFoundException" name="FineNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFineByFineId/Fault/FineNotFoundException"/>
+</operation>
+<operation name="setHasPaidTrue">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/setHasPaidTrueRequest" message="tns:setHasPaidTrue"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/setHasPaidTrueResponse" message="tns:setHasPaidTrueResponse"/>
+<fault message="tns:FineNotFoundException" name="FineNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/setHasPaidTrue/Fault/FineNotFoundException"/>
+<fault message="tns:FineIsAlreadyPaidException" name="FineIsAlreadyPaidException" wsam:Action="http://ws.session.ejb/BookDropWebService/setHasPaidTrue/Fault/FineIsAlreadyPaidException"/>
+</operation>
+<operation name="memberLogin">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/memberLoginRequest" message="tns:memberLogin"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/memberLoginResponse" message="tns:memberLoginResponse"/>
+<fault message="tns:InvalidLoginException" name="InvalidLoginException" wsam:Action="http://ws.session.ejb/BookDropWebService/memberLogin/Fault/InvalidLoginException"/>
+</operation>
 <operation name="doExtendBook">
 <input wsam:Action="http://ws.session.ejb/BookDropWebService/doExtendBookRequest" message="tns:doExtendBook"/>
 <output wsam:Action="http://ws.session.ejb/BookDropWebService/doExtendBookResponse" message="tns:doExtendBookResponse"/>
@@ -114,6 +150,16 @@
 <fault message="tns:BookHasBeenReservedException" name="BookHasBeenReservedException" wsam:Action="http://ws.session.ejb/BookDropWebService/doExtendBook/Fault/BookHasBeenReservedException"/>
 <fault message="tns:MemberHasFinesException" name="MemberHasFinesException" wsam:Action="http://ws.session.ejb/BookDropWebService/doExtendBook/Fault/MemberHasFinesException"/>
 <fault message="tns:BookIsAlreadyOverdueException" name="BookIsAlreadyOverdueException" wsam:Action="http://ws.session.ejb/BookDropWebService/doExtendBook/Fault/BookIsAlreadyOverdueException"/>
+</operation>
+<operation name="doReturnBook">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/doReturnBookRequest" message="tns:doReturnBook"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/doReturnBookResponse" message="tns:doReturnBookResponse"/>
+<fault message="tns:LendingNotFoundException" name="LendingNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/doReturnBook/Fault/LendingNotFoundException"/>
+<fault message="tns:MemberNotFoundException" name="MemberNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/doReturnBook/Fault/MemberNotFoundException"/>
+</operation>
+<operation name="searchBookToReserve">
+<input wsam:Action="http://ws.session.ejb/BookDropWebService/searchBookToReserveRequest" message="tns:searchBookToReserve"/>
+<output wsam:Action="http://ws.session.ejb/BookDropWebService/searchBookToReserveResponse" message="tns:searchBookToReserveResponse"/>
 </operation>
 <operation name="doReserveBook">
 <input wsam:Action="http://ws.session.ejb/BookDropWebService/doReserveBookRequest" message="tns:doReserveBook"/>
@@ -124,51 +170,87 @@
 <fault message="tns:MemberHasFinesException" name="MemberHasFinesException" wsam:Action="http://ws.session.ejb/BookDropWebService/doReserveBook/Fault/MemberHasFinesException"/>
 <fault message="tns:BookNotFoundException" name="BookNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/doReserveBook/Fault/BookNotFoundException"/>
 </operation>
-<operation name="memberLogin">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/memberLoginRequest" message="tns:memberLogin"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/memberLoginResponse" message="tns:memberLoginResponse"/>
-<fault message="tns:InvalidLoginException" name="InvalidLoginException" wsam:Action="http://ws.session.ejb/BookDropWebService/memberLogin/Fault/InvalidLoginException"/>
-</operation>
-<operation name="doReturnBook">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/doReturnBookRequest" message="tns:doReturnBook"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/doReturnBookResponse" message="tns:doReturnBookResponse"/>
-<fault message="tns:LendingNotFoundException" name="LendingNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/doReturnBook/Fault/LendingNotFoundException"/>
-<fault message="tns:MemberNotFoundException" name="MemberNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/doReturnBook/Fault/MemberNotFoundException"/>
-</operation>
-<operation name="setHasPaidTrue">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/setHasPaidTrueRequest" message="tns:setHasPaidTrue"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/setHasPaidTrueResponse" message="tns:setHasPaidTrueResponse"/>
-<fault message="tns:FineNotFoundException" name="FineNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/setHasPaidTrue/Fault/FineNotFoundException"/>
-</operation>
-<operation name="persist">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/persistRequest" message="tns:persist"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/persistResponse" message="tns:persistResponse"/>
-</operation>
-<operation name="retrieveFineByFineId">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFineByFineIdRequest" message="tns:retrieveFineByFineId"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFineByFineIdResponse" message="tns:retrieveFineByFineIdResponse"/>
-<fault message="tns:FineNotFoundException" name="FineNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFineByFineId/Fault/FineNotFoundException"/>
-</operation>
-<operation name="retrieveBooksLoanedByMember">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveBooksLoanedByMemberRequest" message="tns:retrieveBooksLoanedByMember"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveBooksLoanedByMemberResponse" message="tns:retrieveBooksLoanedByMemberResponse"/>
-</operation>
-<operation name="searchBookToReserve">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/searchBookToReserveRequest" message="tns:searchBookToReserve"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/searchBookToReserveResponse" message="tns:searchBookToReserveResponse"/>
-</operation>
-<operation name="retrieveFinesByMember">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFinesByMemberRequest" message="tns:retrieveFinesByMember"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveFinesByMemberResponse" message="tns:retrieveFinesByMemberResponse"/>
-</operation>
-<operation name="retrieveMemberByIdentityNumber">
-<input wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveMemberByIdentityNumberRequest" message="tns:retrieveMemberByIdentityNumber"/>
-<output wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveMemberByIdentityNumberResponse" message="tns:retrieveMemberByIdentityNumberResponse"/>
-<fault message="tns:MemberNotFoundException" name="MemberNotFoundException" wsam:Action="http://ws.session.ejb/BookDropWebService/retrieveMemberByIdentityNumber/Fault/MemberNotFoundException"/>
-</operation>
 </portType>
 <binding name="BookDropWebServicePortBinding" type="tns:BookDropWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="persist">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveBooksLoanedByMember">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveMemberByIdentityNumber">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="MemberNotFoundException">
+<soap:fault name="MemberNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveFinesByMember">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveFineByFineId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="FineNotFoundException">
+<soap:fault name="FineNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="setHasPaidTrue">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="FineNotFoundException">
+<soap:fault name="FineNotFoundException" use="literal"/>
+</fault>
+<fault name="FineIsAlreadyPaidException">
+<soap:fault name="FineIsAlreadyPaidException" use="literal"/>
+</fault>
+</operation>
+<operation name="memberLogin">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="InvalidLoginException">
+<soap:fault name="InvalidLoginException" use="literal"/>
+</fault>
+</operation>
 <operation name="doExtendBook">
 <soap:operation soapAction=""/>
 <input>
@@ -189,6 +271,30 @@
 <fault name="BookIsAlreadyOverdueException">
 <soap:fault name="BookIsAlreadyOverdueException" use="literal"/>
 </fault>
+</operation>
+<operation name="doReturnBook">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="LendingNotFoundException">
+<soap:fault name="LendingNotFoundException" use="literal"/>
+</fault>
+<fault name="MemberNotFoundException">
+<soap:fault name="MemberNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="searchBookToReserve">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
 </operation>
 <operation name="doReserveBook">
 <soap:operation soapAction=""/>
@@ -212,105 +318,6 @@
 </fault>
 <fault name="BookNotFoundException">
 <soap:fault name="BookNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="memberLogin">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="InvalidLoginException">
-<soap:fault name="InvalidLoginException" use="literal"/>
-</fault>
-</operation>
-<operation name="doReturnBook">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="LendingNotFoundException">
-<soap:fault name="LendingNotFoundException" use="literal"/>
-</fault>
-<fault name="MemberNotFoundException">
-<soap:fault name="MemberNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="setHasPaidTrue">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="FineNotFoundException">
-<soap:fault name="FineNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="persist">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveFineByFineId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="FineNotFoundException">
-<soap:fault name="FineNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveBooksLoanedByMember">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="searchBookToReserve">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveFinesByMember">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveMemberByIdentityNumber">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="MemberNotFoundException">
-<soap:fault name="MemberNotFoundException" use="literal"/>
 </fault>
 </operation>
 </binding>

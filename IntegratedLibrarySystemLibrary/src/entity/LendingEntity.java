@@ -29,10 +29,10 @@ public class LendingEntity implements Serializable {
     private Long lendId;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lendDate;    
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     //@JoinColumn(name="memberId", nullable = false)
     private MemberEntity memberEntity;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     //@JoinColumn(name="bookId", nullable = false)
     private BookEntity book;
     @Temporal(javax.persistence.TemporalType.DATE)

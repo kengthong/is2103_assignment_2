@@ -13,6 +13,8 @@ import entity.FineEntity;
 import entity.LendingEntity;
 import entity.MemberEntity;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -25,6 +27,7 @@ import util.exception.BookIsAlreadyLoanedByMemberException;
 import util.exception.BookIsAlreadyOverdueException;
 import util.exception.BookIsAvailableForLoanException;
 import util.exception.BookNotFoundException;
+import util.exception.FineIsAlreadyPaidException;
 import util.exception.FineNotFoundException;
 import util.exception.InvalidLoginException;
 import util.exception.LendingNotFoundException;
@@ -142,10 +145,10 @@ public class BookDropWebService {
     }
 
     @WebMethod(operationName = "setHasPaidTrue")
-    public void setHasPaidTrue(@WebParam(name = "fineIdToPay") Long fineIdToPay) throws FineNotFoundException {
+    public void setHasPaidTrue(@WebParam(name = "fineIdToPay") Long fineIdToPay) throws FineNotFoundException, FineIsAlreadyPaidException {
         try {
             fineControllerLocal.setHasPaidTrue(fineIdToPay);
-        } catch (FineNotFoundException ex) {
+        } catch (FineNotFoundException | FineIsAlreadyPaidException ex) {
             throw ex;
         }
     }

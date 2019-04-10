@@ -15,6 +15,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.FineIsAlreadyPaidException;
 import util.exception.FineNotFoundException;
 import util.exception.MemberHasFinesException;
 
@@ -92,10 +93,13 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     }
 
     @Override
-    public void setHasPaidTrue(Long fineId) throws FineNotFoundException {
+    public void setHasPaidTrue(Long fineId) throws FineNotFoundException, FineIsAlreadyPaidException {
         
         try {
             FineEntity fineEntity = retrieveFineByFineId(fineId);
+            if(fineEntity.getHasPaid() == true) {
+                throw new FineIsAlreadyPaidException("Fine with Id = "+ fineId + " is already paid\n");
+            }
             fineEntity.setHasPaid(true);
             entityManager.flush();
         } catch(FineNotFoundException ex) {
