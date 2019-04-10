@@ -97,7 +97,7 @@ public class LibraryOperationController implements LibraryOperationControllerRem
             lendingEntityControllerLocal.checkIfMemberExceedsMaxLoans(identityNumber);
             List<ReservationEntity> reservations = reservationControllerLocal.retrieveAllUnfulfilledReservationsByBookId(bookId);
             if (!reservations.isEmpty()) {
-                reservationControllerLocal.checkIfMemberOnReserveList(reservations,identityNumber);
+                reservationControllerLocal.checkIfMemberOnReserveList(reservations, identityNumber);
                 reservationControllerLocal.fulfillReservation(reservations.get(0));
             }
 
@@ -234,7 +234,7 @@ public class LibraryOperationController implements LibraryOperationControllerRem
         query.setParameter("inTitleToSearch", titleToSearch);
         return query.getResultList();
     }
-    
+
     @Override
     public List<Object[]> searchBook(String titleToSearch) {
         Query query = entityManager.createQuery(
@@ -252,8 +252,7 @@ public class LibraryOperationController implements LibraryOperationControllerRem
             //if no, check for reservations. If no reservations, append currently available
             Long bookId = (Long) result[0];
             try {
-                
-                
+
                 lendingEntityControllerLocal.checkIsBookLent(bookId);
                 reservationControllerLocal.checkIfBookHasReservations(bookId);
                 result[2] = "Currently Available";
@@ -266,7 +265,7 @@ public class LibraryOperationController implements LibraryOperationControllerRem
                     result[2] = "Due on " + dt1.format(dueDate);
                 } catch (LendingNotFoundException ex1) {
                 }
-                
+
             } catch (BookHasBeenReservedException ex) {
                 // has been reserved
                 result[2] = "Reserved";
@@ -277,7 +276,6 @@ public class LibraryOperationController implements LibraryOperationControllerRem
         return results;
 
     }
-    
 
     public void persist(Object object) {
         entityManager.persist(object);
@@ -343,9 +341,17 @@ public class LibraryOperationController implements LibraryOperationControllerRem
             return currentLendingEntity;
         } catch (LendingNotFoundException ex) {
             throw new BookIsAvailableForLoanException("Member cannot reserve books that are currently available in the library.");
-        } 
+        }
 
     }
 
+    @Override
+    public void setFines(Integer amount, MemberEntity currentMember) {
+        FineEntity newFineEntity = new FineEntity();
+        newFineEntity.setMemberEntity(currentMember);
+        newFineEntity.setAmount(amount);
+        newFineEntity.setHasPaid(false);
+        fineControllerLocal.createFine(newFineEntity);
+    }
 
 }

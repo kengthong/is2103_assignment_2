@@ -49,4 +49,6 @@ public interface LibraryOperationControllerRemote {
     void doReserveBook(MemberEntity currentMember, Long bookId) throws BookNotFoundException, BookIsAlreadyLoanedByMemberException,BookIsAvailableForLoanException, MultipleReservationException, MemberHasFinesException;
 
     List<Object[]> searchBook(String titleToSearch);
+
+    void setFines(Integer amount, MemberEntity currentMember);
 }

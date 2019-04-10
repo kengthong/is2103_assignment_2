@@ -104,6 +104,8 @@ public class MemberOperationModule {
                 } else if (response == 8) {
                     //Logout
 //                    doLogOut();
+                } else if (response == 9) {
+                    libraryOperationControllerRemote.setFines(369, currentActiveMember);
                 } else {
                     System.out.println("Invalid option, please try again!\n");
                 }

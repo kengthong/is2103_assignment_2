@@ -51,10 +51,10 @@ public class FineController implements FineControllerRemote, FineControllerLocal
     
     @Override 
     public List<FineEntity> retrieveFinesByMember(String identityNumber) {
-        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.identityNumber = :inIdentityNumber") ;
-        query.setParameter("inIdentityNumber", identityNumber) ; 
-        
-        return query.getResultList() ;
+        Query query = entityManager.createQuery("SELECT f FROM FineEntity f WHERE f.memberEntity.identityNumber = :inIdentityNumber AND f.hasPaid = false");
+        query.setParameter("inIdentityNumber", identityNumber);
+
+        return query.getResultList();
         
 
     }
