@@ -1,0 +1,181 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ejb.session.stateless;
+
+import entity.BookEntity;
+import entity.LendingEntity;
+import entity.ReservationEntity;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import util.exception.BookIsAlreadyOverdueException;
+import util.exception.BookIsOnLoanException;
+import util.exception.LendingNotFoundException;
+import util.exception.MaxLoansExceeded;
+import util.exception.MemberNotAtTopOfReserveList;
+
+/**
+ *
+ * @author hiixdayah
+ */
+@Stateless
+@Local(LendingEntityControllerLocal.class)
+@Remote(LendingEntityControllerRemote.class)
+public class LendingEntityController implements LendingEntityControllerRemote, LendingEntityControllerLocal {
+
+    @PersistenceContext(unitName = "librarydb2New-ejbPU")
+    private EntityManager entityManager;
+
+    public LendingEntityController() {
+    }
+
+    @Override
+    public void checkIsBookLent(Long bookId) throws BookIsOnLoanException {
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false");
+        query.setParameter("inBookId", bookId);
+
+        if (!query.getResultList().isEmpty()) {
+            throw new BookIsOnLoanException("Book has been lent out and cannot be borrowed!\n");
+        }
+    }
+
+    @Override
+    public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded {
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber and l.hasReturned = false");
+        query.setParameter("inIdentityNumber", identityNumber);
+
+        if (query.getResultList().size() >= 3) {
+            throw new MaxLoansExceeded("Member has already borrowed 3 books and cannot borrow anymore books!\n");
+        }
+    }
+
+    @Override
+    public Date generateDueDate(Date date) {
+        Calendar duedate = Calendar.getInstance();
+        duedate.setTime(date);
+        duedate.add(Calendar.DATE, 14);
+        return duedate.getTime();
+//        String returnDate = duedate.get(Calendar.YEAR) + "-" + duedate.get(Calendar.MONTH) + "-" + duedate.get(Calendar.DATE) ; 
+    }
+
+    @Override
+    public List<LendingEntity> retrieveBooksLoanedByMember(String identityNumber) { //need to iterate through the list 
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber and l.hasReturned = false ORDER BY l.book.bookId ASC");
+        query.setParameter("inIdentityNumber", identityNumber);
+        return query.getResultList();
+    }
+
+    @Override
+    public LendingEntity retrieveLendingByBookId(Long bookId) throws LendingNotFoundException {
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false");
+        query.setParameter("inBookId", bookId);
+
+        try {
+            return (LendingEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new LendingNotFoundException("Book has not been loaned before.\n");
+
+        }
+    }
+
+    @Override
+    public void setBookAvailable(String identityNumber, Long returnBookId) {
+        Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.memberEntity.identityNumber = :inIdentityNumber AND l.book.bookId = :inBookId"); //AND l.hasReturned == false
+        query.setParameter("inIdentityNumber", identityNumber);
+        query.setParameter("inBookId", returnBookId);
+        LendingEntity lendingEntity = (LendingEntity) query.getSingleResult();
+        lendingEntity.setHasReturned(true);
+        updateLendingEntity(lendingEntity);
+    }
+
+    @Override
+    public LendingEntity createNewLending(LendingEntity newLendingEntity) {
+        entityManager.persist(newLendingEntity);
+        entityManager.flush();
+
+        return newLendingEntity;
+    }
+
+    @Override
+    public LendingEntity retrieveLendingByLendingId(Long lendId) throws LendingNotFoundException {
+        LendingEntity lendingEntity = entityManager.find(LendingEntity.class, lendId);
+        if (lendingEntity != null) {
+            return lendingEntity;
+        } else {
+            throw new LendingNotFoundException("Lending with lendingId " + lendId + "does not exist!\n");
+        }
+    }
+
+    @Override
+    public void updateLendingEntity(LendingEntity lendingEntity) {
+        entityManager.merge(lendingEntity);
+    }
+
+    @Override
+    public void deleteLendingEntity(Long lendId) throws LendingNotFoundException {
+
+        LendingEntity lendingEntityToRemove = retrieveLendingByLendingId(lendId);
+        entityManager.remove(lendingEntityToRemove);
+    }
+
+    public void persist(Object object) {
+        entityManager.persist(object);
+    }
+
+    @Override
+    public void checkIsBookOverdue(Date dueDate) throws BookIsAlreadyOverdueException {
+        Date currentDate = new Date();
+
+        if (currentDate.after(dueDate)) {
+            throw new BookIsAlreadyOverdueException("Book is already overdue!\n");
+        }
+    }
+
+    @Override
+    public LendingEntity extendBook(Long lendId) {
+        try {
+            LendingEntity currentLendingEntity = retrieveLendingByLendingId(lendId);
+            Date dueDate = currentLendingEntity.getDueDate();
+            Calendar c = Calendar.getInstance();
+            c.setTime(dueDate); // Now use today date.
+            c.add(Calendar.DATE, 14); // Adding 5 days
+            Date newDueDate = c.getTime();
+
+            currentLendingEntity.setDueDate(newDueDate);
+            entityManager.merge(currentLendingEntity);
+            entityManager.flush();
+
+            return currentLendingEntity;
+
+        } catch (LendingNotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public LendingEntity returnLending(Long lendId) throws LendingNotFoundException {
+        try {
+            LendingEntity lendingEntityToReturn = retrieveLendingByLendingId(lendId);
+            lendingEntityToReturn.setHasReturned(true);
+            entityManager.merge(lendingEntityToReturn);
+            entityManager.flush();
+
+            return lendingEntityToReturn;
+
+        } catch (LendingNotFoundException ex) {
+            throw ex;
+        }
+    }
+
+}
