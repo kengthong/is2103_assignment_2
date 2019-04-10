@@ -46,12 +46,9 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
         query.setParameter("inBookId", bookId);
 
         if (!query.getResultList().isEmpty()) {
-            throw new BookIsOnLoanException("Book has been lent out and cannot be borrowed!");
+            throw new BookIsOnLoanException("Book has been lent out and cannot be borrowed!\n");
         }
     }
-    
-     
-    
 
     @Override
     public void checkIfMemberExceedsMaxLoans(String identityNumber) throws MaxLoansExceeded {
@@ -59,7 +56,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
         query.setParameter("inIdentityNumber", identityNumber);
 
         if (query.getResultList().size() >= 3) {
-            throw new MaxLoansExceeded("Member has already borrowed 3 books and cannot borrow anymore books!");
+            throw new MaxLoansExceeded("Member has already borrowed 3 books and cannot borrow anymore books!\n");
         }
     }
 
@@ -83,12 +80,11 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
     public LendingEntity retrieveLendingByBookId(Long bookId) throws LendingNotFoundException {
         Query query = entityManager.createQuery("SELECT l FROM LendingEntity l WHERE l.book.bookId = :inBookId and l.hasReturned = false");
         query.setParameter("inBookId", bookId);
-        
+
         try {
             return (LendingEntity) query.getSingleResult();
-        } catch(NoResultException | NonUniqueResultException ex)
-        {
-             throw new LendingNotFoundException("Book has not been loaned before.");
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new LendingNotFoundException("Book has not been loaned before.\n");
 
         }
     }
@@ -105,12 +101,8 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
 
     @Override
     public LendingEntity createNewLending(LendingEntity newLendingEntity) {
-        try {
-            entityManager.persist(newLendingEntity);
-            entityManager.flush();
-        } catch (Exception ex) {
-            System.out.println("Exception =" + ex.getMessage());
-        }
+        entityManager.persist(newLendingEntity);
+        entityManager.flush();
 
         return newLendingEntity;
     }
@@ -121,7 +113,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
         if (lendingEntity != null) {
             return lendingEntity;
         } else {
-            throw new LendingNotFoundException("Lending with lendingId " + lendId + "does not exist!");
+            throw new LendingNotFoundException("Lending with lendingId " + lendId + "does not exist!\n");
         }
     }
 
@@ -146,7 +138,7 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
         Date currentDate = new Date();
 
         if (currentDate.after(dueDate)) {
-            throw new BookIsAlreadyOverdueException("Book is already overdue!");
+            throw new BookIsAlreadyOverdueException("Book is already overdue!\n");
         }
     }
 
@@ -159,15 +151,14 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
             c.setTime(dueDate); // Now use today date.
             c.add(Calendar.DATE, 14); // Adding 5 days
             Date newDueDate = c.getTime();
-            
+
             currentLendingEntity.setDueDate(newDueDate);
             entityManager.merge(currentLendingEntity);
             entityManager.flush();
-            
+
             return currentLendingEntity;
-            
-        } catch(LendingNotFoundException ex)
-        {
+
+        } catch (LendingNotFoundException ex) {
             return null;
         }
     }
@@ -179,15 +170,12 @@ public class LendingEntityController implements LendingEntityControllerRemote, L
             lendingEntityToReturn.setHasReturned(true);
             entityManager.merge(lendingEntityToReturn);
             entityManager.flush();
-            
+
             return lendingEntityToReturn;
-            
+
         } catch (LendingNotFoundException ex) {
             throw ex;
         }
     }
-
-
-    
 
 }

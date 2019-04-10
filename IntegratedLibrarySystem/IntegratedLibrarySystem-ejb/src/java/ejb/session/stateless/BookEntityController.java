@@ -48,7 +48,7 @@ public class BookEntityController implements BookEntityControllerRemote, BookEnt
         try {
             return (BookEntity) query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-            throw new BookNotFoundException("Book Isbn " + isbn + " does not exist!");
+            throw new BookNotFoundException("Book Isbn " + isbn + " does not exist!\n");
 
         }
     }
@@ -60,7 +60,7 @@ public class BookEntityController implements BookEntityControllerRemote, BookEnt
         if (bookEntity != null) {
             return bookEntity;
         } else {
-            throw new BookNotFoundException("Book ID " + bookId + " does not exist!");
+            throw new BookNotFoundException("Book ID " + bookId + " does not exist!\n");
         }
     }
 

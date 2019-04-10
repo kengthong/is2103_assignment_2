@@ -5,13 +5,14 @@
  */
 package ejb.session.stateless;
 
-import entity.MemberEntity;
 import entity.ReservationEntity;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.BookHasBeenReservedException;
@@ -77,11 +78,18 @@ public class ReservationController implements ReservationControllerRemote, Reser
     }
 
     @Override
-    public ReservationEntity retrieveReservationOfMember(Long bookId, Long memberId) {
+    public ReservationEntity retrieveReservationOfMember(Long bookId, Long memberId) throws ReservationNotFoundException {
         Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.memberEntity.memberId = :inMemberId AND r.book.bookId = :inBookId");
         query.setParameter("inMemberId", memberId);
         query.setParameter("inBookId", bookId);
-        return (ReservationEntity) query.getSingleResult();
+        
+        try {
+            return (ReservationEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new ReservationNotFoundException("Reservation not found\n");
+
+        }
+        
     }
 
     @Override
@@ -99,7 +107,7 @@ public class ReservationController implements ReservationControllerRemote, Reser
         query.setParameter("inIdentityNumber", identityNumber);
 
         if (!query.getResultList().isEmpty()) {
-            throw new MultipleReservationException("Member has already made the same reservation previously");
+            throw new MultipleReservationException("Member has already made the same reservation previously\n");
         }
     }
 
@@ -122,7 +130,7 @@ public class ReservationController implements ReservationControllerRemote, Reser
     public void checkIfBookHasReservations(long bookId) throws BookHasBeenReservedException {
         List<ReservationEntity> reservations = retrieveAllUnfulfilledReservationsByBookId(bookId);
         if(!reservations.isEmpty()) {
-            throw new BookHasBeenReservedException("Book has been reserved.");
+            throw new BookHasBeenReservedException("Book has been reserved.\n");
         }
     }
     
@@ -130,7 +138,7 @@ public class ReservationController implements ReservationControllerRemote, Reser
     public void checkIfMemberOnReserveList(List<ReservationEntity> reservations, String identityNumber) throws MemberNotAtTopOfReserveList {
         
         if (!reservations.get(0).getMember().getIdentityNumber().equals(identityNumber)) {
-            throw new MemberNotAtTopOfReserveList("Book has been reserved by another member");
+            throw new MemberNotAtTopOfReserveList("Book has been reserved by another member\n");
         }
     }
 

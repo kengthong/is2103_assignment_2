@@ -60,7 +60,7 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
         }
         catch(NoResultException | NonUniqueResultException ex)
         {
-             throw new MemberNotFoundException("Member Identity Number  " + identityNumber + " does not exist!");
+             throw new MemberNotFoundException("Member Identity Number  " + identityNumber + " does not exist!\n");
 
         }
     }
@@ -76,7 +76,7 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
         }
         else
         {
-            throw new MemberNotFoundException("Member ID " + memberId + " does not exist!");
+            throw new MemberNotFoundException("Member ID " + memberId + " does not exist!\n");
         }
     }
     
@@ -88,8 +88,12 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
     @Override
     public void deleteMember(Long memberId) throws MemberNotFoundException
     {
-        MemberEntity memberEntityToRemove = retrieveMemberByMemberId(memberId);
-        entityManager.remove(memberEntityToRemove);
+        try {
+            MemberEntity memberEntityToRemove = retrieveMemberByMemberId(memberId);
+            entityManager.remove(memberEntityToRemove);
+        } catch (MemberNotFoundException ex) {
+            throw ex;
+        }
     }
     
     @Override
@@ -114,12 +118,12 @@ public class MemberEntityController implements MemberEntityControllerRemote, Mem
             }
             else
             {
-                throw new InvalidLoginException("Invalid identity number or invalid security code!");
+                throw new InvalidLoginException("Invalid identity number or invalid security code!\n");
             }
         }
         catch(MemberNotFoundException ex)
         {
-            throw new InvalidLoginException("Invalid identity number or invalid security code!");
+            throw new InvalidLoginException("Invalid identity number or invalid security code!\n");
         }
     }
 

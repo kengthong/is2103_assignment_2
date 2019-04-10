@@ -42,10 +42,10 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
             if (staffEntity.getPassword().equals(password)) {
                 return staffEntity;
             } else {
-                throw new InvalidLoginException("Username does not exist or invalid password!");
+                throw new InvalidLoginException("Username does not exist or invalid password!\n");
             }
         } catch (StaffNotFoundException ex) {
-            throw new InvalidLoginException("Username does not exist or invalid password!");
+            throw new InvalidLoginException("Username does not exist or invalid password!\n");
         }
     }
 
@@ -66,7 +66,7 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
             return (StaffEntity) query.getSingleResult() ; 
         }
         catch (NoResultException | NonUniqueResultException ex) {
-            throw new StaffNotFoundException("Staff Username " + username + " does not exist") ; 
+            throw new StaffNotFoundException("Staff Username " + username + " does not exist\n") ; 
         }
         
     }
@@ -78,7 +78,7 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
         if (staffEntity != null) {
             return staffEntity;
         } else {
-            throw new StaffNotFoundException("Staff ID " + staffId + " does not exist!");
+            throw new StaffNotFoundException("Staff ID " + staffId + " does not exist!\n");
         }
     }
 

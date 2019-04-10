@@ -117,8 +117,8 @@ public class AdministrationOperationModule {
                     scanner.nextLine() ;
                     String identityNumber = scanner.nextLine().trim();
                     try { 
-                    MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
-                    doDeleteMember(memberEntity);
+                        MemberEntity memberEntity = memberEntityControllerRemote.retrieveMemberByIdentityNumber(identityNumber);
+                        doDeleteMember(memberEntity);
                     } catch (MemberNotFoundException ex) {
                         System.out.println("Member cannot be found!") ; 
                     }

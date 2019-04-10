@@ -140,7 +140,7 @@ public class LibraryOperationController implements LibraryOperationControllerRem
             //check for reserve
             List<ReservationEntity> reservations = reservationControllerLocal.retrieveAllReservationsByBookId(bookId);
             if (!reservations.isEmpty()) {
-                throw new BookHasBeenReservedException("Book has been reserved by another member.");
+                throw new BookHasBeenReservedException("Book has been reserved by another member.\n");
             }
             //extend book
             Long lendId = currentLendingEntity.getLendId();
@@ -331,16 +331,16 @@ public class LibraryOperationController implements LibraryOperationControllerRem
                 //check that there are existing unfulfilled reservations
                 List<ReservationEntity> reservations = reservationControllerLocal.retrieveAllUnfulfilledReservationsByBookId(bookId);
                 if (reservations.isEmpty()) {
-                    throw new BookIsAvailableForLoanException("Member cannot reserve books that are currently available in the library");
+                    throw new BookIsAvailableForLoanException("Member cannot reserve books that are currently available in the library\n");
                 }
             } else { // if book is currently on loan
                 if (currentLendingEntity.getMember().getIdentityNumber().equals(identityNumber)) { // if mmeber has already borrowed the same book
-                    throw new BookIsAlreadyLoanedByMemberException("You cannot make reservations for books that are loaned to you.");
+                    throw new BookIsAlreadyLoanedByMemberException("You cannot make reservations for books that are loaned to you.\n");
                 }
             }
             return currentLendingEntity;
         } catch (LendingNotFoundException ex) {
-            throw new BookIsAvailableForLoanException("Member cannot reserve books that are currently available in the library.");
+            throw new BookIsAvailableForLoanException("Member cannot reserve books that are currently available in the library.\n");
         }
 
     }

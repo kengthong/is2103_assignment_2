@@ -45,7 +45,7 @@ public class FineController implements FineControllerRemote, FineControllerLocal
         query.setParameter("inIdentityNumber", identityNumber) ; 
         
         if ( !query.getResultList().isEmpty() ) {
-            throw new MemberHasFinesException("Member has unpaid fines and cannot borrow any books!");
+            throw new MemberHasFinesException("Member has unpaid fines and cannot borrow any books!\n");
         } 
     }
     
@@ -67,7 +67,7 @@ public class FineController implements FineControllerRemote, FineControllerLocal
         try {
             return (FineEntity) query.getSingleResult() ;
         } catch (NoResultException | NonUniqueResultException ex) {
-            throw new FineNotFoundException("Fine does not exist");
+            throw new FineNotFoundException("Fine does not exist\n");
         }
         
     }

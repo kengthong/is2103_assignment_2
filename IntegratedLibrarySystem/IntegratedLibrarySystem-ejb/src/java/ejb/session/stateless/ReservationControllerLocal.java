@@ -32,7 +32,7 @@ public interface ReservationControllerLocal {
 
     List<ReservationEntity> retrieveReservationsByMember(Long memberId);
 
-    ReservationEntity retrieveReservationOfMember(Long bookId, Long memberId);
+    ReservationEntity retrieveReservationOfMember(Long bookId, Long memberId) throws ReservationNotFoundException;
 
     List<ReservationEntity> retrieveAllUnfulfilledReservationsByBookId(Long bookId);
 
